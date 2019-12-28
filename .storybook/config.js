@@ -12,7 +12,7 @@ const Background = styled.div`
 
 addParameters({
   options: {
-    theme: themes.normal,
+    theme: themes.dark,
   },
 });
 
