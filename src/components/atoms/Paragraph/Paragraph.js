@@ -5,6 +5,7 @@ const Paragraph = styled.p`
   font-weight: ${({ theme, regular }) => (regular ? theme.regular : theme.medium)};
   font-size: ${({ theme }) => theme.s};
   color: ${({ theme, secondary }) => (secondary ? theme.textSecondary : theme.text)};
+  transition: color ${({ theme }) => theme.themeTransition};
 `;
 
 export default Paragraph;
