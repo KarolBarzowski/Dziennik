@@ -4,17 +4,9 @@ export const useWeather = () => {
   const URL = `https://api.weatherbit.io/v2.0/forecast/daily?city=Gdynia&key=${process.env.REACT_APP_WEATHER_API_KEY}`;
   const [data, setData] = useState([]);
 
-  const daysInWeek = [
-    'Niedziela',
-    'Poniedziałek',
-    'Wtorek',
-    'Środa',
-    'Czwartek',
-    'Piątek',
-    'Sobota',
-  ];
   const date = new Date();
   const today = date.getDay();
+
   const daysToGet = [
     [1, 2, 3, 4, 5], // sunday
     [0, 1, 2, 3, 4], // monday
@@ -30,10 +22,6 @@ export const useWeather = () => {
     days.forEach(day => {
       /* eslint camelcase: 0 */
       const { temp, pop, sunset_ts, sunrise_ts } = weather[day];
-      const dayName = daysInWeek[new Date(weather[day].valid_date).getDay()];
-      const splitDate = weather[day].valid_date.split('-');
-      const dd = splitDate[2];
-      const mm = splitDate[1];
       const sunsetHour = Math.round((sunset_ts / 3600) % 24);
       const sunsetMinutes = Math.round((sunset_ts / 60) % 60);
 
@@ -45,8 +33,6 @@ export const useWeather = () => {
       results.push({
         temp,
         pop,
-        name: dayName,
-        date: `${dd}.${mm}`,
         sunset,
         sunrise,
       });

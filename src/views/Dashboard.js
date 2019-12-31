@@ -30,19 +30,44 @@ const StyledHeading = styled(Heading)`
 `;
 
 function Dashboard({ data, weather }) {
-  const [syntax, setSyntax] = useState({
-    dateSyntax: 'Ładowanie...',
-    weatherSyntax: 'Ładowanie...',
-  });
+  const [weatherSyntax, setWeatherSyntax] = useState('');
+  const [dateSyntax, setDateSyntax] = useState('');
+  const [plan, setPlan] = useState('Ładowanie...');
 
   useEffect(() => {
     if (weather) {
-      const { name, date, temp, pop } = weather;
-      const dateSyntax = `${name}, ${date}`;
-      const weatherSyntax = `${temp}°C | ${pop}%`;
-      setSyntax({ dateSyntax, weatherSyntax });
+      const { temp, pop } = weather;
+      const syntax = `${temp}°C | ${pop}%`;
+      setWeatherSyntax(syntax);
     }
   }, [weather]);
+
+  const daysInWeek = [
+    'Niedziela',
+    'Poniedziałek',
+    'Wtorek',
+    'Środa',
+    'Czwartek',
+    'Piątek',
+    'Sobota',
+  ];
+  const date = new Date();
+  const today = date.getDay();
+
+  useEffect(() => {
+    const tomorrow = new Date(date);
+    let planDay = date.getDay();
+    if (date.getDay() > 4) planDay = 0;
+    if (today < 5) tomorrow.setDate(tomorrow.getDate() + 1);
+    else if (today === 5) tomorrow.setDate(tomorrow.getDate() + 3);
+    else tomorrow.setDate(tomorrow.getDate() + 2);
+    const d = tomorrow.getDate() < 10 ? `0${tomorrow.getDate()}` : tomorrow.getDate();
+    const m =
+      tomorrow.getMonth() + 1 < 10 ? `0${tomorrow.getMonth() + 1}` : tomorrow.getMonth() + 1;
+    const result = `${daysInWeek[tomorrow.getDay()]}, ${d}.${m}`;
+    if (data) setPlan(data.plan[planDay]);
+    setDateSyntax(result);
+  }, [data]);
 
   return (
     <StyledSection>
@@ -51,11 +76,10 @@ function Dashboard({ data, weather }) {
         <Card
           cardType="plan"
           title="Plan lekcji"
-          description={syntax.dateSyntax}
-          weather={syntax.weatherSyntax}
+          description={dateSyntax}
+          weather={weatherSyntax}
           link="/plan"
-          time="8:55 - 16:15"
-          lessons={data.plan[3]}
+          lessons={plan}
         />
       </StyledWrapper>
     </StyledSection>

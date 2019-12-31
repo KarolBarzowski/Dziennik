@@ -5,12 +5,16 @@ import { useData } from 'hooks/useData';
 import { useWeather } from 'hooks/useWeather';
 import MainTemplate from 'templates/MainTemplate';
 import Dashboard from 'views/Dashboard';
+import Tutorial from 'views/Tutorial';
 
 function Root() {
   const data = useData();
   const weather = useWeather();
   const [theme, toggleTheme, isAutomatic, isCustom, setOptions, schedule] = useDarkMode(weather[0]);
 
+  if (!data) {
+    return <Tutorial />;
+  }
   return (
     <BrowserRouter>
       <MainTemplate

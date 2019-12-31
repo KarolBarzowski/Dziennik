@@ -62,52 +62,88 @@ const StyledParagraph = styled(Paragraph)`
   font-size: ${({ theme }) => theme.m};
 `;
 
-function Card({ cardType, title, description, weather, link, time, lessons }) {
+function Card({ cardType, title, description, weather, link, lessons }) {
   const [uniqueLessons, setUniqueLessons] = useState(null);
+  const [time, setTime] = useState('Ładowanie...');
 
   useEffect(() => {
-    const createUniqueLessons = () => {
-      const duplicates = {};
+    if (lessons !== 'Ładowanie...') {
+      const createUniqueLessons = () => {
+        const duplicates = {};
 
-      // get duplicates
-      lessons.forEach(({ name }) => {
-        duplicates[name] = (duplicates[name] || 0) + 1;
-      });
+        // get duplicates
+        lessons.forEach(({ name }) => {
+          duplicates[name] = (duplicates[name] || 0) + 1;
+        });
 
-      // assign duplicates number to its lesson
-      lessons.forEach((lesson, i) => {
-        /* eslint no-param-reassign: ["error", { "props": false }] */
-        lessons[i].multiple = duplicates[lesson.name];
-      });
+        // assign duplicates number to its lesson
+        lessons.forEach((lesson, i) => {
+          /* eslint no-param-reassign: ["error", { "props": false }] */
+          lessons[i].multiple = duplicates[lesson.name];
+        });
 
-      // create array of unique lessons
-      const unique = Array.from(new Set(lessons.map(({ name }) => name))).map(name =>
-        lessons.find(lesson => lesson.name === name),
-      );
+        // create array of unique lessons
+        const unique = Array.from(new Set(lessons.map(({ name }) => name))).map(name =>
+          lessons.find(lesson => lesson.name === name),
+        );
 
-      // remove empty lessons
-      if (unique[0].name === '') {
-        unique.shift();
-      } else if (unique[unique.length - 1].name === '') {
-        unique.pop();
-      }
-
-      unique.forEach((lesson, i) => {
-        if (lesson.name.includes('Zajęcia dodatkowe')) {
-          unique.splice(i, 1);
+        // remove empty lessons
+        if (unique[0].name === '') {
+          unique.shift();
+        } else if (unique[unique.length - 1].name === '') {
+          unique.pop();
         }
-      });
 
-      setUniqueLessons(unique);
-    };
+        unique.forEach((lesson, i) => {
+          if (lesson.name.includes('Zajęcia dodatkowe')) {
+            unique.splice(i, 1);
+          }
+        });
 
-    switch (cardType) {
-      case 'plan':
-        createUniqueLessons();
-        break;
+        const schoolHours = [
+          '07:55',
+          '08:45',
+          '09:40',
+          '10:35',
+          '11:30',
+          '12:35',
+          '13:30',
+          '14:25',
+          '15:20',
+          '16:15',
+          '17:05',
+          '17:55',
+          '18:45',
+        ];
 
-      default:
-        break;
+        unique.forEach(lesson => {
+          if (lesson.multiple !== 1) {
+            const { multiple, hours } = lesson;
+            const endHour = hours.split(' - ')[1];
+            const end =
+              schoolHours[schoolHours.findIndex(index => index === endHour) + multiple - 1];
+            const start = hours.split(' - ')[0];
+            lesson.hours = `${start} - ${end}`;
+          }
+          return lesson;
+        });
+
+        const lessonsTime = `${unique[0].hours.split(' - ')[0]} - ${
+          unique[unique.length - 1].hours.split(' - ')[1]
+        }`;
+
+        setUniqueLessons(unique);
+        setTime(lessonsTime);
+      };
+
+      switch (cardType) {
+        case 'plan':
+          createUniqueLessons();
+          break;
+
+        default:
+          break;
+      }
     }
   }, [cardType, lessons]);
 
@@ -122,7 +158,7 @@ function Card({ cardType, title, description, weather, link, time, lessons }) {
           {cardType === 'plan' && (
             <Paragraph regular secondary>
               {weather}
-              <StyledIcon icon={faCloudRain} />
+              {weather !== '' && <StyledIcon icon={faCloudRain} />}
             </Paragraph>
           )}
         </StyledInfo>
@@ -156,16 +192,16 @@ Card.propTypes = {
   description: PropTypes.string.isRequired,
   weather: PropTypes.string,
   link: PropTypes.string.isRequired,
-  time: PropTypes.string,
-  lessons: PropTypes.arrayOf(
-    PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number])),
-  ),
+  lessons: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.arrayOf(
+      PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number])),
+    ),
+  ]).isRequired,
 };
 
 Card.defaultProps = {
   weather: null,
-  time: null,
-  lessons: null,
 };
 
 export default Card;

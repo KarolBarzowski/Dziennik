@@ -283,6 +283,13 @@ const StyledWarnIcon = styled(FontAwesomeIcon)`
   margin-right: 0.5rem;
 `;
 
+const StyledWersion = styled.span`
+  position: absolute;
+  bottom: 0.5rem;
+  left: 0.5rem;
+  font-size: ${({ theme }) => theme.xs};
+`;
+
 function Modal({
   handleModalToggle,
   toggleTheme,
@@ -340,6 +347,7 @@ function Modal({
               <Paragraph>Funkcje</Paragraph>
             </StyledListItem>
           </StyledList>
+          <StyledWersion>Wersja 1.0</StyledWersion>
         </StyledSidenav>
         <StyledContent>
           <StyledTopbar>
@@ -374,7 +382,7 @@ function Modal({
                   </li>
                   <li>Otworzy się kilka nowych kart.</li>
                   <li>Kiedy synchronizacja się zakończy, wyświetli się informacja o tym.</li>
-                  <li>Po zakończeniu - kliknij F5.</li>
+                  <li>Po zakończeniu - odśwież tę stronę.</li>
                 </ol>
               </StyledSeparator>
               <StyledSeparator mt={1.5} />
@@ -396,7 +404,12 @@ function Modal({
                     <StyledPreviewCard />
                   </StyledPreview>
                   <Paragraph>Jasny</Paragraph>
-                  <StyledCheckbox type="radio" checked={theme === 'light'} name="theme" />
+                  <StyledCheckbox
+                    type="radio"
+                    checked={theme === 'light'}
+                    name="theme"
+                    onChange={() => null}
+                  />
                   <StyledCheckmark />
                 </StyledPreviewWrapper>
                 <StyledPreviewWrapper onClick={() => toggleTheme('dark')}>
@@ -405,7 +418,12 @@ function Modal({
                     <StyledPreviewCard dark />
                   </StyledPreview>
                   <Paragraph>Ciemny</Paragraph>
-                  <StyledCheckbox type="radio" checked={theme === 'dark'} name="theme" />
+                  <StyledCheckbox
+                    type="radio"
+                    checked={theme === 'dark'}
+                    name="theme"
+                    onChange={() => null}
+                  />
                   <StyledCheckmark />
                 </StyledPreviewWrapper>
               </StyledPreviewsContainer>
