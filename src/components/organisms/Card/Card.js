@@ -7,21 +7,24 @@ import { faCloudRain } from '@fortawesome/free-solid-svg-icons';
 import Paragraph from 'components/atoms/Paragraph/Paragraph';
 import Heading from 'components/atoms/Heading/Heading';
 import Lesson from 'components/molecules/Lesson/Lesson';
+import { slideInDown } from 'functions/animations';
 
 const StyledWrapper = styled.div`
   display: flex;
   flex-flow: column nowrap;
   padding: 1rem 1.5rem 1.5rem;
+  margin: ${({ center }) => (center ? '1.5rem' : 0)};
   background-color: ${({ theme }) => theme.card};
   border-radius: 1.5rem;
   box-shadow: rgba(0, 0, 0, 0.16) 0 3px 6px;
   transition: background-color ${({ theme }) => theme.themeTransition};
+  animation: ${slideInDown} ${({ theme }) => theme.slideTransition} 0.15s;
 `;
 
 const StyledHeader = styled.div`
   display: flex;
   flex-flow: row nowrap;
-  justify-content: space-between;
+  justify-content: ${({ center }) => (center ? 'center' : 'space-between')};
 `;
 
 const StyledInfo = styled.div``;
@@ -62,7 +65,7 @@ const StyledParagraph = styled(Paragraph)`
   font-size: ${({ theme }) => theme.m};
 `;
 
-function Card({ cardType, title, description, weather, link, lessons }) {
+function Card({ cardType, title, description, weather, link, lessons, center }) {
   const [uniqueLessons, setUniqueLessons] = useState(null);
   const [time, setTime] = useState('Ładowanie...');
 
@@ -148,8 +151,8 @@ function Card({ cardType, title, description, weather, link, lessons }) {
   }, [cardType, lessons]);
 
   return (
-    <StyledWrapper>
-      <StyledHeader>
+    <StyledWrapper center={center}>
+      <StyledHeader center={center}>
         <StyledInfo>
           <Heading>{title}</Heading>
           <Paragraph regular secondary>
@@ -162,7 +165,7 @@ function Card({ cardType, title, description, weather, link, lessons }) {
             </Paragraph>
           )}
         </StyledInfo>
-        <StyledLink to={link}>Wszystkie</StyledLink>
+        {link && <StyledLink to={link}>Wszystkie</StyledLink>}
       </StyledHeader>
       <StyledContent>
         {cardType === 'plan' && (
@@ -189,19 +192,23 @@ function Card({ cardType, title, description, weather, link, lessons }) {
 Card.propTypes = {
   cardType: PropTypes.oneOf(['plan', 'grades', 'exams']).isRequired,
   title: PropTypes.string.isRequired,
-  description: PropTypes.string.isRequired,
+  description: PropTypes.string,
   weather: PropTypes.string,
-  link: PropTypes.string.isRequired,
+  link: PropTypes.string,
   lessons: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.arrayOf(
       PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number])),
     ),
   ]).isRequired,
+  center: PropTypes.bool,
 };
 
 Card.defaultProps = {
-  weather: null,
+  weather: '',
+  link: null,
+  center: false,
+  description: '',
 };
 
 export default Card;

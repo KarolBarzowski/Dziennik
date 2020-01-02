@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
 const StyledLabel = styled.label`
@@ -59,5 +60,19 @@ function Radio({ children, name, checked, onChange }) {
     </StyledLabel>
   );
 }
+
+Radio.propTypes = {
+  children: PropTypes.element,
+  name: PropTypes.string,
+  checked: PropTypes.bool,
+  onChange: PropTypes.func,
+};
+
+Radio.defaultProps = {
+  children: null,
+  name: '',
+  checked: false,
+  onChange: null,
+};
 
 export default Radio;

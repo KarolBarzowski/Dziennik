@@ -7,15 +7,15 @@ export default {
 
 export const Default = () => (
   <>
-    <Radio name="radio" checked onChange={() => console.log('1')}>
+    <Radio name="radio" checked onChange={null}>
       Label one
     </Radio>
     <br />
-    <Radio name="radio" onChange={() => console.log('2')}>
+    <Radio name="radio" onChange={null}>
       Label two
     </Radio>
     <br />
-    <Radio name="radio" onChange={() => console.log('3')}>
+    <Radio name="radio" onChange={null}>
       Label three
     </Radio>
   </>

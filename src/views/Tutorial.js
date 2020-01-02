@@ -23,6 +23,10 @@ const Tutorial = () => (
         Aplikacja jest tworzona pod przeglądarkę Google Chrome. Na innych dodatek może się różnić, a
         skrypt nie działać poprawnie.
       </p>
+      <p>
+        <StyledWarn icon={faExclamation} />
+        Aktualnie aplikacja działa wyłącznie na komputerze, w przyszłości powstanie wersja mobilna.
+      </p>
       <br />
       <h3>1. Aby móc używać aplikacji, wymagany jest dodatek Tampermonkey.</h3>
       <p>

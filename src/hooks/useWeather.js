@@ -48,7 +48,8 @@ export const useWeather = () => {
       .then(res => res.json())
       .then(json => getWeather(daysToGet[today], json.data));
     return () => controller.abort();
-  }, [URL]);
+    // eslint-disable-next-line
+  }, []);
 
   return data;
 };

@@ -1,21 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import { useData } from 'hooks/useData';
 import Section from 'components/atoms/Section/Section';
 import Heading from 'components/atoms/Heading/Heading';
 import Card from 'components/organisms/Card/Card';
-
-const StyledSection = styled(Section)`
-  padding-top: 7rem;
-
-  @media screen and (min-width: 600px) and (max-width: 929px) {
-    padding-top: 8.9rem;
-  }
-
-  @media screen and (min-width: 930px) {
-    padding-top: 2.5rem;
-  }
-`;
 
 const StyledWrapper = styled.div`
   display: flex;
@@ -29,7 +18,8 @@ const StyledHeading = styled(Heading)`
   position: absolute;
 `;
 
-function Dashboard({ data, weather }) {
+function Dashboard({ weather }) {
+  const { planData } = useData(null);
   const [weatherSyntax, setWeatherSyntax] = useState('');
   const [dateSyntax, setDateSyntax] = useState('');
   const [plan, setPlan] = useState('Ładowanie...');
@@ -61,16 +51,16 @@ function Dashboard({ data, weather }) {
     if (today < 5) tomorrow.setDate(tomorrow.getDate() + 1);
     else if (today === 5) tomorrow.setDate(tomorrow.getDate() + 3);
     else tomorrow.setDate(tomorrow.getDate() + 2);
-    const d = tomorrow.getDate() < 10 ? `0${tomorrow.getDate()}` : tomorrow.getDate();
-    const m =
-      tomorrow.getMonth() + 1 < 10 ? `0${tomorrow.getMonth() + 1}` : tomorrow.getMonth() + 1;
+    const d = `0${tomorrow.getDate()}`.slice(-2);
+    const m = `0${tomorrow.getMonth() + 1}`.slice(-2);
     const result = `${daysInWeek[tomorrow.getDay()]}, ${d}.${m}`;
-    if (data) setPlan(data.plan[planDay]);
+    if (planData !== null) setPlan(planData[planDay]);
     setDateSyntax(result);
-  }, [data]);
+    // eslint-disable-next-line
+  }, [planData]);
 
   return (
-    <StyledSection>
+    <Section width={930}>
       <StyledHeading big>Podsumowanie</StyledHeading>
       <StyledWrapper>
         <Card
@@ -82,7 +72,7 @@ function Dashboard({ data, weather }) {
           lessons={plan}
         />
       </StyledWrapper>
-    </StyledSection>
+    </Section>
   );
 }
 

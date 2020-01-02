@@ -72,6 +72,7 @@ const StyledWarnIcon = styled(StyledIcon)`
 
 const StyledParagraph = styled(Paragraph)`
   color: ${({ theme }) => theme.textBlack};
+  ${({ margin }) => margin && `margin: 0 .5rem;`};
 `;
 
 const StyledStack = styled.div`
@@ -117,7 +118,7 @@ function Lesson({ hours, name, room, teacher, multiple, warn }) {
     <StyledWrapper margin={stacks.length}>
       <StyledHeader bgColor={bgColor} onClick={() => handleToggle()} isOpen={isOpen}>
         <StyledParagraph>{hours.split(' - ')[0]}</StyledParagraph>
-        <StyledParagraph>{name}</StyledParagraph>
+        <StyledParagraph margin>{name}</StyledParagraph>
         <StyledParagraph>
           {room}
           {warn.type && <StyledWarnIcon icon={faExclamation} ml={1} />}

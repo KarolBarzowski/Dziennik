@@ -1,6 +1,7 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import { useData } from 'hooks/useData';
 import { useOutsideClick } from 'hooks/useOutsideClick';
 import Paragraph from 'components/atoms/Paragraph/Paragraph';
 import Heading from 'components/atoms/Heading/Heading';
@@ -15,7 +16,9 @@ import {
   faTimes,
   faExternalLinkAlt,
   faExclamation,
+  faDownload,
 } from '@fortawesome/free-solid-svg-icons';
+import { fadeIn } from 'functions/animations';
 
 const StyledBackground = styled.div`
   position: fixed;
@@ -35,13 +38,18 @@ const StyledWrapper = styled.div`
   display: flex;
   flex-flow: row nowrap;
   height: 80vh;
-  width: 80%;
+  width: 100%;
   background-color: ${({ theme }) => theme.background};
   border-radius: 1.5rem;
   color: ${({ theme }) => theme.text};
   box-shadow: rgba(0, 0, 0, 0.16) 0 3px 6px;
   z-index: 20;
   transition: background-color ${({ theme }) => theme.themeTransition};
+  animation: ${fadeIn} ${({ theme }) => theme.fadeTransition};
+
+  @media screen and (min-width: 600px) {
+    width: 80%;
+  }
 `;
 
 const StyledSidenav = styled.aside`
@@ -111,8 +119,12 @@ const StyledPage = styled.div`
   display: flex;
   flex-flow: column nowrap;
   align-items: flex-start;
-  height: 100%;
+  height: 90%;
   width: 100%;
+  overflow-y: scroll;
+  @media screen and (min-width: 600px) {
+    overflow-y: auto;
+  }
 `;
 
 const StyledParagraph = styled(Paragraph)`
@@ -300,7 +312,28 @@ function Modal({
   schedule,
 }) {
   const outsideRef = useRef();
+  const { userData } = useData();
   const [currentPage, setCurrentPage] = useState('Synchronizacja');
+  const [syncDate, setSyncDate] = useState('Ładowanie...');
+  const [lastSync, setLastSync] = useState('Ładowanie...');
+
+  useEffect(() => {
+    if (userData) {
+      let date = new Date(userData.timestamp);
+      let day = `0${date.getDate()}`.slice(-2);
+      let month = `0${date.getMonth() + 1}`.slice(-2);
+      let hour = `0${date.getHours()}`.slice(-2);
+      const minutes = `0${date.getMinutes()}`.slice(-2);
+      setSyncDate(`${day}.${month} ${hour}:${minutes}`);
+
+      date = userData.lastSync.split('-');
+      let rest;
+      [, month, rest] = date;
+      rest = rest.split(' ');
+      [day, hour] = rest;
+      setLastSync(`${day}.${month} ${hour}`);
+    }
+  }, [userData]);
 
   useOutsideClick(outsideRef, () => handleModalToggle());
 
@@ -358,12 +391,13 @@ function Modal({
           </StyledTopbar>
           {currentPage === 'Synchronizacja' && (
             <StyledPage>
-              <StyledParagraph regular>Ostatnia synchronizacja: --.--</StyledParagraph>
-              <StyledParagraph regular>Data sychronizacji e-dziennika: --.--.----</StyledParagraph>
+              <StyledParagraph regular>Ostatnia synchronizacja: {syncDate}</StyledParagraph>
+              <StyledParagraph regular>Data sychronizacji e-dziennika: {lastSync}</StyledParagraph>
               <StyledButton
                 as="a"
                 href="https://nasze.miasto.gdynia.pl/ed_miej/login.pl"
                 target="_blank"
+                rel="noreferrer noopener"
               >
                 Synchronizuj
                 <StyledIcon icon={faExternalLinkAlt} fixedWidth ml={0.5} />
@@ -372,7 +406,7 @@ function Modal({
               <StyledOption>
                 <Heading>Jak synchronizować?</Heading>
               </StyledOption>
-              <StyledSeparator ml={1.5} mt={1}>
+              <StyledSeparator ml={2} mt={1}>
                 <ol>
                   <li>Naciśnij przycisk Synchronizuj, otworzy się e-dziennik w nowym oknie.</li>
                   <li>Zaloguj się na konto ucznia i przejdź do zakładki Ogłoszenia.</li>
@@ -392,6 +426,15 @@ function Modal({
                   Uwaga! Jeżeli wystąpił jakikolwiek błąd, przez co synchronizacja nie zakończyła
                   się sukcesem, wciśnij przycisk Resetuj (w Ogłoszeniach).
                 </Paragraph>
+              </StyledOption>
+              <StyledOption>
+                <StyledButton
+                  as="a"
+                  href="https://github.com/KarolBarzowski/Dziennik/raw/master/script.user.js"
+                >
+                  Skrypt
+                  <StyledIcon icon={faDownload} fixedWidth ml={0.5} />
+                </StyledButton>
               </StyledOption>
             </StyledPage>
           )}
@@ -483,7 +526,7 @@ function Modal({
               </StyledOptionsWrapper>
             </StyledPage>
           )}
-          {currentPage === 'Funkcje' && <StyledPage>Nieczynne</StyledPage>}
+          {currentPage === 'Funkcje' && <StyledPage>Wkrótce</StyledPage>}
         </StyledContent>
       </StyledWrapper>
     </StyledBackground>

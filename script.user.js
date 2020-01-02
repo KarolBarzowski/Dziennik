@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Pobieracz danych z e-dziennika
-// @version      1.6
+// @version      1.7
 // @description  Pobiera dane z e-dziennika.
 // @author       Karol
 // @match        https://nasze.miasto.gdynia.pl/ed_miej/*
@@ -150,13 +150,27 @@ function init() {
     rows.forEach(row => {
       let name = row.children[3].textContent.trim();
       let date = row.children[4].textContent.trim();
+      let hours = row.children[5].textContent.trim();
       let absence = {
         name,
         date,
+        hours,
       };
 
       let status = row.children[7].textContent.trim();
-      absence.isCounted = status === 'Nieusprawiedliwione' ? true : false;
+      if (status === 'Nieusprawiedliwione') {
+        absence.isCounted = true;
+        absence.status = 'unexcused';
+      } else if (status === 'Wnioskowanie usprawiedliwienia przez opiekuna') {
+        absence.isCounted = true;
+        absence.status = 'pending';
+      } else if (status === 'Zwolnienie nieliczone do frekwencji') {
+        absence.isCounted = false;
+        absence.status = 'notCounted';
+      } else {
+        absence.isCounted = false;
+        absence.status = 'excused';
+      }
       absencesList.push(absence);
     });
     let storageData = JSON.parse(localStorage.getItem('data'));

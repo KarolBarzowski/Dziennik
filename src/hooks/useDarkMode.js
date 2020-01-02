@@ -64,6 +64,7 @@ export const useDarkMode = weather => {
       if (currentTheme) setTheme(currentTheme);
       else setMode('light');
     }
+    // eslint-disable-next-line
   }, [weather, isAutomatic, isCustom, schedule]);
 
   return [theme, toggleTheme, isAutomatic, isCustom, setOptions, schedule];

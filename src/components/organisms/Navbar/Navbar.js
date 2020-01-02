@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCog } from '@fortawesome/free-solid-svg-icons';
 
 const StyledWrapper = styled.nav`
-  position: fixed;
+  position: absolute;
   top: 1.5rem;
   right: 1.5rem;
   display: flex;
@@ -174,7 +174,7 @@ function Navbar({ handleModalToggle }) {
                   </StyledParagraph>
                 </StyledListItem>
                 <StyledListItem>
-                  <StyledParagraph as={NavLink} secondary="true" to="/grades">
+                  <StyledParagraph as={NavLink} secondary="true" to="/oceny">
                     Oceny
                   </StyledParagraph>
                 </StyledListItem>
@@ -184,13 +184,13 @@ function Navbar({ handleModalToggle }) {
                   </StyledParagraph>
                 </StyledListItem>
                 <StyledListItem>
-                  <StyledParagraph as={NavLink} secondary="true" to="/exams">
+                  <StyledParagraph as={NavLink} secondary="true" to="/sprawdziany">
                     Sprawdziany
                   </StyledParagraph>
                 </StyledListItem>
                 <StyledListItem>
-                  <StyledParagraph as={NavLink} secondary="true" to="/absences">
-                    Nieobecności
+                  <StyledParagraph as={NavLink} secondary="true" to="/frekwencja">
+                    Frekwencja
                   </StyledParagraph>
                 </StyledListItem>
               </StyledList>
@@ -214,7 +214,7 @@ function Navbar({ handleModalToggle }) {
                     </StyledParagraph>
                   </StyledListItem>
                   <StyledListItem>
-                    <StyledParagraph as={NavLink} secondary="true" to="/grades">
+                    <StyledParagraph as={NavLink} secondary="true" to="/oceny">
                       Oceny
                     </StyledParagraph>
                   </StyledListItem>
@@ -224,13 +224,13 @@ function Navbar({ handleModalToggle }) {
                     </StyledParagraph>
                   </StyledListItem>
                   <StyledListItem>
-                    <StyledParagraph as={NavLink} secondary="true" to="/exams">
+                    <StyledParagraph as={NavLink} secondary="true" to="/sprawdziany">
                       Sprawdziany
                     </StyledParagraph>
                   </StyledListItem>
                   <StyledListItem>
-                    <StyledParagraph as={NavLink} secondary="true" to="/absences">
-                      Nieobecności
+                    <StyledParagraph as={NavLink} secondary="true" to="/frekwencja">
+                      Frekwencja
                     </StyledParagraph>
                   </StyledListItem>
                 </StyledMobileList>
