@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactGA from 'react-ga';
 import { createBrowserHistory } from 'history';
-import { Router, Switch, Route } from 'react-router-dom';
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { useDarkMode } from 'hooks/useDarkMode';
 import { useData } from 'hooks/useData';
 import { useWeather } from 'hooks/useWeather';
@@ -31,7 +31,7 @@ function Root() {
     return <Tutorial />;
   }
   return (
-    <Router history={history}>
+    <BrowserRouter>
       <MainTemplate
         theme={theme}
         toggleTheme={toggleTheme}
@@ -52,7 +52,7 @@ function Root() {
           <Route path="/frekwencja" component={Absences} />
         </Switch>
       </MainTemplate>
-    </Router>
+    </BrowserRouter>
   );
 }
 
