@@ -1,14 +1,15 @@
 // ==UserScript==
 // @name         Pobieracz danych z e-dziennika
-// @version      1.7
+// @version      1.7.1
 // @description  Pobiera dane z e-dziennika.
-// @author       Karol
+// @author       Karol Barzowski
 // @match        https://nasze.miasto.gdynia.pl/ed_miej/*
 // @match        http://localhost:*/*
 // @match        https://edziennik.netlify.com/*
 // @exclude      https://nasze.miasto.gdynia.pl/ed_miej/login.pl*
 // @downloadURL  https://raw.githubusercontent.com/KarolBarzowski/Dziennik/master/script.user.js
 // @updateURL    https://raw.githubusercontent.com/KarolBarzowski/Dziennik/master/script.user.js
+// @run-at       document-end
 // @grant        GM_addStyle
 // @grant        GM_openInTab
 // @grant        GM_download
