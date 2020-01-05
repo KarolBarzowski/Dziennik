@@ -23,5 +23,21 @@ export const useData = () => {
     } else setData(null);
   }, []);
 
+  useEffect(() => {
+    if (userData) {
+      const actualTs = JSON.parse(window.localStorage.getItem('actualTs'));
+      const { timestamp } = userData;
+      if (actualTs) {
+        if (actualTs !== timestamp) {
+          window.localStorage.setItem('lastTs', actualTs);
+          window.localStorage.setItem('actualTs', timestamp);
+        }
+      } else {
+        window.localStorage.setItem('actualTs', timestamp);
+        window.localStorage.setItem('lastTs', timestamp);
+      }
+    }
+  }, [userData]);
+
   return { data, gradesData, userData, planData, behaviourData, absencesData, examsData };
 };

@@ -127,7 +127,7 @@ function Absences() {
   ];
 
   useEffect(() => {
-    if (absencesData !== null) {
+    if (absencesData) {
       const absencesSorted = {
         excused: [],
         unexcused: [],

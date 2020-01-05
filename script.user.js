@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Pobieracz danych z e-dziennika
-// @version      1.7.1
+// @version      1.7.2
 // @description  Pobiera dane z e-dziennika.
 // @author       Karol Barzowski
 // @match        https://nasze.miasto.gdynia.pl/ed_miej/*
@@ -341,7 +341,7 @@ background-color: rgb(215, 0, 21);
       content.innerHTML = `
 <h1>Udało Ci się zsynchronizować dane!</h1>
 <br />
-<h3>Odśwież tę stronę, otworzy się aplikacja.</h3>
+<h3>Odśwież tą stronę, otworzy się aplikacja.</h3>
 `;
     } else {
       if (parsedStorageData.user.timestamp < dataToExport.user.timestamp) {
@@ -392,7 +392,7 @@ background: rgba(0, 0, 0, .04);
         dialog.innerHTML = `
 <div class="scrim">
   <div class="dialog">
-    <p class="dialog__text">Aby ukończyć synchronizację, odśwież tę stronę.</p>
+    <p class="dialog__text">Aby ukończyć synchronizację, odśwież tą stronę.</p>
     <button type="button" class="dialog__button" onClick="window.location.reload()">Odśwież</button>
   </div>
 </div>

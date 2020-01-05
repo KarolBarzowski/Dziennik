@@ -28,13 +28,17 @@ const StyledHeader = styled.div`
   align-items: center;
   height: 4.8rem;
   padding: 0.8rem 1rem;
-  background-color: ${({ bgColor, theme }) => (bgColor ? theme[bgColor] : theme.dp02)};
+  background-color: ${({ bgColor, theme }) =>
+    theme[bgColor] !== undefined ? theme[bgColor] : theme.default};
   border-radius: ${({ isOpen }) => (isOpen ? '1rem 1rem 0 0' : '1rem')};
   box-shadow: ${({ isOpen }) =>
     isOpen ? 'rgba(0, 0, 0, 0.16) 0 0 6px' : 'rgba(0, 0, 0, 0.16) 0 3px 6px'};
   cursor: pointer;
   transition: border-radius 0.1s ease-in-out;
   z-index: 10;
+  ${Paragraph} {
+    color: ${({ theme, bgColor }) => (theme[bgColor] !== undefined ? theme.textBlack : theme.text)};
+  }
 `;
 
 const StyledCollapse = styled.div`
@@ -81,7 +85,8 @@ const StyledStack = styled.div`
   left: ${({ stack }) => 0.8 * stack}rem;
   height: 4.8rem;
   width: ${({ stack }) => `calc(100% - ${1.6 * stack}rem)`};
-  background-color: ${({ bgColor, theme }) => (bgColor ? theme[bgColor] : theme.dp02)};
+  background-color: ${({ bgColor, theme }) =>
+    theme[bgColor] !== undefined ? theme[bgColor] : theme.default};
   border-radius: 1rem;
   box-shadow: rgba(0, 0, 0, 0.16) 0 3px 6px;
   z-index: ${({ stack }) => 10 - stack};

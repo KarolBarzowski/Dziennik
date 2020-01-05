@@ -71,10 +71,6 @@ const StyledRow = styled.div`
   padding: 0.4rem 0.8rem;
   margin-top: 1.5rem;
   animation: ${fadeIn} ${({ theme }) => theme.fadeTransition} 0.15s;
-
-  :hover {
-    background-color: ${({ theme }) => theme.hover};
-  }
 `;
 
 const StyledParagraph = styled(Paragraph)`
@@ -97,10 +93,6 @@ const StyledAvg = styled(StyledRow)`
   margin: 0;
   ${StyledParagraph} {
     font-size: ${({ theme }) => theme.m};
-  }
-
-  :hover {
-    background-color: transparent;
   }
 `;
 

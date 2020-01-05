@@ -18,6 +18,7 @@ const StyledWrapper = styled.div`
 `;
 
 const StyledIcon = styled(FontAwesomeIcon)`
+  color: ${({ theme }) => theme.text};
   will-change: transform;
   transition: transform 0.2s ease-in-out;
 `;

@@ -53,9 +53,9 @@ export const useDarkMode = weather => {
       } else {
         // night - day
         const date = new Date();
-        const time = `${date.getHours()}:${date.getMinutes()}`;
+        const ts = Math.floor(date.getTime() / 1000);
         if (weather) {
-          if (time > weather.sunset) setMode('dark');
+          if (ts > weather.sunset) setMode('dark');
           else setMode('light');
         }
       }

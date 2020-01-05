@@ -1,56 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
-import styled from 'styled-components';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCloudRain } from '@fortawesome/free-solid-svg-icons';
+import styled, { css } from 'styled-components';
 import Paragraph from 'components/atoms/Paragraph/Paragraph';
-import Heading from 'components/atoms/Heading/Heading';
+import Button from 'components/atoms/Button/Button';
 import Lesson from 'components/molecules/Lesson/Lesson';
 import { slideInDown } from 'functions/animations';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
 
 const StyledWrapper = styled.div`
   display: flex;
   flex-flow: column nowrap;
+  height: 100%;
+  margin: 0 0 1.5rem 0;
   padding: 1rem 1.5rem 1.5rem;
-  margin: ${({ center }) => (center ? '1.5rem' : 0)};
   background-color: ${({ theme }) => theme.card};
   border-radius: 1.5rem;
   box-shadow: rgba(0, 0, 0, 0.16) 0 3px 6px;
+  break-inside: avoid-column;
   transition: background-color ${({ theme }) => theme.themeTransition};
   animation: ${slideInDown} ${({ theme }) => theme.slideTransition} 0.15s;
-`;
-
-const StyledHeader = styled.div`
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: ${({ center }) => (center ? 'center' : 'space-between')};
-`;
-
-const StyledInfo = styled.div``;
-
-const StyledIcon = styled(FontAwesomeIcon)`
-  font-size: 1.4rem;
-  margin-left: 0.2rem;
-`;
-
-const StyledLink = styled(Link)`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 0.5rem 1.5rem;
-  max-height: 3.2rem;
-  text-decoration: none;
-  color: ${({ theme }) => theme.text};
-  font-size: ${({ theme }) => theme.s};
-  font-weight: ${({ theme }) => theme.medium};
-  border: 0.2rem solid ${({ theme }) => theme.border};
-  border-radius: 5rem;
-  transition: background-color 0.1s ease-in-out, border ${({ theme }) => theme.themeTransition},
-    color ${({ theme }) => theme.themeTransition};
-  :hover {
-    background-color: ${({ theme }) => theme.buttonHover};
-  }
 `;
 
 const StyledContent = styled.div`
@@ -65,7 +34,91 @@ const StyledParagraph = styled(Paragraph)`
   font-size: ${({ theme }) => theme.m};
 `;
 
-function Card({ cardType, title, description, weather, link, lessons, center }) {
+const StyledRow = styled(StyledParagraph)`
+  position: relative;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.4rem;
+  width: 100%;
+
+  ${({ color, theme }) =>
+      theme[color] !== undefined && theme.name === 'light'
+        ? css`
+            border-left: 0.5rem solid ${theme[color]};
+            padding-left: 0.8rem;
+          `
+        : css`
+            color: ${theme[color]};
+          `}
+    :nth-of-type(even) {
+    background-color: ${({ theme }) => theme.modalHover};
+  }
+
+  :hover {
+    background-color: ${({ theme }) => theme.hover};
+  }
+`;
+
+const StyledSpan = styled.span`
+  text-align: left;
+  min-width: 12rem;
+  max-width: 12rem;
+  cursor: default;
+
+  :last-of-type {
+    min-width: 14rem;
+    max-width: 14rem;
+  }
+`;
+
+const StyledTip = styled.span`
+  position: absolute;
+  top: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 0.5rem;
+  padding: 0.6rem;
+  font-size: ${({ theme }) => theme.s};
+  color: ${({ theme }) => theme.text};
+  white-space: nowrap;
+  text-align: left;
+  opacity: 0;
+  visibility: hidden;
+  background-color: ${({ theme }) => theme.tip};
+  box-shadow: rgba(0, 0, 0, 0.16) 0 3px 6px;
+  transition: opacity 0.04s ease-in-out 0.02s;
+  z-index: 10;
+`;
+
+const StyledColor = styled(StyledSpan)`
+  color: ${({ theme, color }) => (theme[color] !== undefined ? theme[color] : theme.text)};
+  :hover + ${StyledTip} {
+    visibility: visible;
+    opacity: 1;
+  }
+`;
+
+const StyledMiniCard = styled(StyledContent)`
+  /* margin-top: 1.5rem; */
+  align-items: flex-start;
+`;
+
+const StyledGradesWrapper = styled.span`
+  text-align: left;
+  min-width: 16rem;
+`;
+
+const StyledGrade = styled.span`
+  position: relative;
+`;
+
+const StyledSeparator = styled.span`
+  color: ${({ theme }) => theme.text};
+`;
+
+function Card({ children, cardType, lessons, exams, grades, link, ctaText, nextDayExams }) {
   const [uniqueLessons, setUniqueLessons] = useState(null);
   const [time, setTime] = useState('Ładowanie...');
 
@@ -148,67 +201,153 @@ function Card({ cardType, title, description, weather, link, lessons, center }) 
           break;
       }
     }
-  }, [cardType, lessons]);
+    // eslint-disable-next-line
+  }, [lessons]);
+
+  useEffect(() => {
+    if (uniqueLessons) {
+      nextDayExams.forEach(exam => {
+        uniqueLessons.forEach(({ name }, i) => {
+          if (name === exam.name) {
+            uniqueLessons[i].warn = {
+              type: exam.category,
+              desc: exam.desc,
+            };
+          }
+        });
+      });
+    }
+  }, [nextDayExams, uniqueLessons]);
 
   return (
-    <StyledWrapper center={center}>
-      <StyledHeader center={center}>
-        <StyledInfo>
-          <Heading>{title}</Heading>
-          <Paragraph regular secondary>
-            {description}
-          </Paragraph>
-          {cardType === 'plan' && (
-            <Paragraph regular secondary>
-              {weather}
-              {weather !== '' && <StyledIcon icon={faCloudRain} />}
-            </Paragraph>
-          )}
-        </StyledInfo>
-        {link && <StyledLink to={link}>Wszystkie</StyledLink>}
-      </StyledHeader>
-      <StyledContent>
-        {cardType === 'plan' && (
-          <>
-            <StyledParagraph>{time}</StyledParagraph>
-            {uniqueLessons &&
-              uniqueLessons.map(({ name, hours, teacher, room, multiple }) => (
-                <Lesson
-                  key={name}
-                  hours={hours}
-                  name={name}
-                  room={room}
-                  teacher={teacher}
-                  multiple={multiple}
-                />
-              ))}
-          </>
-        )}
-      </StyledContent>
+    <StyledWrapper>
+      {children}
+      {cardType === 'plan' && (
+        <StyledContent>
+          <StyledParagraph>{time}</StyledParagraph>
+          {uniqueLessons &&
+            uniqueLessons.map(({ name, hours, teacher, room, multiple, warn }) => (
+              <Lesson
+                key={name}
+                hours={hours}
+                name={name}
+                room={room}
+                teacher={teacher}
+                multiple={multiple}
+                warn={warn}
+              />
+            ))}
+        </StyledContent>
+      )}
+      {cardType === 'mini' && (
+        <StyledMiniCard>
+          <Button as="a" href={link} target="_blank" rel="noopener noreferrer">
+            {ctaText} <FontAwesomeIcon icon={faExternalLinkAlt} fixedWidth />
+          </Button>
+        </StyledMiniCard>
+      )}
+      {cardType === 'exams' && (
+        <StyledMiniCard>
+          {exams &&
+            exams.map(
+              ({ name, isNextWeek, dayName, dateSyntax, desc, nameColor, color, category }) => (
+                <StyledRow key={desc}>
+                  <StyledSpan>{isNextWeek ? dayName : dateSyntax}</StyledSpan>
+                  <StyledColor color={color}>{category}</StyledColor>
+                  <StyledColor color={nameColor}>{name}</StyledColor>
+                </StyledRow>
+              ),
+            )}
+        </StyledMiniCard>
+      )}
+      {cardType === 'grades' && (
+        <StyledMiniCard>
+          {grades &&
+            grades.map(({ color: nameColor, name, grades: gradesList }) => (
+              <StyledRow color={nameColor} key={name}>
+                <StyledSpan>{name}</StyledSpan>
+                <StyledGradesWrapper>
+                  {gradesList.map(
+                    ({ color, grade, notCounted, category, weight, date, desc }, i) => (
+                      <React.Fragment key={i.toString()}>
+                        <StyledGrade>
+                          <StyledColor color={color}>{grade}</StyledColor>
+                          <StyledTip>
+                            {notCounted && (
+                              <>
+                                Nie liczona do średniej
+                                <br />
+                              </>
+                            )}
+                            {category}
+                            <br />
+                            Waga {weight}
+                            <br />
+                            {date}
+                            <br />
+                            {desc}
+                          </StyledTip>
+                        </StyledGrade>
+                        {i !== gradesList.length - 1 && <StyledSeparator>, </StyledSeparator>}
+                      </React.Fragment>
+                    ),
+                  )}
+                </StyledGradesWrapper>
+              </StyledRow>
+            ))}
+        </StyledMiniCard>
+      )}
     </StyledWrapper>
   );
 }
 
 Card.propTypes = {
-  cardType: PropTypes.oneOf(['plan', 'grades', 'exams']).isRequired,
-  title: PropTypes.string.isRequired,
-  description: PropTypes.string,
-  weather: PropTypes.string,
-  link: PropTypes.string,
+  children: PropTypes.element,
+  cardType: PropTypes.oneOf(['plan', 'grades', 'exams', 'mini']).isRequired,
   lessons: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.arrayOf(
-      PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number])),
+      PropTypes.objectOf(
+        PropTypes.oneOfType([
+          PropTypes.string,
+          PropTypes.number,
+          PropTypes.objectOf(PropTypes.string),
+        ]),
+      ),
     ),
-  ]).isRequired,
-  center: PropTypes.bool,
+  ]),
+  exams: PropTypes.arrayOf(
+    PropTypes.objectOf(
+      PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date), PropTypes.bool]),
+    ),
+  ),
+  link: PropTypes.string,
+  ctaText: PropTypes.string,
+  nextDayExams: PropTypes.arrayOf(
+    PropTypes.objectOf(
+      PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date), PropTypes.bool]),
+    ),
+  ),
+  grades: PropTypes.arrayOf(
+    PropTypes.objectOf(
+      PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.arrayOf(
+          PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.bool])),
+        ),
+      ]),
+    ),
+  ),
 };
 
 Card.defaultProps = {
-  weather: '',
-  link: null,
-  center: false,
-  description: '',
+  lessons: null,
+  children: null,
+  exams: null,
+  link: '',
+  ctaText: '',
+  nextDayExams: [],
+  grades: null,
 };
 
 export default Card;

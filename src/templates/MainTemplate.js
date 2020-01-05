@@ -16,7 +16,7 @@ function MainTemplate({
   schedule,
 }) {
   const [isModalOpen, setModalOpen] = useState(false);
-  
+
   const handleModalToggle = () => setModalOpen(!isModalOpen);
 
   return (

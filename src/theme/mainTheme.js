@@ -15,7 +15,7 @@ const fontSize = {
 
 const lessonsPalette = {
   light: {
-    default: 'rgb(51, 154, 240)',
+    default: 'rgb(255, 255, 255)',
     zajeciazwychowawca: 'rgb(255, 149, 0)',
     programowanieialgorytmika: 'rgb(0, 122, 255)',
     jezykangielski: '#ffcc00',
@@ -33,7 +33,7 @@ const lessonsPalette = {
     systemyoperacyjne: '#f8bbd0',
   },
   dark: {
-    default: 'rgb(51, 154, 240)',
+    default: 'rgb(58, 58, 60)',
     zajeciazwychowawca: 'rgb(255, 159, 10)',
     programowanieialgorytmika: 'rgb(10, 132, 255)',
     jezykangielski: '#ffcc00',

@@ -43,7 +43,8 @@ const StyledRow = styled(Paragraph)`
 
 const StyledItem = styled.span`
   width: 100%;
-  ${({ color, theme }) => color && `color: ${theme[color]}`};
+  ${({ color, theme }) =>
+    theme[color] !== undefined ? `color: ${theme[color]}` : `color: ${theme.text}`};
   :first-of-type {
     min-width: 15rem;
     max-width: 15rem;
@@ -96,12 +97,12 @@ function Exams() {
   ];
 
   useEffect(() => {
-    if (examsData) {
+    if (examsData && examsData.length) {
       const upcomingExams = [];
       const lateExams = [];
       examsData.forEach(({ category, date, name, description }) => {
         const dateArray = date.split('/');
-        const day = dateArray[0];
+        const day = parseFloat(dateArray[0]);
         const month = parseFloat(dateArray[1]) - 1;
         const year = `20${dateArray[2]}`;
         const dateResult = new Date(year, month, day);
@@ -131,15 +132,16 @@ function Exams() {
       });
 
       const sortedUpcoming = upcomingExams.sort((a, b) => b.date - a.date);
+      sortedUpcoming.reverse();
       const sortedLate = lateExams.sort((a, b) => b.date - a.date);
 
       const diff = 1000 * 3600 * 24;
       const differenceInTime = sortedUpcoming[0].date.getTime() - today.getTime();
-      const differenceInDays = Math.round(Math.abs(differenceInTime / diff));
+      const differenceInDays = Math.round(Math.abs(differenceInTime / diff) + 0.5);
 
       let diffMessage;
-
-      if (differenceInDays === 1) diffMessage = 'już jutro! - ';
+      if (differenceInDays === 0) diffMessage = 'już dziś! - ';
+      else if (differenceInDays === 1) diffMessage = 'już jutro! - ';
       else diffMessage = `za ${differenceInDays} dni - `;
 
       const nextExam = {};
@@ -154,7 +156,7 @@ function Exams() {
       nextExam.desc = sortedUpcoming[0].desc;
       nextExam.nameColor = getCleanName(sortedUpcoming[0].name);
 
-      const dd = `0${sortedUpcoming[0].date.getDate()}`.slice(-2);
+      const dd = sortedUpcoming[0].date.getDate();
       const mm = sortedUpcoming[0].date.getMonth();
       nextExam.date = `${dd} ${monthsInYear[mm]}`;
 
@@ -178,7 +180,8 @@ function Exams() {
               {next.category} {next.date} ({next.dayName})
             </Heading>
             <StyledParagraph>
-              <StyledItem color={next.nameColor}>{next.name}</StyledItem> - {next.desc}
+              <StyledItem color={next.nameColor}>{next.name}</StyledItem>
+              {next.desc !== '' && ` - ${next.desc}`}
             </StyledParagraph>
           </StyledBox>
         )}

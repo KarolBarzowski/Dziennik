@@ -25,7 +25,7 @@ history.listen(location => {
 function Root() {
   const { data } = useData();
   const weather = useWeather();
-  const [theme, toggleTheme, isAutomatic, isCustom, setOptions, schedule] = useDarkMode(weather[0]);
+  const [theme, toggleTheme, isAutomatic, isCustom, setOptions, schedule] = useDarkMode(weather);
 
   if (!data) {
     return <Tutorial />;
@@ -41,11 +41,7 @@ function Root() {
         schedule={schedule}
       >
         <Switch>
-          <Route
-            exact
-            path="/"
-            render={() => <Dashboard weather={weather[new Date().getDay() === 6 ? 0 : 1]} />}
-          />
+          <Route exact path="/" component={Dashboard} />
           <Route path="/oceny" component={Grades} />
           <Route path="/plan" component={Plan} />
           <Route path="/sprawdziany" component={Exams} />

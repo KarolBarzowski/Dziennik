@@ -17,7 +17,9 @@ import {
   faExternalLinkAlt,
   faExclamation,
   faDownload,
+  faCodeBranch,
 } from '@fortawesome/free-solid-svg-icons';
+import { faFacebookMessenger } from '@fortawesome/free-brands-svg-icons';
 import { fadeIn } from 'functions/animations';
 
 const StyledBackground = styled.div`
@@ -53,6 +55,7 @@ const StyledWrapper = styled.div`
 `;
 
 const StyledSidenav = styled.aside`
+  position: relative;
   height: 100%;
   width: 26rem;
   background-color: ${({ theme }) => theme.card};
@@ -85,6 +88,12 @@ const StyledListItem = styled.li`
 
   :hover {
     background-color: ${({ theme, active }) => !active && theme.modalHover};
+  }
+
+  :last-of-type {
+    position: absolute;
+    bottom: 1.5rem;
+    width: 100%;
   }
 `;
 
@@ -295,13 +304,6 @@ const StyledWarnIcon = styled(FontAwesomeIcon)`
   margin-right: 0.5rem;
 `;
 
-const StyledWersion = styled.span`
-  position: absolute;
-  bottom: 0.5rem;
-  left: 0.5rem;
-  font-size: ${({ theme }) => theme.xs};
-`;
-
 function Modal({
   handleModalToggle,
   toggleTheme,
@@ -379,8 +381,14 @@ function Modal({
               <StyledIcon icon={faCogs} fixedWidth mr={1.5} />
               <Paragraph>Funkcje</Paragraph>
             </StyledListItem>
+            <StyledListItem
+              active={currentPage === 'Wersja'}
+              onClick={() => handleNavClick('Wersja')}
+            >
+              <StyledIcon icon={faCodeBranch} fixedWidth mr={1.5} />
+              <Paragraph>Wersja</Paragraph>
+            </StyledListItem>
           </StyledList>
-          <StyledWersion>Wersja 1.0</StyledWersion>
         </StyledSidenav>
         <StyledContent>
           <StyledTopbar>
@@ -409,14 +417,14 @@ function Modal({
               <StyledSeparator ml={2} mt={1}>
                 <ol>
                   <li>Naciśnij przycisk Synchronizuj, otworzy się e-dziennik w nowym oknie.</li>
-                  <li>Zaloguj się na konto ucznia i przejdź do zakładki Ogłoszenia.</li>
+                  <li>Zaloguj się na konto UCZNIA i przejdź do zakładki Ogłoszenia.</li>
                   <li>
                     Jeżeli masz pobrany dodatek - po prawej u góry powinien być przycisk
                     Synchronizuj - kliknij go i nic nie rób.
                   </li>
                   <li>Otworzy się kilka nowych kart.</li>
                   <li>Kiedy synchronizacja się zakończy, wyświetli się informacja o tym.</li>
-                  <li>Po zakończeniu - odśwież tę stronę.</li>
+                  <li>Po zakończeniu - odśwież tą stronę.</li>
                 </ol>
               </StyledSeparator>
               <StyledSeparator mt={1.5} />
@@ -527,6 +535,37 @@ function Modal({
             </StyledPage>
           )}
           {currentPage === 'Funkcje' && <StyledPage>Wkrótce</StyledPage>}
+          {currentPage === 'Wersja' && (
+            <StyledPage>
+              <StyledParagraph regular>Aktualna wersja: 1.1.0</StyledParagraph>
+              <StyledParagraph regular>Zalecana wersja skryptu: 1.7.1</StyledParagraph>
+              <StyledButton
+                as="a"
+                href="https://github.com/KarolBarzowski/Dziennik/raw/master/script.user.js"
+              >
+                Aktualizuj Skrypt
+                <StyledIcon icon={faDownload} fixedWidth ml={0.5} />
+              </StyledButton>
+              <StyledButton
+                as="a"
+                href="https://github.com/KarolBarzowski/Dziennik/blob/master/CHANGELOG.md"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Changelog
+                <StyledIcon icon={faExternalLinkAlt} fixedWidth ml={0.5} />
+              </StyledButton>
+              <StyledButton
+                as="a"
+                href="https://m.me/walterbialy"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Zgłoś błąd / Prześlij opinie
+                <StyledIcon icon={faFacebookMessenger} fixedWidth ml={0.5} />
+              </StyledButton>
+            </StyledPage>
+          )}
         </StyledContent>
       </StyledWrapper>
     </StyledBackground>
