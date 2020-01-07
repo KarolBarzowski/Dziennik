@@ -89,6 +89,7 @@ const StyledTip = styled.span`
   background-color: ${({ theme }) => theme.tip};
   box-shadow: rgba(0, 0, 0, 0.16) 0 3px 6px;
   transition: opacity 0.04s ease-in-out 0.02s;
+  break-inside: avoid-column;
   z-index: 10;
 `;
 

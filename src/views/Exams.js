@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { useData } from 'hooks/useData';
 import Section from 'components/atoms/Section/Section';
 import Heading from 'components/atoms/Heading/Heading';
@@ -45,6 +45,7 @@ const StyledItem = styled.span`
   width: 100%;
   ${({ color, theme }) =>
     theme[color] !== undefined ? `color: ${theme[color]}` : `color: ${theme.text}`};
+
   :first-of-type {
     min-width: 15rem;
     max-width: 15rem;
@@ -53,6 +54,19 @@ const StyledItem = styled.span`
     min-width: 15rem;
     max-width: 15rem;
   }
+`;
+
+const StyledName = styled(StyledItem)`
+  ${({ color, theme }) =>
+    theme[color] !== undefined && theme.name === 'light'
+      ? css`
+          border-left: 0.5rem solid ${theme[color]};
+          padding: 0.2rem 0 0.2rem 0.4rem;
+          color: ${theme.text};
+        `
+      : css`
+          color: ${theme[color]};
+        `}
 `;
 
 const StyledHeading = styled(Heading)`
@@ -180,7 +194,7 @@ function Exams() {
               {next.category} {next.date} ({next.dayName})
             </Heading>
             <StyledParagraph>
-              <StyledItem color={next.nameColor}>{next.name}</StyledItem>
+              <StyledName color={next.nameColor}>{next.name}</StyledName>
               {next.desc !== '' && ` - ${next.desc}`}
             </StyledParagraph>
           </StyledBox>
@@ -195,7 +209,7 @@ function Exams() {
               <StyledRow key={desc}>
                 <StyledItem>{dateSyntax}</StyledItem>
                 <StyledItem color={color}>{category || 'Inne'}</StyledItem>
-                <StyledItem color={nameColor}>{name}</StyledItem>
+                <StyledName color={nameColor}>{name}</StyledName>
                 <StyledItem>{desc}</StyledItem>
               </StyledRow>
             ))}
@@ -210,7 +224,7 @@ function Exams() {
               <StyledRow key={desc}>
                 <StyledItem>{dateSyntax}</StyledItem>
                 <StyledItem color={color}>{category || 'Inne'}</StyledItem>
-                <StyledItem color={nameColor}>{name}</StyledItem>
+                <StyledName color={nameColor}>{name}</StyledName>
                 <StyledItem>{desc}</StyledItem>
               </StyledRow>
             ))}

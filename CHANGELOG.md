@@ -14,10 +14,12 @@ Wszystkie zmiany w projekcie zostaną tutaj zapisane.
 - **[Podsumowanie]** Dodano kartę najnowszych ocen.
 - **[Podsumowanie]** Dodano informację o jutrzejszym sprawdzianie w planie lekcji.
 - **[Podsumowanie]** Dodano powiadomienie o nieobecnościach.
+- **[Oceny]** Dodano funkcję obliczającą ocenę przewidywaną i końcową ze średniej, jeżeli ich nie ma.
 - **[Plan lekcji]** Dodano informację o nadchodzących sprawdzianach w planie lekcji.
 
 ### ZMIENIONO
 
+- **[ogólne]** Zmieniono wyświetlanie koloru przedmiotu, zależnie od motywu.
 - **[Frekwencja]** Kolor strzałki symbolizującej rozwinięcie dnia zmienia się razem z motywem.
 - **[Poradnik]** Dokładniejsza instrukcja synchronizacji.
 
