@@ -4,6 +4,8 @@ Wszystkie zmiany w projekcie zostaną tutaj zapisane.
 
 ## [Unreleased]
 
+## [1.1.0] - 2019-01-09
+
 ### DODANO
 
 - **[ogólne]** Aplikacjia działa teraz na przeglądarkach: Mozilla Firefox, Microsoft Edge, Opera oraz Opera GX.

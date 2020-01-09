@@ -21,7 +21,7 @@ const StyledHeadRow = styled.div`
 const StyledHeadItem = styled(Paragraph)`
   width: 100%;
   text-align: center;
-  
+
   ::first-letter {
     text-transform: uppercase;
   }
