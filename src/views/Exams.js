@@ -145,41 +145,46 @@ function Exams() {
           });
       });
 
-      const sortedUpcoming = upcomingExams.sort((a, b) => b.date - a.date);
-      sortedUpcoming.reverse();
-      const sortedLate = lateExams.sort((a, b) => b.date - a.date);
+      if (upcomingExams.length) {
+        const sortedUpcoming = upcomingExams.sort((a, b) => b.date - a.date);
+        sortedUpcoming.reverse();
 
-      const diff = 1000 * 3600 * 24;
-      const differenceInTime = sortedUpcoming[0].date.getTime() - today.getTime();
-      const differenceInDays = Math.round(Math.abs(differenceInTime / diff) + 0.5);
+        const diff = 1000 * 3600 * 24;
+        const differenceInTime = sortedUpcoming[0].date.getTime() - today.getTime();
+        const differenceInDays = Math.round(Math.abs(differenceInTime / diff) + 0.5);
 
-      let diffMessage;
-      if (differenceInDays === 0) diffMessage = 'już dziś! - ';
-      else if (differenceInDays === 1) diffMessage = 'już jutro! - ';
-      else diffMessage = `za ${differenceInDays} dni - `;
+        let diffMessage;
+        if (differenceInDays === 0) diffMessage = 'już dziś! - ';
+        else if (differenceInDays === 1) diffMessage = 'już jutro! - ';
+        else diffMessage = `za ${differenceInDays} dni - `;
 
-      const nextExam = {};
+        const nextExam = {};
 
-      if (sortedUpcoming[0].category === 'Sprawdzian')
-        nextExam.category = `Następny sprawdzian ${diffMessage}`;
-      else if (sortedUpcoming[0].category === 'Kartkówka')
-        nextExam.category = `Następna kartkówka ${diffMessage}`;
-      else nextExam.category = `Następne zadanie ${diffMessage}`;
+        if (sortedUpcoming[0].category === 'Sprawdzian')
+          nextExam.category = `Następny sprawdzian ${diffMessage}`;
+        else if (sortedUpcoming[0].category === 'Kartkówka')
+          nextExam.category = `Następna kartkówka ${diffMessage}`;
+        else nextExam.category = `Następne zadanie ${diffMessage}`;
 
-      nextExam.name = sortedUpcoming[0].name;
-      nextExam.desc = sortedUpcoming[0].desc;
-      nextExam.nameColor = getCleanName(sortedUpcoming[0].name);
+        nextExam.name = sortedUpcoming[0].name;
+        nextExam.desc = sortedUpcoming[0].desc;
+        nextExam.nameColor = getCleanName(sortedUpcoming[0].name);
 
-      const dd = sortedUpcoming[0].date.getDate();
-      const mm = sortedUpcoming[0].date.getMonth();
-      nextExam.date = `${dd} ${monthsInYear[mm]}`;
+        const dd = sortedUpcoming[0].date.getDate();
+        const mm = sortedUpcoming[0].date.getMonth();
+        nextExam.date = `${dd} ${monthsInYear[mm]}`;
 
-      const dayName = daysInWeek[sortedUpcoming[0].date.getDay()];
-      nextExam.dayName = dayName;
+        const dayName = daysInWeek[sortedUpcoming[0].date.getDay()];
+        nextExam.dayName = dayName;
 
-      setNext(nextExam);
-      setUpcoming(sortedUpcoming);
-      setLate(sortedLate);
+        setNext(nextExam);
+        setUpcoming(sortedUpcoming);
+      }
+
+      if (lateExams.length) {
+        const sortedLate = lateExams.sort((a, b) => b.date - a.date);
+        setLate(sortedLate);
+      }
     }
     // eslint-disable-next-line
   }, [examsData]);
