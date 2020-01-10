@@ -4,6 +4,12 @@ Wszystkie zmiany w projekcie zostaną tutaj zapisane.
 
 ## [Unreleased]
 
+## [1.1.1] - 2019-01-10
+
+### NAPRAWIONO
+
+- **[Sprawdziany]** Naprawiono crash aplikacji występujący kiedy nie ma sprawdzianów.
+
 ## [1.1.0] - 2019-01-09
 
 ### DODANO
