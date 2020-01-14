@@ -13,7 +13,6 @@
 // @grant        GM_addStyle
 // @grant        GM_setValue
 // @grant        GM_getValue
-// @require      file:///C:\Users\Karol\Programowanie\Projects\dziennik\script.user.js
 // ==/UserScript==
 
 const ACTUAL_ACTION = localStorage.getItem('actualAction');
