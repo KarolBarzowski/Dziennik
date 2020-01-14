@@ -37,7 +37,7 @@ const URLS = {
     'https://nasze.miasto.gdynia.pl/ed_miej/zest_ed_zachowanie_ucznia.pl?f_g_start=0&print_version=1',
 };
 
-if (document.title === 'E-dziennik') {
+if (window.location.href.includes('https://edziennik.netlify.com/')) {
   const dataToExport = GM_getValue('data', null);
   const storageData = localStorage.getItem('data');
   const parsedStorageData = JSON.parse(storageData);
