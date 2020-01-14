@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Pobieracz danych z e-dziennika
-// @version      1.7.2
+// @version      2.0.0
 // @description  Pobiera dane z e-dziennika.
 // @author       Karol Barzowski
 // @match        https://nasze.miasto.gdynia.pl/ed_miej/*
@@ -11,246 +11,206 @@
 // @updateURL    https://raw.githubusercontent.com/KarolBarzowski/Dziennik/master/script.user.js
 // @run-at       document-end
 // @grant        GM_addStyle
-// @grant        GM_openInTab
-// @grant        GM_download
 // @grant        GM_setValue
 // @grant        GM_getValue
+// @require      file:///C:\Users\Karol\Programowanie\Projects\dziennik\script.user.js
 // ==/UserScript==
 
-function init() {
-  'use strict';
+const ACTUAL_ACTION = localStorage.getItem('actualAction');
+const SHOULD_START = localStorage.getItem('shouldStart');
+const ACTUAL_URL = window.location.href;
+const LOGIN = localStorage.getItem('LOGIN');
+const USER = localStorage.getItem('user');
 
-  const URLS = {
-    grades: 'https://nasze.miasto.gdynia.pl/ed_miej/display.pl?form=ed_oceny_ucznia',
-    plan: `https://nasze.miasto.gdynia.pl/ed_miej/display.pl?form=ed_plan_zajec&user=`,
-    settings: 'https://nasze.miasto.gdynia.pl/ed_miej/display.pl?form=zmiana_danych',
-    start: 'https://nasze.miasto.gdynia.pl/ed_miej/zest_start.pl',
-    behaviour: 'https://nasze.miasto.gdynia.pl/ed_miej/zest_ed_zachowanie_ucznia.pl',
-    absences:
-      'https://nasze.miasto.gdynia.pl/ed_miej/zest_ed_nieobecnosci_ucznia.pl?back_url=display.pl%3Fform%3Ded_nieobecnosci_ucznia&f_g_start=0&iframe_name=zest&print_version=1&simple_mode=1&uczen_login=',
-    exams:
-      'https://nasze.miasto.gdynia.pl/ed_miej/zest_ed_planowane_zadania.pl?back_url=display.pl%3Fform%3Ded_planowane_zadania&f_g_start=0&iframe_name=zest&print_version=1&simple_mode=1&uczen_login=',
-  };
+const URLS = {
+  start: 'https://nasze.miasto.gdynia.pl/ed_miej/zest_start.pl',
+  settings: 'https://nasze.miasto.gdynia.pl/ed_miej/display.pl?form=zmiana_danych',
+  plan: `https://nasze.miasto.gdynia.pl/ed_miej/display.pl?form=ed_plan_zajec&user=`,
+  gradesLinks:
+    'https://nasze.miasto.gdynia.pl/ed_miej/zest_ed_oceny_ucznia.pl?&f_g_start=0&iframe_name=zest&print_version=1&simple_mode=1&uczen_login=',
+  grades:
+    'https://nasze.miasto.gdynia.pl/ed_miej/zest_ed_oceny_ucznia_szczegoly.pl?&f_g_start=0&print_version=1&login_ucznia=',
+  absences:
+    'https://nasze.miasto.gdynia.pl/ed_miej/zest_ed_nieobecnosci_ucznia.pl?f_g_start=0&iframe_name=zest&print_version=1&simple_mode=1&uczen_login=',
+  exams:
+    'https://nasze.miasto.gdynia.pl/ed_miej/zest_ed_planowane_zadania.pl?f_g_start=0&iframe_name=zest&print_version=1&simple_mode=1&uczen_login=',
+  behaviour:
+    'https://nasze.miasto.gdynia.pl/ed_miej/zest_ed_zachowanie_ucznia.pl?f_g_start=0&print_version=1',
+};
 
-  const actualAction = localStorage.getItem('actualAction');
-  const shouldStart = localStorage.getItem('shouldStart');
+const finish = () => {
+  const data = localStorage.getItem('data');
+  GM_setValue('data', JSON.parse(data));
 
-  const getGradesLinks = () => {
-    let rows = Array.from(document.querySelectorAll('.dataRow'));
-    let links = [];
+  localStorage.removeItem('shouldStart');
+  localStorage.removeItem('actualAction');
+  localStorage.removeItem('user');
+  localStorage.removeItem('data');
+  localStorage.removeItem('LOGIN');
 
-    rows.forEach(row => {
-      let href = row.children[0].children[0].href;
-      links.push(href);
-    });
+  document.body.innerHTML = `
+  <div style="min-height: 80vh; margin: 0; display: flex; flex-flow: column nowrap; justify-content: center; align-items: center;">
+    <h1>Sukces!</h1><h2>Możesz zamknąć tą kartę</h2>
+  </div>
+  `;
+};
 
-    localStorage.setItem('gradesLinks', JSON.stringify(links));
-    localStorage.setItem('actualGradesLink', 0);
-    localStorage.setItem('actualAction', 'gradesData');
-    GM_openInTab(links[0], { active: true });
-  };
+const displayButtons = () => {
+  GM_addStyle(`
+  .box {
+  position: absolute;
+  top: 5px;
+  right: 25px;
+  background: white;
+  }
 
-  const getGradesData = () => {
-    let rows = Array.from(document.querySelectorAll('.dataRow'));
-    let name = document
-      .querySelector('#headerContent')
-      .textContent.trim()
-      .split(': ')[1];
-    let data = {
-      name,
-      grades: [],
-    };
+  .box > button {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  font-family: sans-serif;
+  font-size: 16px;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: rgba(0, 0, 0, .16) 0px 1px 3px;
+  }
 
-    rows.forEach(row => {
-      let grade = {};
+  #readyBtn {
+  background-color: rgb(36, 138, 61);
+  }
 
-      grade.category = row.children[0].textContent.trim();
+  #resetBtn {
+  background-color: rgb(215, 0, 21);
+  }
+  `);
 
-      if (row.children[3].textContent.trim().split(' ').length > 1) {
-        // Mobile
-        grade.grade = row.children[1].textContent.trim();
-        grade.gradeDesc = row.children[2].textContent.trim();
-        grade.date = row.children[3].textContent.trim();
-        grade.teacher = row.children[4].textContent.trim();
-        grade.categoryDesc = row.children[5].textContent.trim();
-        grade.value = row.children[6].textContent.trim();
-        grade.weight = row.children[7].textContent.trim();
-        grade.semester = row.children[8].textContent.trim();
-        let isCounted = row.children[9].textContent.trim();
-        grade.isCounted = isCounted === 'Tak' ? true : false;
-      } else {
-        // Desktop
-        grade.categoryDesc = row.children[1].textContent.trim();
-        grade.grade = row.children[2].textContent.trim();
-        grade.gradeDesc = row.children[8].textContent.trim();
-        grade.value = row.children[3].textContent.trim();
-        grade.weight = row.children[4].textContent.trim();
-        grade.semester = row.children[5].textContent.trim();
-        let isCounted = row.children[6].textContent.trim();
-        grade.isCounted = isCounted === 'Tak' ? true : false;
-        grade.date = row.children[9].textContent.trim();
-        grade.teacher = row.children[10].textContent.trim();
-      }
+  const box = document.createElement('div');
+  box.innerHTML = `
+  <button type="button" id="resetBtn">Resetuj</button>
+  <button type="button" id="readyBtn">Synchronizuj</button>
+  `;
+  box.classList.add('box');
+  document.body.appendChild(box);
 
-      data.grades.push(grade);
-    });
+  const readyBtn = document.querySelector('#readyBtn');
+  const resetBtn = document.querySelector('#resetBtn');
 
-    if (data.grades.length !== 0) {
-      let storageData = JSON.parse(localStorage.getItem('data'));
-      storageData.grades.push(data);
-      localStorage.setItem('data', JSON.stringify(storageData));
+  readyBtn.addEventListener('click', e => {
+    localStorage.setItem('actualAction', 'settings');
+    localStorage.setItem('shouldStart', 'true');
 
-      let actualGradesLink = parseFloat(localStorage.getItem('actualGradesLink'));
+    const menu = document.getElementById('menu');
+    let user;
 
-      let links = JSON.parse(localStorage.getItem('gradesLinks'));
+    if (menu.children.length > 1) user = 'parent';
+    else user = 'student';
+    localStorage.setItem('user', user);
 
-      if (links.length > actualGradesLink + 1) {
-        // continue
-        localStorage.setItem('actualGradesLink', actualGradesLink + 1);
+    e.target.disabled = true;
+    e.target.textContent = 'Pobieranie';
 
-        window.location.href = links[actualGradesLink + 1];
-      } else {
-        // no more links
-        localStorage.removeItem('actualGradesLink');
-        localStorage.removeItem('gradesLinks');
-        localStorage.setItem('actualAction', 'userLogin');
+    window.location.href = URLS.settings;
+  });
 
-        window.location.href = URLS.settings;
-      }
-    }
-  };
+  resetBtn.addEventListener('click', () => {
+    localStorage.removeItem('shouldStart');
+    localStorage.removeItem('actualAction');
+    localStorage.removeItem('user');
+    localStorage.removeItem('data');
+    localStorage.removeItem('names');
+    localStorage.removeItem('actualName');
+    localStorage.removeItem('LOGIN');
 
-  const getUserLogin = () => {
-    let login = document
-      .querySelector('#ctrl_container_login > td > div > div > span')
-      .textContent.trim();
-    localStorage.setItem('LOGIN', login);
+    resetBtn.textContent = 'Zresetowano';
 
-    let timestamp = new Date().getTime();
-    let userInfo = document.querySelector('#userInfo').textContent.trim();
-    let basicData = userInfo.split(' ');
-    let user = {
-      timestamp,
-      name: `${basicData[7]} ${basicData[8]}`,
-      lastSync: `${basicData[3]} ${basicData[4]}`,
-    };
-
-    let storageData = JSON.parse(localStorage.getItem('data'));
-    storageData.user = user;
-    localStorage.setItem('data', JSON.stringify(storageData));
     setTimeout(() => {
-      localStorage.setItem('actualAction', 'plan');
-      GM_openInTab(URLS.plan + login, { active: true });
+      resetBtn.textContent = 'Resetuj';
     }, 2000);
+  });
+};
+
+const getLogin = () => {
+  const login = document
+    .querySelector('#ctrl_container_login > td > div > div > span')
+    .textContent.trim();
+
+  localStorage.setItem('LOGIN', login);
+
+  const ts = new Date().getTime();
+
+  const userInfo = document.querySelector('#userInfo').textContent.trim();
+  const basicData = userInfo.split(' ');
+
+  const obj = {
+    timestamp: ts,
+    lastSync: `${basicData[3]} ${basicData[4]}`,
   };
 
-  const getAbsencesData = () => {
-    let absencesList = [];
-    let rows = Array.from(document.querySelectorAll('.dataRowExport'));
+  if (USER === 'student') {
+    const name = basicData[7];
+    obj.name = name;
+  }
 
-    rows.forEach(row => {
-      let name = row.children[3].textContent.trim();
-      let date = row.children[4].textContent.trim();
-      let hours = row.children[5].textContent.trim();
-      let absence = {
-        name,
-        date,
-        hours,
-      };
+  const storageData = {};
+  storageData.user = obj;
+  localStorage.setItem('data', JSON.stringify(storageData));
 
-      let status = row.children[7].textContent.trim();
-      if (status === 'Nieusprawiedliwione') {
-        absence.isCounted = true;
-        absence.status = 'unexcused';
-      } else if (status === 'Wnioskowanie usprawiedliwienia przez opiekuna') {
-        absence.isCounted = true;
-        absence.status = 'pending';
-      } else if (status === 'Zwolnienie nieliczone do frekwencji') {
-        absence.isCounted = false;
-        absence.status = 'notCounted';
-      } else {
-        absence.isCounted = false;
-        absence.status = 'excused';
+  localStorage.setItem('actualAction', 'plan');
+  window.location.href = URLS.plan + login;
+};
+
+const getPlan = () => {
+  const storageData = JSON.parse(localStorage.getItem('data'));
+
+  if (USER === 'parent' && !storageData.user.name) {
+    const btn = document.querySelector('#f_uczen_lagel_img');
+    btn.click();
+
+    const checkExist = setInterval(() => {
+      const listItems = document.querySelectorAll('.link_list_element');
+      if (listItems.length) {
+        clearInterval(checkExist);
+        listItems.forEach(({ attributes: { key, val } }) => {
+          if (key.value.length) {
+            const login = key.value;
+            const name = val.value.split(' ')[0];
+            localStorage.setItem('LOGIN', login);
+
+            storageData.user.name = name;
+            localStorage.setItem('data', JSON.stringify(storageData));
+            window.location.href = `${window.location.href}&uczen=${login}`;
+          }
+        });
       }
-      absencesList.push(absence);
-    });
-    let storageData = JSON.parse(localStorage.getItem('data'));
-    storageData.absences = absencesList;
-    localStorage.setItem('data', JSON.stringify(storageData));
-    setTimeout(() => {
-      localStorage.setItem('actualAction', 'examsData');
-      GM_openInTab(URLS.exams, { active: true });
-    }, 3000);
-  };
+    }, 100);
+  } else {
+    const iframe = document.querySelector('#f_plan');
 
-  const getExamsData = () => {
-    let examsList = [];
-    let rows = Array.from(document.querySelectorAll('.dataRowExport'));
+    const plan = [[], [], [], [], []];
 
-    rows.forEach(row => {
-      let category = row.children[2].textContent.trim();
-      let date = row.children[9].textContent.trim().split(' ')[0];
-      let name = row.children[5].textContent.trim();
-      let description = row.children[6].textContent.trim();
-
-      let exam = {
-        category,
-        date,
-        name,
-        description,
-      };
-      examsList.push(exam);
-    });
-    let storageData = JSON.parse(localStorage.getItem('data'));
-    storageData.exams = examsList;
-    localStorage.setItem('data', JSON.stringify(storageData));
-    setTimeout(() => {
-      localStorage.setItem('actualAction', 'finish');
-      GM_openInTab(URLS.start, { active: true });
-    }, 3000);
-  };
-
-  const getBehaviourData = () => {
-    let row = document.querySelector('#gridRow_0');
-    let behaviour = {
-      estSemI: row.children[0].textContent.trim(),
-      semI: row.children[1].textContent.trim(),
-      estSemII: row.children[2].textContent.trim(),
-      semII: row.children[3].textContent.trim(),
-    };
-    let storageData = JSON.parse(localStorage.getItem('data'));
-    storageData.behaviour = behaviour;
-    localStorage.setItem('data', JSON.stringify(storageData));
-    setTimeout(() => {
-      localStorage.setItem('actualAction', 'absencesData');
-      GM_openInTab(URLS.absences, { active: true });
-    }, 3000);
-  };
-
-  const getPlan = () => {
-    let plan = [[], [], [], [], []];
-
-    let rows = Array.from(document.querySelectorAll('#section > table > tbody > tr')).slice(2);
+    const rows = Array.from(
+      iframe.contentWindow.document.querySelectorAll('#section > table > tbody > tr'),
+    ).slice(2);
 
     rows.forEach((row, lessonIndex) => {
       if (lessonIndex % 2 === 0) {
-        let childrens = Array.from(row.children);
+        const childrens = Array.from(row.children);
 
         childrens.slice(1).forEach((child, dayIndex) => {
-          let lesson = {
+          const lesson = {
             name: '',
             hours: '',
             teacher: '',
             room: '',
           };
 
-          if (child.innerHTML != '') {
-            let info = child.innerText.split('\n');
-            lesson.name = info[0];
-            lesson.hours = info[1];
-            let moreInfo = info[2].split(', ');
-            lesson.teacher = moreInfo[1];
-            lesson.room = moreInfo[2].slice(0, -1);
+          if (child.innerHTML !== '') {
+            const [name, hours, moreInfo] = child.innerText.split('\n');
+            lesson.name = name;
+            lesson.hours = hours;
+            const [, teacher, room] = moreInfo.split(', ');
+            lesson.teacher = teacher;
+            lesson.room = room.slice(0, -1);
           }
 
           plan[dayIndex].push(lesson);
@@ -258,194 +218,231 @@ function init() {
       }
     });
 
-    let storageData = JSON.parse(localStorage.getItem('data'));
     storageData.plan = plan;
     localStorage.setItem('data', JSON.stringify(storageData));
-    localStorage.setItem('actualAction', 'behaviourData');
-    GM_openInTab(URLS.behaviour, { active: true });
+    localStorage.setItem('actualAction', 'gradesLinks');
+    window.location.href = `${URLS.gradesLinks}${LOGIN}`;
+  }
+};
+
+const getGradesLinks = () => {
+  const rows = Array.from(document.querySelectorAll('.dataRowExport'));
+  const names = [];
+
+  rows.forEach(({ children }) => {
+    const name = children[0].textContent.trim().replace(/ /g, '%20');
+    names.push(name);
+  });
+
+  const storageData = JSON.parse(localStorage.getItem('data'));
+  storageData.grades = [];
+  localStorage.setItem('data', JSON.stringify(storageData));
+
+  localStorage.setItem('names', JSON.stringify(names));
+  localStorage.setItem('actualName', 0);
+  localStorage.setItem('actualAction', 'grades');
+  window.location.href = `${URLS.grades}${LOGIN}&zajecia=${names[0]}`;
+};
+
+const getGrades = () => {
+  const names = JSON.parse(localStorage.getItem('names'));
+  const actualName = parseFloat(localStorage.getItem('actualName'));
+
+  const rows = Array.from(document.querySelectorAll('.dataRowExport'));
+  const name = document
+    .querySelector('#printHeader')
+    .textContent.trim()
+    .split(': ')[1];
+  const data = {
+    name,
+    grades: [],
   };
 
-  if (document.title === 'Ogłoszenia') {
-    const body = document.querySelector('body');
+  rows.forEach(row => {
+    const grade = {};
 
-    GM_addStyle(`
-.box {
-position: absolute;
-top: 5px;
-right: 25px;
-background: white;
-}
+    grade.category = row.children[0].textContent.trim();
 
-.box > button {
-padding: 8px 12px;
-border: none;
-border-radius: 4px;
-font-family: sans-serif;
-font-size: 16px;
-color: #fff;
-cursor: pointer;
-box-shadow: rgba(0, 0, 0, .16) 0px 1px 3px;
-}
-
-#readyBtn {
-background-color: rgb(36, 138, 61);
-}
-
-#resetBtn {
-background-color: rgb(215, 0, 21);
-}
-`);
-
-    const box = document.createElement('div');
-    box.innerHTML = `
-<button type="button" id="resetBtn">Resetuj</button>
-<button type="button" id="readyBtn">Synchronizuj</button>
-`;
-    box.classList.add('box');
-    body.appendChild(box);
-
-    const readyBtn = document.querySelector('#readyBtn');
-    const resetBtn = document.querySelector('#resetBtn');
-
-    readyBtn.addEventListener('click', e => {
-      localStorage.setItem('actualAction', 'gradesLinks');
-      localStorage.setItem('shouldStart', 'true');
-      let data = {
-        grades: [],
-      };
-      localStorage.setItem('data', JSON.stringify(data));
-      e.target.disabled = true;
-      e.target.textContent = 'Pobieranie';
-      window.location.href = URLS.grades;
-    });
-
-    resetBtn.addEventListener('click', e => {
-      localStorage.removeItem('shouldStart');
-      localStorage.removeItem('actualAction');
-      localStorage.removeItem('data');
-      localStorage.removeItem('gradesLinks');
-      localStorage.removeItem('actualGradesLink');
-      localStorage.removeItem('LOGIN');
-      resetBtn.textContent = 'Zresetowano';
-    });
-  }
-
-  if (document.title === 'E-dziennik') {
-    const dataToExport = GM_getValue('data', null);
-    const storageData = localStorage.getItem('data');
-    const parsedStorageData = JSON.parse(storageData);
-    if (dataToExport !== null && storageData === null) {
-      // after 1st sync
-      localStorage.setItem('data', JSON.stringify(dataToExport));
-      const content = document.querySelector('#tutorial');
-      content.innerHTML = `
-<h1>Udało Ci się zsynchronizować dane!</h1>
-<br />
-<h3>Odśwież tą stronę, otworzy się aplikacja.</h3>
-`;
+    if (row.children[3].textContent.trim().split(' ').length > 1) {
+      // Mobile
+      grade.grade = row.children[1].textContent.trim();
+      grade.gradeDesc = row.children[2].textContent.trim();
+      grade.date = row.children[3].textContent.trim();
+      grade.teacher = row.children[4].textContent.trim();
+      grade.categoryDesc = row.children[5].textContent.trim();
+      grade.value = row.children[6].textContent.trim();
+      grade.weight = row.children[7].textContent.trim();
+      grade.semester = row.children[8].textContent.trim();
+      const isCounted = row.children[9].textContent.trim();
+      grade.isCounted = isCounted === 'Tak' ? true : false;
     } else {
-      if (parsedStorageData.user.timestamp < dataToExport.user.timestamp) {
-        // sync
-        localStorage.setItem('data', JSON.stringify(dataToExport));
-        GM_addStyle(`
-.scrim {
-position: fixed;
-top: 0;
-left: 0;
-display: flex;
-justify-content: center;
-align-items: center;
-min-height: 100vh;
-max-height: 100vh;
-width: 100%;
-background-color: rgba(0, 0, 0, 0.32);
-z-index: 99;
-}
-
-.dialog {
-padding: 25px;
-background-color: white;
-border-radius: 10px;
-box-shadow: rgba(0, 0, 0, 0.16) 0 3px 6px;
-}
-
-.dialog__text {
-font-size: 16px;
-}
-
-.dialog__button {
-padding: 4px 8px;
-margin-top: 15px;
-border: 1px solid silver;
-border-radius: 5px;
-background: white;
-font-size: 16px;
-cursor: pointer;
-}
-
-.dialog__button:hover {
-background: rgba(0, 0, 0, .04);
-}
-
-`);
-        const dialog = document.createElement('div');
-        dialog.innerHTML = `
-<div class="scrim">
-  <div class="dialog">
-    <p class="dialog__text">Aby ukończyć synchronizację, odśwież tą stronę.</p>
-    <button type="button" class="dialog__button" onClick="window.location.reload()">Odśwież</button>
-  </div>
-</div>
-`;
-        document.body.appendChild(dialog);
-      }
+      // Desktop
+      grade.categoryDesc = row.children[1].textContent.trim();
+      grade.grade = row.children[2].textContent.trim();
+      grade.gradeDesc = row.children[8].textContent.trim();
+      grade.value = row.children[3].textContent.trim();
+      grade.weight = row.children[4].textContent.trim();
+      grade.semester = row.children[5].textContent.trim();
+      const isCounted = row.children[6].textContent.trim();
+      grade.isCounted = isCounted === 'Tak' ? true : false;
+      grade.date = row.children[9].textContent.trim();
+      grade.teacher = row.children[10].textContent.trim();
     }
+
+    data.grades.push(grade);
+  });
+
+  const storageData = JSON.parse(localStorage.getItem('data'));
+  storageData.grades.push(data);
+  localStorage.setItem('data', JSON.stringify(storageData));
+
+  if (names.length > actualName + 1) {
+    localStorage.setItem('actualName', actualName + 1);
+    window.location.href = `${URLS.grades}${LOGIN}&zajecia=${names[actualName + 1]}`;
+  } else {
+    localStorage.removeItem('names');
+    localStorage.removeItem('actualName');
+    localStorage.setItem('actualAction', 'absences');
+
+    window.location.href = URLS.absences + LOGIN;
+  }
+};
+
+const getAbsences = () => {
+  const absencesList = [];
+  const rows = Array.from(document.querySelectorAll('.dataRowExport'));
+
+  rows.forEach(row => {
+    const name = row.children[3].textContent.trim();
+    const date = row.children[4].textContent.trim();
+    const hours = row.children[5].textContent.trim();
+    const absence = {
+      name,
+      date,
+      hours,
+    };
+
+    const status = row.children[7].textContent.trim();
+    if (status === 'Nieusprawiedliwione') {
+      absence.isCounted = true;
+      absence.status = 'unexcused';
+    } else if (status === 'Wnioskowanie usprawiedliwienia przez opiekuna') {
+      absence.isCounted = true;
+      absence.status = 'pending';
+    } else if (status === 'Zwolnienie nieliczone do frekwencji') {
+      absence.isCounted = false;
+      absence.status = 'notCounted';
+    } else {
+      absence.isCounted = false;
+      absence.status = 'excused';
+    }
+    absencesList.push(absence);
+  });
+  const storageData = JSON.parse(localStorage.getItem('data'));
+  storageData.absences = absencesList;
+  localStorage.setItem('data', JSON.stringify(storageData));
+  localStorage.setItem('actualAction', 'exams');
+  window.location.href = URLS.exams + LOGIN;
+};
+
+const getExams = () => {
+  const examsList = [];
+  const rows = Array.from(document.querySelectorAll('.dataRowExport'));
+
+  rows.forEach(row => {
+    const category = row.children[2].textContent.trim();
+    const date = row.children[9].textContent.trim().split(' ')[0];
+    const name = row.children[5].textContent.trim();
+    const description = row.children[6].textContent.trim();
+
+    const exam = {
+      category,
+      date,
+      name,
+      description,
+    };
+    examsList.push(exam);
+  });
+  const storageData = JSON.parse(localStorage.getItem('data'));
+  storageData.exams = examsList;
+  localStorage.setItem('data', JSON.stringify(storageData));
+  localStorage.setItem('actualAction', 'behaviour');
+  window.location.href = URLS.behaviour;
+};
+
+const getBehaviour = () => {
+  const row = document.querySelector('#gridRow_0');
+
+  let estSemI, semI, estSemII, semII;
+
+  if (USER === 'parent') {
+    estSemI = row.children[2].textContent.trim();
+    semI = row.children[3].textContent.trim();
+    estSemII = row.children[4].textContent.trim();
+    semII = row.children[5].textContent.trim();
+  } else {
+    estSemI = row.children[0].textContent.trim();
+    semI = row.children[1].textContent.trim();
+    estSemII = row.children[2].textContent.trim();
+    semII = row.children[3].textContent.trim();
   }
 
-  if (shouldStart === 'true') {
-    switch (actualAction) {
-      case 'gradesLinks':
-        if (window.frameElement) {
-          getGradesLinks();
+  const behaviour = {
+    estSemI,
+    semI,
+    estSemII,
+    semII,
+  };
+  const storageData = JSON.parse(localStorage.getItem('data'));
+  storageData.behaviour = behaviour;
+  localStorage.setItem('data', JSON.stringify(storageData));
+  finish();
+};
+
+function init() {
+  if (SHOULD_START === 'true') {
+    switch (ACTUAL_ACTION) {
+      case 'settings':
+        if (ACTUAL_URL === URLS.settings) {
+          getLogin();
         }
         break;
-
-      case 'gradesData':
-        getGradesData();
-        break;
-
-      case 'userLogin':
-        getUserLogin();
-        break;
       case 'plan':
-        if (window.frameElement) {
+        if (ACTUAL_URL.includes(URLS.plan)) {
           getPlan();
         }
         break;
-      case 'absencesData':
-        getAbsencesData();
+      case 'gradesLinks':
+        if (ACTUAL_URL.includes(URLS.gradesLinks)) {
+          getGradesLinks();
+        }
         break;
-      case 'examsData':
-        getExamsData();
+      case 'grades':
+        if (ACTUAL_URL.includes(URLS.grades)) {
+          getGrades();
+        }
         break;
-      case 'behaviourData':
-        getBehaviourData();
+      case 'absences':
+        if (ACTUAL_URL.includes(URLS.absences)) {
+          getAbsences();
+        }
         break;
-      case 'finish': {
-        localStorage.removeItem('shouldStart');
-        localStorage.removeItem('actualAction');
-        localStorage.removeItem('LOGIN');
-        let data = localStorage.getItem('data');
-        GM_setValue('data', JSON.parse(data));
-        localStorage.removeItem('data');
-        document.body.innerHTML =
-          '<h1>Sukces!</h1><h2>Możesz zamknąć wszystkie karty e-dziennika.</h2>';
+      case 'exams':
+        if (ACTUAL_URL.includes(URLS.exams)) {
+          getExams();
+        }
         break;
-      }
+      case 'behaviour':
+        if (ACTUAL_URL.includes(URLS.behaviour)) {
+          getBehaviour();
+        }
+        break;
       default:
         break;
     }
   }
+
+  if (ACTUAL_URL === URLS.start) displayButtons();
 }
 
 window.addEventListener('load', init);
