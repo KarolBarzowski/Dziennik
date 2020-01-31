@@ -11,7 +11,6 @@ const StyledWrapper = styled.div`
   flex-flow: row wrap;
   justify-content: center;
   width: 100%;
-  padding-top: 4.5rem;
 `;
 
 const StyledCenter = styled.div`
@@ -31,7 +30,6 @@ function Plan() {
     'Ładowanie...',
   ]);
   const [exams, setExams] = useState([]);
-  const [dates, setDates] = useState([]);
 
   const date = new Date();
   const daysInWeek = [
@@ -42,20 +40,6 @@ function Plan() {
     'Czwartek',
     'Piątek',
     'Sobota',
-  ];
-  const monthsInYear = [
-    'stycznia',
-    'lutego',
-    'marca',
-    'kwietnia',
-    'maja',
-    'czerwca',
-    'lipca',
-    'sierpnia',
-    'września',
-    'października',
-    'listopada',
-    'grudnia',
   ];
   const daysSequence = [
     [0, 0, 1, 2, 3, 4, 0],
@@ -112,19 +96,7 @@ function Plan() {
         results[daysSequence[today][i]].push(...nextExams);
       }
 
-      const datesArray = [[], [], [], [], []];
-      for (let i = 0; i < 7; i += 1) {
-        tomorrow.setDate(date.getDate() + i);
-        if (tomorrow.getDay() !== 0 && tomorrow.getDay() !== 6) {
-          const dd = tomorrow.getDate();
-          const mm = monthsInYear[tomorrow.getMonth()];
-          const dateSyntax = `${dd} ${mm}`;
-          datesArray[daysSequence[today][i]].push(dateSyntax);
-        }
-      }
-
       setExams(results);
-      setDates(datesArray);
     }
     // eslint-disable-next-line
   }, [examsData]);
@@ -134,14 +106,12 @@ function Plan() {
   }, [planData]);
 
   return (
-    <Section width={830}>
-      <Heading big>Plan lekcji</Heading>
+    <Section>
       <StyledWrapper>
         {plan.map((lessons, i) => (
           <Card cardType="plan" lessons={lessons} nextDayExams={exams[i]} key={i.toString()}>
             <StyledCenter>
               <Heading>{daysInWeek[i + 1]}</Heading>
-              <Paragraph>{dates[i]}</Paragraph>
             </StyledCenter>
           </Card>
         ))}

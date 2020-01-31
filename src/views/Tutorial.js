@@ -97,18 +97,22 @@ const Tutorial = () => (
           </a>
           , otworzy się e-dziennik w nowym oknie.
         </li>
-        <li>Zaloguj się na konto UCZNIA i przejdź do zakładki Ogłoszenia.</li>
+        <li>Zaloguj się na konto ucznia lub rodzica i przejdź do zakładki Ogłoszenia.</li>
+        <li>Po prawej u góry powinien być przycisk Synchronizuj - kliknij go i czekaj.</li>
+        <li>Na końcu synchronizacji pokaże się informacja o sukcesie.</li>
         <li>
-          Jeżeli masz pobrany dodatek - po prawej u góry powinien być przycisk Synchronizuj -
-          kliknij go i nic nie rób.
+          Po zakończeniu - <a href="https://edziennik.netlify.com/">odśwież</a>, przeniesie cię do
+          aplikacji.
         </li>
-        <li>Otworzy się kilka nowych kart.</li>
-        <li>Kiedy synchronizacja się zakończy, wyświetli się informacja o tym.</li>
-        <li>Po zakończeniu - odśwież tą stronę, przeniesie cię do aplikacji.</li>
         <h4>
           <StyledWarn icon={faExclamation} />
           Uwaga! Jeżeli wystąpił jakikolwiek błąd, przez co synchronizacja nie zakończyła się
-          sukcesem, wciśnij przycisk Resetuj (w Ogłoszeniach), następnie ponów instrukcję.
+          sukcesem, wciśnij przycisk Resetuj (w Ogłoszeniach), następnie ponów instrukcję lub
+          skontaktuj się ze mną{' '}
+          <a href="https://m.me/walterbialy" target="_blank" rel="noopener noreferrer">
+            <FontAwesomeIcon icon={faFacebookMessenger} />
+          </a>
+          .
         </h4>
       </ol>
       <StyledInfo>
@@ -123,9 +127,10 @@ const Tutorial = () => (
         </h4>
         <br />
         Skrypt pobiera dane (oceny, plan lekcji, sprawdziany i nieobecności) z dziennika
-        elektornicznego, następnie zapisuje je w pamięci dodatku Tampermonkey.
+        elektornicznego, następnie zapisuje je w pamięci dodatku Tampermonkey oraz w pamięci
+        lokalnej przeglądarki.
         <br />
-        Pobrane dane są widoczne tylko dla ciebie.
+        Pobrane dane są widoczne tylko dla Ciebie.
         <br />
         Twórca tej aplikacji nie ma dostępu do żadnych z tych danych.
       </StyledInfo>

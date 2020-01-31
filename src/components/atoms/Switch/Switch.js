@@ -2,13 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
-/* change to label */
 const StyledWrapper = styled.label`
   display: inline-block;
   position: relative;
   height: 2.1rem;
   width: 3.4rem;
-  margin-left: 1.5rem;
+  margin-left: 0.5rem;
   background-color: ${({ theme, isChecked }) => (isChecked ? theme.green : theme.switch)};
   border-radius: 5rem;
   cursor: pointer;

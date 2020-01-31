@@ -10,12 +10,7 @@ import Card from 'components/organisms/Card/Card';
 import { getColor, getCleanName } from 'functions/functions';
 
 const StyledWrapper = styled.div`
-  /* display: flex;
-  flex-flow: column nowrap;
-  justify-content: center; */
   width: 100%;
-  /* width: calc(100% - 1.5rem); */
-  padding-top: 7.4rem;
   column-count: 1;
 
   @media screen and (min-width: 770px) {
@@ -29,10 +24,6 @@ const StyledWrapper = styled.div`
   @media screen and (min-width: 1800px) {
     column-count: 4;
   }
-`;
-
-const StyledHeading = styled(Heading)`
-  position: absolute;
 `;
 
 const StyledHeader = styled.div`
@@ -206,8 +197,7 @@ function Dashboard() {
   }, [gradesData]);
 
   return (
-    <Section width={930}>
-      <StyledHeading big>Podsumowanie</StyledHeading>
+    <Section>
       <StyledWrapper>
         <Card cardType="grades" grades={grades}>
           <StyledHeader>
@@ -248,7 +238,10 @@ function Dashboard() {
         )}
         <Card cardType="exams" exams={exams}>
           <StyledHeader>
-            <Heading>Sprawdziany</Heading>
+            <div>
+              <Heading>Sprawdziany</Heading>
+              <Paragraph secondary>Nadchodzące sprawdziany i inne zadania</Paragraph>
+            </div>
             <Button as={Link} to="/sprawdziany">
               Wszystkie
             </Button>

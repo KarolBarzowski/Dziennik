@@ -21,6 +21,7 @@ const StyledHeadRow = styled.div`
 const StyledHeadItem = styled(Paragraph)`
   width: 100%;
   text-align: center;
+  transition: opacity 0.2s ease-in-out 0.1s;
 
   ::first-letter {
     text-transform: uppercase;
@@ -39,6 +40,7 @@ const StyledBodyRow = styled.div`
   align-items: center;
   padding: 0.4rem 0.8rem;
   animation: ${fadeIn} ${({ theme }) => theme.fadeTransition} 0.15s;
+  transition: opacity 0.2s ease-in-out 0.1s;
 
   :nth-of-type(odd) {
     background-color: ${({ theme }) => theme.modalHover};
@@ -97,6 +99,15 @@ function GradesTable({ gradesData, behaviourData, semester }) {
   const [grades, setGrades] = useState(null);
   const [avgEst, setAvgEst] = useState('');
   const [avgFin, setAvgFin] = useState('');
+  const [gradesSteps] = useState(
+    JSON.parse(window.localStorage.getItem('settings_regulation')) || [
+      1.86,
+      2.86,
+      3.86,
+      4.86,
+      5.51,
+    ],
+  );
 
   useEffect(() => {
     if (gradesData) {
@@ -166,21 +177,21 @@ function GradesTable({ gradesData, behaviourData, semester }) {
         actualObj.avg = avg;
 
         if (!actualObj.est) {
-          if (avg <= 1.85) actualObj.est = 1;
-          else if (avg > 1.86 && avg <= 2.85) actualObj.est = 2;
-          else if (avg > 2.86 && avg <= 3.85) actualObj.est = 3;
-          else if (avg > 3.86 && avg <= 4.85) actualObj.est = 4;
-          else if (avg > 4.86 && avg <= 5.3) actualObj.est = 5;
-          else if (avg > 5.3) actualObj.est = 6;
+          if (avg <= gradesSteps[0] - 0.01) actualObj.est = 1;
+          else if (avg >= gradesSteps[0] && avg <= gradesSteps[1] - 0.01) actualObj.est = 2;
+          else if (avg >= gradesSteps[1] && avg <= gradesSteps[2] - 0.01) actualObj.est = 3;
+          else if (avg >= gradesSteps[2] && avg <= gradesSteps[3] - 0.01) actualObj.est = 4;
+          else if (avg >= gradesSteps[3] && avg <= gradesSteps[4] - 0.01) actualObj.est = 5;
+          else if (avg >= gradesSteps[4]) actualObj.est = 6;
         }
 
         if (!actualObj.fin) {
-          if (avg <= 1.85) actualObj.fin = 1;
-          else if (avg > 1.86 && avg <= 2.85) actualObj.fin = 2;
-          else if (avg > 2.86 && avg <= 3.85) actualObj.fin = 3;
-          else if (avg > 3.86 && avg <= 4.85) actualObj.fin = 4;
-          else if (avg > 4.86 && avg <= 5.3) actualObj.fin = 5;
-          else if (avg > 5.3) actualObj.fin = 6;
+          if (avg <= gradesSteps[0] - 0.01) actualObj.fin = 1;
+          else if (avg >= gradesSteps[0] && avg <= gradesSteps[1] - 0.01) actualObj.fin = 2;
+          else if (avg >= gradesSteps[1] && avg <= gradesSteps[2] - 0.01) actualObj.fin = 3;
+          else if (avg >= gradesSteps[2] && avg <= gradesSteps[3] - 0.01) actualObj.fin = 4;
+          else if (avg >= gradesSteps[3] && avg <= gradesSteps[4] - 0.01) actualObj.fin = 5;
+          else if (avg >= gradesSteps[4]) actualObj.fin = 6;
         }
 
         results.push(actualObj);
@@ -205,13 +216,6 @@ function GradesTable({ gradesData, behaviourData, semester }) {
 
   return (
     <StyledWrapper>
-      <StyledHeadRow>
-        <StyledHeadItem secondary>Przedmiot</StyledHeadItem>
-        <StyledHeadItem secondary>Oceny</StyledHeadItem>
-        <StyledHeadItem secondary>Średnia</StyledHeadItem>
-        <StyledHeadItem secondary>Przewidywana</StyledHeadItem>
-        <StyledHeadItem secondary>Końcowa</StyledHeadItem>
-      </StyledHeadRow>
       {grades &&
         grades.map(({ grades: gradesList, name, avg, fin, est }) => (
           <StyledBodyRow key={name}>

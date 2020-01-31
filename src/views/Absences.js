@@ -14,18 +14,17 @@ import { slideInDown } from 'functions/animations';
 const StyledWrapper = styled.div`
   display: flex;
   flex-flow: column nowrap;
-  margin-top: 3.5rem;
 `;
 
 const StyledBox = styled.div`
   background-color: ${({ theme }) => theme.card};
   border-radius: 1rem;
   padding: 1.5rem;
-  margin: 1.5rem 0;
+  margin: 0 0 1.5rem;
   box-shadow: rgba(0, 0, 0, 0.16) 0 3px 6px;
   animation: ${slideInDown} ${({ theme }) => theme.slideTransition} 0.15s;
   :first-of-type {
-    margin-right: 2.5rem;
+    margin-right: 1.5rem;
     width: 100%;
   }
 `;
@@ -195,8 +194,7 @@ function Absences() {
   }, [absencesData]);
 
   return (
-    <Section width={840}>
-      <Heading big>Frekwencja</Heading>
+    <Section>
       <StyledWrapper>
         <StyledRow>
           <StyledBox>
@@ -265,13 +263,15 @@ function Absences() {
               {absences &&
                 Object.keys(absences).map(key => (
                   <Collapsible key={key} title={absences[key].date} info={absences[key].types}>
-                    {absences[key].lessons.map(({ name, hours, status, statusColor }) => (
-                      <StyledItemRow key={hours}>
-                        <StyledItem>{hours}</StyledItem>
-                        <StyledItem>{name}</StyledItem>
-                        <StyledItem color={statusColor}>{status}</StyledItem>
-                      </StyledItemRow>
-                    ))}
+                    <>
+                      {absences[key].lessons.map(({ name, hours, status, statusColor }) => (
+                        <StyledItemRow key={hours}>
+                          <StyledItem>{hours}</StyledItem>
+                          <StyledItem>{name}</StyledItem>
+                          <StyledItem color={statusColor}>{status}</StyledItem>
+                        </StyledItemRow>
+                      ))}
+                    </>
                   </Collapsible>
                 ))}
             </StyledContent>

@@ -8,9 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCog } from '@fortawesome/free-solid-svg-icons';
 
 const StyledWrapper = styled.nav`
-  position: absolute;
-  top: 1.5rem;
-  right: 1.5rem;
+  position: fixed;
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-between;
@@ -21,6 +19,10 @@ const StyledWrapper = styled.nav`
   border-radius: 5rem;
   box-shadow: rgba(0, 0, 0, 0.16) 0 3px 6px;
   transition: background-color ${({ theme }) => theme.themeTransition};
+
+  @media screen and (min-width: 600px) {
+    position: relative;
+  }
 `;
 
 const StyledParagraph = styled(Paragraph)`
@@ -80,7 +82,7 @@ const StyledBtn = styled.button`
 `;
 
 const StyledBurger = styled.button`
-  position: absolute;
+  position: fixed;
   top: 1rem;
   left: 1rem;
   padding: 1.5rem;
@@ -209,27 +211,53 @@ function Navbar({ handleModalToggle }) {
               <StyledMobileWrapper isOpen={isOpen}>
                 <StyledMobileList>
                   <StyledListItem>
-                    <StyledParagraph exact as={NavLink} secondary="true" to="/">
+                    <StyledParagraph
+                      exact
+                      as={NavLink}
+                      secondary="true"
+                      to="/"
+                      onClick={() => handleToggle()}
+                    >
                       Podsumowanie
                     </StyledParagraph>
                   </StyledListItem>
                   <StyledListItem>
-                    <StyledParagraph as={NavLink} secondary="true" to="/oceny">
+                    <StyledParagraph
+                      as={NavLink}
+                      secondary="true"
+                      to="/oceny"
+                      onClick={() => handleToggle()}
+                    >
                       Oceny
                     </StyledParagraph>
                   </StyledListItem>
                   <StyledListItem>
-                    <StyledParagraph as={NavLink} secondary="true" to="/plan">
+                    <StyledParagraph
+                      as={NavLink}
+                      secondary="true"
+                      to="/plan"
+                      onClick={() => handleToggle()}
+                    >
                       Plan lekcji
                     </StyledParagraph>
                   </StyledListItem>
                   <StyledListItem>
-                    <StyledParagraph as={NavLink} secondary="true" to="/sprawdziany">
+                    <StyledParagraph
+                      as={NavLink}
+                      secondary="true"
+                      to="/sprawdziany"
+                      onClick={() => handleToggle()}
+                    >
                       Sprawdziany
                     </StyledParagraph>
                   </StyledListItem>
                   <StyledListItem>
-                    <StyledParagraph as={NavLink} secondary="true" to="/frekwencja">
+                    <StyledParagraph
+                      as={NavLink}
+                      secondary="true"
+                      to="/frekwencja"
+                      onClick={() => handleToggle()}
+                    >
                       Frekwencja
                     </StyledParagraph>
                   </StyledListItem>

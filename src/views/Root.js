@@ -2,6 +2,7 @@ import React from 'react';
 import ReactGA from 'react-ga';
 import { createBrowserHistory } from 'history';
 import { Router, Switch, Route } from 'react-router-dom';
+import { SnackbarProvider } from 'notistack';
 import { useDarkMode } from 'hooks/useDarkMode';
 import { useData } from 'hooks/useData';
 import { useWeather } from 'hooks/useWeather';
@@ -12,6 +13,7 @@ import Plan from 'views/Plan';
 import Exams from 'views/Exams';
 import Absences from 'views/Absences';
 import Tutorial from 'views/Tutorial';
+import GlobalStyle from 'theme/GlobalStyle';
 
 ReactGA.initialize(process.env.REACT_APP_TRACKING_ID);
 
@@ -31,24 +33,29 @@ function Root() {
     return <Tutorial />;
   }
   return (
-    <Router history={history}>
-      <MainTemplate
-        theme={theme}
-        toggleTheme={toggleTheme}
-        isAutomatic={isAutomatic}
-        isCustom={isCustom}
-        setOptions={setOptions}
-        schedule={schedule}
-      >
-        <Switch>
-          <Route exact path="/" component={Dashboard} />
-          <Route path="/oceny" component={Grades} />
-          <Route path="/plan" component={Plan} />
-          <Route path="/sprawdziany" component={Exams} />
-          <Route path="/frekwencja" component={Absences} />
-        </Switch>
-      </MainTemplate>
-    </Router>
+    <>
+      <GlobalStyle />
+      <SnackbarProvider>
+        <Router history={history}>
+          <MainTemplate
+            theme={theme}
+            toggleTheme={toggleTheme}
+            isAutomatic={isAutomatic}
+            isCustom={isCustom}
+            setOptions={setOptions}
+            schedule={schedule}
+          >
+            <Switch>
+              <Route exact path="/" component={Dashboard} />
+              <Route path="/oceny" component={Grades} />
+              <Route path="/plan" component={Plan} />
+              <Route path="/sprawdziany" component={Exams} />
+              <Route path="/frekwencja" component={Absences} />
+            </Switch>
+          </MainTemplate>
+        </Router>
+      </SnackbarProvider>
+    </>
   );
 }
 

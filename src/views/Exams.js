@@ -7,10 +7,6 @@ import Paragraph from 'components/atoms/Paragraph/Paragraph';
 import { getColor, getCleanName } from 'functions/functions';
 import { slideInDown } from 'functions/animations';
 
-const StyledWrapper = styled.div`
-  margin-top: 3.5rem;
-`;
-
 const StyledBox = styled.div`
   background-color: ${({ theme }) => theme.card};
   border-radius: 1rem;
@@ -190,9 +186,8 @@ function Exams() {
   }, [examsData]);
 
   return (
-    <Section width={880}>
-      <Heading big>Sprawdziany</Heading>
-      <StyledWrapper>
+    <Section>
+      <>
         {next && (
           <StyledBox>
             <Heading>
@@ -234,7 +229,7 @@ function Exams() {
               </StyledRow>
             ))}
         </StyledBox>
-      </StyledWrapper>
+      </>
     </Section>
   );
 }

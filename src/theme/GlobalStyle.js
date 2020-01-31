@@ -20,6 +20,11 @@ const GlobalStyle = createGlobalStyle`
         font-size: 1.6rem;
         font-family: 'Montserrat', sans-serif;
     }
+
+    .MuiSnackbarContent-message {
+        font-size: 1.6rem;
+        font-family: 'Montserrat', sans-serif;
+    }
 `;
 
 export default GlobalStyle;
