@@ -6,6 +6,10 @@ export function useOutsideClick(ref, handler) {
       if (!ref.current || ref.current.contains(e.target)) {
         return;
       }
+      const styles = window.getComputedStyle(ref.current);
+      if (parseFloat(styles.getPropertyValue('opacity')) < 1) {
+        return;
+      }
 
       handler(e);
     };

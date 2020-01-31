@@ -106,6 +106,7 @@ export const theme = {
     red: 'rgb(255, 59, 48)',
     purple: 'rgb(175, 82, 222)',
     teal: 'rgb(90, 200, 250)',
+    gray3: 'rgb(199, 199, 204)',
   },
   dark: {
     name: 'dark',
@@ -136,6 +137,7 @@ export const theme = {
     red: 'rgb(255, 69, 58)',
     purple: 'rgb(191, 90, 242)',
     teal: 'rgb(100, 210, 255)',
+    gray3: 'rgb(72, 72, 74)',
   },
 };
 

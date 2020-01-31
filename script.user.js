@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Pobieracz danych z e-dziennika
-// @version      2.0.0
+// @version      2.0.1
 // @description  Pobiera dane z e-dziennika.
 // @author       Karol Barzowski
 // @match        https://nasze.miasto.gdynia.pl/ed_miej/*
@@ -44,66 +44,13 @@ if (window.location.href.includes('https://edziennik.netlify.com/')) {
   if (dataToExport !== null && storageData === null) {
     // after 1st sync
     localStorage.setItem('data', JSON.stringify(dataToExport));
-    const content = document.querySelector('#tutorial');
-    content.innerHTML = `
-<h1>Udało Ci się zsynchronizować dane!</h1>
-<br />
-<h3>Odśwież tą stronę, otworzy się aplikacja.</h3>
-`;
+    localStorage.setItem('isUpdate', true);
+    window.location.reload();
   } else if (parsedStorageData.user.timestamp < dataToExport.user.timestamp) {
     // sync
     localStorage.setItem('data', JSON.stringify(dataToExport));
-    GM_addStyle(`
-.scrim {
-position: fixed;
-top: 0;
-left: 0;
-display: flex;
-justify-content: center;
-align-items: center;
-min-height: 100vh;
-max-height: 100vh;
-width: 100%;
-background-color: rgba(0, 0, 0, 0.32);
-z-index: 99;
-}
-
-.dialog {
-padding: 25px;
-background-color: white;
-border-radius: 10px;
-box-shadow: rgba(0, 0, 0, 0.16) 0 3px 6px;
-}
-
-.dialog__text {
-font-size: 16px;
-}
-
-.dialog__button {
-padding: 4px 8px;
-margin-top: 15px;
-border: 1px solid silver;
-border-radius: 5px;
-background: white;
-font-size: 16px;
-cursor: pointer;
-}
-
-.dialog__button:hover {
-background: rgba(0, 0, 0, .04);
-}
-
-`);
-    const dialog = document.createElement('div');
-    dialog.innerHTML = `
-<div class="scrim">
-<div class="dialog">
-  <p class="dialog__text">Aby ukończyć synchronizację, odśwież tą stronę.</p>
-  <button type="button" class="dialog__button" onClick="window.location.reload()">Odśwież</button>
-</div>
-</div>
-`;
-    document.body.appendChild(dialog);
+    localStorage.setItem('isUpdate', true);
+    window.location.reload();
   }
 }
 

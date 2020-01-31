@@ -4,13 +4,27 @@ Wszystkie zmiany w projekcie zostaną tutaj zapisane.
 
 ## [Unreleased]
 
-## [1.1.1] - 2019-01-10
+## [1.2.0] - 2020-01-31
+
+### DODANO
+
+- **[Oceny]** Dodano symulator ocen.
+- **[ustawienia]** Dodano ustawienia do zakładki Funkcje.
+
+### ZMIENIONO
+
+- **[ogólne]** Nagłówek w lewym górnym rogu jest teraz bardziej dynamiczny.
+- **[ogólne]** Zmieniono instrukcję synchronizacji.
+- **[ogólne]** Ogólne poprawki wyglądu.
+- **[ogólne]** Zmieniono powiadomienie o sukcesie synchronizacji.
+
+## [1.1.1] - 2020-01-10
 
 ### NAPRAWIONO
 
 - **[Sprawdziany]** Naprawiono crash aplikacji występujący kiedy nie ma sprawdzianów.
 
-## [1.1.0] - 2019-01-09
+## [1.1.0] - 2020-01-09
 
 ### DODANO
 
@@ -39,6 +53,6 @@ Wszystkie zmiany w projekcie zostaną tutaj zapisane.
 
 - **[Podsumowanie]** Usunięto pogodę w planie lekcji.
 
-## [1.0.0] - 2019-01-02
+## [1.0.0] - 2020-01-02
 
-- Podstawowa wersja dziennika
+- Podstawowa wersja dziennika.

@@ -11,6 +11,7 @@ import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 const StyledWrapper = styled.div`
   display: flex;
   flex-flow: column nowrap;
+  width: 100%;
   background-color: ${({ theme }) => theme.card};
   border-radius: 1rem;
   margin: 1.5rem 0;
@@ -31,7 +32,7 @@ const StyledHeader = styled.div`
   padding: 1rem 1.5rem;
   cursor: pointer;
   ${StyledIcon} {
-    transform: rotate(${({ isOpen }) => (isOpen ? '90deg' : '0')});
+    transform: rotate(${({ isOpen }) => (isOpen ? '90deg' : '-90deg')});
   }
 `;
 
@@ -80,13 +81,14 @@ function Collapsible({ children, title, info, opened }) {
 Collapsible.propTypes = {
   title: PropTypes.string.isRequired,
   opened: PropTypes.bool,
-  children: PropTypes.arrayOf(PropTypes.element),
-  info: PropTypes.arrayOf(PropTypes.string).isRequired,
+  children: PropTypes.element,
+  info: PropTypes.arrayOf(PropTypes.string),
 };
 
 Collapsible.defaultProps = {
   opened: false,
   children: null,
+  info: null,
 };
 
 export default Collapsible;

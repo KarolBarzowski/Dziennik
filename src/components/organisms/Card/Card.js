@@ -1,12 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import styled, { css } from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
 import Paragraph from 'components/atoms/Paragraph/Paragraph';
 import Button from 'components/atoms/Button/Button';
 import Lesson from 'components/molecules/Lesson/Lesson';
 import { slideInDown } from 'functions/animations';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
+
+const DelayedAppear = keyframes`
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+`;
 
 const StyledWrapper = styled.div`
   display: flex;
@@ -102,7 +112,6 @@ const StyledColor = styled(StyledSpan)`
 `;
 
 const StyledMiniCard = styled(StyledContent)`
-  /* margin-top: 1.5rem; */
   align-items: flex-start;
 `;
 
@@ -117,6 +126,11 @@ const StyledGrade = styled.span`
 
 const StyledSeparator = styled.span`
   color: ${({ theme }) => theme.text};
+`;
+
+const StyledDescription = styled(Paragraph)`
+  align-self: center;
+  animation: ${DelayedAppear} 0.3s ease-in-out backwards 0.3s;
 `;
 
 function Card({ children, cardType, lessons, exams, grades, link, ctaText, nextDayExams }) {
@@ -249,7 +263,7 @@ function Card({ children, cardType, lessons, exams, grades, link, ctaText, nextD
       )}
       {cardType === 'exams' && (
         <StyledMiniCard>
-          {exams &&
+          {exams && exams.length ? (
             exams.map(
               ({ name, isNextWeek, dayName, dateSyntax, desc, nameColor, color, category }) => (
                 <StyledRow key={desc}>
@@ -258,12 +272,15 @@ function Card({ children, cardType, lessons, exams, grades, link, ctaText, nextD
                   <StyledColor color={nameColor}>{name}</StyledColor>
                 </StyledRow>
               ),
-            )}
+            )
+          ) : (
+            <StyledDescription secondary>Brak nadchodzących zadań</StyledDescription>
+          )}
         </StyledMiniCard>
       )}
       {cardType === 'grades' && (
         <StyledMiniCard>
-          {grades &&
+          {grades && grades.length ? (
             grades.map(({ color: nameColor, name, grades: gradesList }) => (
               <StyledRow color={nameColor} key={name}>
                 <StyledSpan>{name}</StyledSpan>
@@ -295,7 +312,10 @@ function Card({ children, cardType, lessons, exams, grades, link, ctaText, nextD
                   )}
                 </StyledGradesWrapper>
               </StyledRow>
-            ))}
+            ))
+          ) : (
+            <StyledDescription secondary>Brak nowych ocen</StyledDescription>
+          )}
         </StyledMiniCard>
       )}
     </StyledWrapper>

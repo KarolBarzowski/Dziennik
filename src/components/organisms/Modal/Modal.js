@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useReducer } from 'react';
 import PropTypes from 'prop-types';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { useData } from 'hooks/useData';
 import { useOutsideClick } from 'hooks/useOutsideClick';
 import Paragraph from 'components/atoms/Paragraph/Paragraph';
@@ -8,6 +8,7 @@ import Heading from 'components/atoms/Heading/Heading';
 import Switch from 'components/atoms/Switch/Switch';
 import Radio from 'components/atoms/Radio/Radio';
 import TimePicker from 'components/atoms/TimePicker/TimePicker';
+import Collapsible from 'components/molecules/Collapsible/Collapsible';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faSyncAlt,
@@ -20,9 +21,11 @@ import {
   faCodeBranch,
 } from '@fortawesome/free-solid-svg-icons';
 import { faFacebookMessenger } from '@fortawesome/free-brands-svg-icons';
-import { fadeIn } from 'functions/animations';
 
 const StyledBackground = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
   position: fixed;
   top: 0;
   left: 0;
@@ -30,13 +33,22 @@ const StyledBackground = styled.div`
   width: 100%;
   background-color: rgba(0, 0, 0, 0.32);
   z-index: 19;
+  transition: opacity 0.15s ease-in-out 0.05s;
+
+  ${({ isVisible }) =>
+    isVisible
+      ? css`
+          visibility: visible;
+          opacity: 1;
+        `
+      : css`
+          visibility: hidden;
+          opacity: 0;
+          transition: opacity 0.15s ease-in-out 0.05s, visibility 0s linear 0.4s;
+        `}
 `;
 
 const StyledWrapper = styled.div`
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translateY(-50%) translateX(-50%);
   display: flex;
   flex-flow: row nowrap;
   height: 80vh;
@@ -46,12 +58,24 @@ const StyledWrapper = styled.div`
   color: ${({ theme }) => theme.text};
   box-shadow: rgba(0, 0, 0, 0.16) 0 3px 6px;
   z-index: 20;
-  transition: background-color ${({ theme }) => theme.themeTransition};
-  animation: ${fadeIn} ${({ theme }) => theme.fadeTransition};
+  transform-origin: center;
+  transition: background-color ${({ theme }) => theme.themeTransition},
+    transform 0.3s ease-in-out 0.1s, opacity 0.3s ease-in-out 0.05s;
 
   @media screen and (min-width: 600px) {
     width: 80%;
   }
+
+  ${({ isVisible }) =>
+    isVisible
+      ? css`
+          transform: translateY(0);
+          opacity: 1;
+        `
+      : css`
+          transform: translateY(-2.5rem);
+          opacity: 0;
+        `}
 `;
 
 const StyledSidenav = styled.aside`
@@ -304,7 +328,76 @@ const StyledWarnIcon = styled(FontAwesomeIcon)`
   margin-right: 0.5rem;
 `;
 
+const StyledNumberInput = styled.input`
+  width: 6rem;
+  padding: 0.2rem 0.4rem;
+  background-color: ${({ theme }) => theme.gray3};
+  color: ${({ theme }) => theme.text};
+  font-family: 'Roboto', sans-serif;
+  font-size: ${({ theme }) => theme.m};
+  border: none;
+  border-radius: 0.4rem;
+  cursor: pointer;
+  transition: background-color ${({ theme }) => theme.themeTransition},
+    color ${({ theme }) => theme.themeTransition};
+
+  :read-only {
+    width: 4rem;
+    ::-webkit-outer-spin-button,
+    ::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  }
+`;
+
+const StyledRow = styled.div`
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 20rem;
+  margin: 0.5rem 0;
+`;
+
+function NumberInput({ type, value, readOnly, func }) {
+  const [val, setVal] = useState(value);
+
+  useEffect(() => {
+    setVal(value);
+  }, [value]);
+
+  const handleChange = e => {
+    setVal(e.target.value);
+    func(e);
+  };
+
+  return (
+    <StyledNumberInput
+      type={type}
+      value={val}
+      onChange={e => handleChange(e)}
+      step={0.01}
+      readOnly={readOnly}
+    />
+  );
+}
+
+NumberInput.propTypes = {
+  type: PropTypes.string,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  func: PropTypes.func,
+  readOnly: PropTypes.bool,
+};
+
+NumberInput.defaultProps = {
+  type: 'number',
+  readOnly: false,
+  func: null,
+};
+
 function Modal({
+  isVisible,
   handleModalToggle,
   toggleTheme,
   theme,
@@ -318,6 +411,17 @@ function Modal({
   const [currentPage, setCurrentPage] = useState('Synchronizacja');
   const [syncDate, setSyncDate] = useState('Ładowanie...');
   const [lastSync, setLastSync] = useState('Ładowanie...');
+  const [gradesSteps, setGradesSteps] = useState(
+    JSON.parse(window.localStorage.getItem('settings_regulation')) || [
+      1.86,
+      2.86,
+      3.86,
+      4.86,
+      5.51,
+    ],
+  );
+  const [, forceUpdate] = useReducer(x => x + 1, 0);
+  const [transformOrigin, setTransformOrigin] = useState('top right');
 
   useEffect(() => {
     if (userData) {
@@ -337,6 +441,19 @@ function Modal({
     }
   }, [userData]);
 
+  useEffect(() => {
+    const settingsRegulation = JSON.parse(window.localStorage.getItem('settings_regulation'));
+    if (settingsRegulation) setGradesSteps(settingsRegulation);
+    else window.localStorage.setItem('settings_regulation', JSON.stringify(gradesSteps));
+  }, []);
+
+  useEffect(() => {
+    const width = window.innerWidth || document.body.clientWidth;
+    const modalWidth = width * 0.8;
+    const difference = (width - modalWidth) / 2 + 55;
+    setTransformOrigin(`${width - difference}px -2.5rem`);
+  }, [isVisible]);
+
   useOutsideClick(outsideRef, () => handleModalToggle());
 
   const handleNavClick = page => setCurrentPage(page);
@@ -354,9 +471,18 @@ function Modal({
     }
   };
 
+  const handleGradeChange = (e, index) => {
+    const newObj = gradesSteps;
+    const value = parseFloat(e.target.value);
+    gradesSteps[index] = value;
+    setGradesSteps(newObj);
+    window.localStorage.setItem('settings_regulation', JSON.stringify(newObj));
+    forceUpdate();
+  };
+
   return (
-    <StyledBackground>
-      <StyledWrapper ref={outsideRef}>
+    <StyledBackground isVisible={isVisible}>
+      <StyledWrapper ref={outsideRef} isVisible={isVisible} transformOrigin={transformOrigin}>
         <StyledSidenav>
           <StyledHeading>Ustawienia</StyledHeading>
           <StyledList>
@@ -417,13 +543,11 @@ function Modal({
               <StyledSeparator ml={2} mt={1}>
                 <ol>
                   <li>Naciśnij przycisk Synchronizuj, otworzy się e-dziennik w nowym oknie.</li>
-                  <li>Zaloguj się na konto UCZNIA i przejdź do zakładki Ogłoszenia.</li>
+                  <li>Zaloguj się na konto ucznia lub rodzica i przejdź do zakładki Ogłoszenia.</li>
                   <li>
-                    Jeżeli masz pobrany dodatek - po prawej u góry powinien być przycisk
-                    Synchronizuj - kliknij go i nic nie rób.
+                    Po prawej u góry powinien być przycisk Synchronizuj - kliknij go i czekaj.
                   </li>
-                  <li>Otworzy się kilka nowych kart.</li>
-                  <li>Kiedy synchronizacja się zakończy, wyświetli się informacja o tym.</li>
+                  <li>Na końcu synchronizacji pokaże się informacja o sukcesie.</li>
                   <li>Po zakończeniu - odśwież tą stronę.</li>
                 </ol>
               </StyledSeparator>
@@ -534,11 +658,120 @@ function Modal({
               </StyledOptionsWrapper>
             </StyledPage>
           )}
-          {currentPage === 'Funkcje' && <StyledPage>Wkrótce</StyledPage>}
+          {currentPage === 'Funkcje' && (
+            <StyledPage>
+              <Collapsible title="Regulacja progów ocen" opened>
+                <>
+                  <StyledRow>
+                    <StyledParagraph>1</StyledParagraph>
+                    <StyledSeparator ml={0.5} mr={0.5}>
+                      <StyledParagraph regular>do</StyledParagraph>
+                    </StyledSeparator>
+                    <NumberInput
+                      type="number"
+                      value={(gradesSteps[0] - 0.01).toFixed(2)}
+                      readOnly
+                    />
+                    <StyledSeparator mr={4.4} />
+                    <StyledSeparator mr={4.4} />
+                  </StyledRow>
+                  <StyledRow>
+                    <StyledParagraph>2</StyledParagraph>
+                    <StyledSeparator ml={0.5} mr={0.5}>
+                      <StyledParagraph regular>od</StyledParagraph>
+                    </StyledSeparator>
+                    <NumberInput
+                      type="number"
+                      func={e => handleGradeChange(e, 0)}
+                      value={gradesSteps[0]}
+                    />
+                    <StyledSeparator ml={0.5} mr={0.5}>
+                      <StyledParagraph regular>do</StyledParagraph>
+                    </StyledSeparator>
+                    <NumberInput
+                      type="number"
+                      value={(gradesSteps[1] - 0.01).toFixed(2)}
+                      readOnly
+                    />
+                  </StyledRow>
+                  <StyledRow>
+                    <StyledParagraph>3</StyledParagraph>
+                    <StyledSeparator ml={0.5} mr={0.5}>
+                      <StyledParagraph regular>od</StyledParagraph>
+                    </StyledSeparator>
+                    <NumberInput
+                      type="number"
+                      func={e => handleGradeChange(e, 1)}
+                      value={gradesSteps[1]}
+                    />
+                    <StyledSeparator ml={0.5} mr={0.5}>
+                      <StyledParagraph regular>do</StyledParagraph>
+                    </StyledSeparator>
+                    <NumberInput
+                      type="number"
+                      value={(gradesSteps[2] - 0.01).toFixed(2)}
+                      readOnly
+                    />
+                  </StyledRow>
+                  <StyledRow>
+                    <StyledParagraph>4</StyledParagraph>
+                    <StyledSeparator ml={0.5} mr={0.5}>
+                      <StyledParagraph regular>od</StyledParagraph>
+                    </StyledSeparator>
+                    <NumberInput
+                      type="number"
+                      func={e => handleGradeChange(e, 2)}
+                      value={gradesSteps[2]}
+                    />
+                    <StyledSeparator ml={0.5} mr={0.5}>
+                      <StyledParagraph regular>do</StyledParagraph>
+                    </StyledSeparator>
+                    <NumberInput
+                      type="number"
+                      value={(gradesSteps[3] - 0.01).toFixed(2)}
+                      readOnly
+                    />
+                  </StyledRow>
+                  <StyledRow>
+                    <StyledParagraph>5</StyledParagraph>
+                    <StyledSeparator ml={0.5} mr={0.5}>
+                      <StyledParagraph regular>od</StyledParagraph>
+                    </StyledSeparator>
+                    <NumberInput
+                      type="number"
+                      func={e => handleGradeChange(e, 3)}
+                      value={gradesSteps[3]}
+                    />
+                    <StyledSeparator ml={0.5} mr={0.5}>
+                      <StyledParagraph regular>do</StyledParagraph>
+                    </StyledSeparator>
+                    <NumberInput
+                      type="number"
+                      value={(gradesSteps[4] - 0.01).toFixed(2)}
+                      readOnly
+                    />
+                  </StyledRow>
+                  <StyledRow>
+                    <StyledParagraph>6</StyledParagraph>
+                    <StyledSeparator ml={0.5} mr={0.5}>
+                      <StyledParagraph regular>od</StyledParagraph>
+                    </StyledSeparator>
+                    <NumberInput
+                      type="number"
+                      func={e => handleGradeChange(e, 4)}
+                      value={gradesSteps[4]}
+                    />
+                    <StyledSeparator mr={3.6} />
+                    <StyledSeparator mr={3.6} />
+                  </StyledRow>
+                </>
+              </Collapsible>
+            </StyledPage>
+          )}
           {currentPage === 'Wersja' && (
             <StyledPage>
-              <StyledParagraph regular>Aktualna wersja: 1.1.0</StyledParagraph>
-              <StyledParagraph regular>Zalecana wersja skryptu: 1.7.2</StyledParagraph>
+              <StyledParagraph regular>Aktualna wersja: 1.2.0</StyledParagraph>
+              <StyledParagraph regular>Zalecana wersja skryptu: 2.0.1</StyledParagraph>
               <StyledButton
                 as="a"
                 href="https://github.com/KarolBarzowski/Dziennik/raw/master/script.user.js"
@@ -573,6 +806,7 @@ function Modal({
 }
 
 Modal.propTypes = {
+  isVisible: PropTypes.bool.isRequired,
   handleModalToggle: PropTypes.func.isRequired,
   toggleTheme: PropTypes.func.isRequired,
   theme: PropTypes.string,
