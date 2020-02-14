@@ -9,6 +9,7 @@ import Switch from 'components/atoms/Switch/Switch';
 import Radio from 'components/atoms/Radio/Radio';
 import TimePicker from 'components/atoms/TimePicker/TimePicker';
 import Collapsible from 'components/molecules/Collapsible/Collapsible';
+import LoginForm from 'components/molecules/LoginForm/LoginForm';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faSyncAlt,
@@ -19,6 +20,7 @@ import {
   faExclamation,
   faDownload,
   faCodeBranch,
+  faMobileAlt,
 } from '@fortawesome/free-solid-svg-icons';
 import { faFacebookMessenger } from '@fortawesome/free-brands-svg-icons';
 
@@ -408,7 +410,7 @@ function Modal({
 }) {
   const outsideRef = useRef();
   const { userData } = useData();
-  const [currentPage, setCurrentPage] = useState('Synchronizacja');
+  const [currentPage, setCurrentPage] = useState('Mobile');
   const [syncDate, setSyncDate] = useState('Ładowanie...');
   const [lastSync, setLastSync] = useState('Ładowanie...');
   const [gradesSteps, setGradesSteps] = useState(
@@ -494,6 +496,13 @@ function Modal({
               <Paragraph>Synchronizacja</Paragraph>
             </StyledListItem>
             <StyledListItem
+              active={currentPage === 'Mobile'}
+              onClick={() => handleNavClick('Mobile')}
+            >
+              <StyledIcon icon={faMobileAlt} fixedWidth mr={1.5} />
+              <Paragraph>Mobile</Paragraph>
+            </StyledListItem>
+            <StyledListItem
               active={currentPage === 'Motyw'}
               onClick={() => handleNavClick('Motyw')}
             >
@@ -568,6 +577,11 @@ function Modal({
                   <StyledIcon icon={faDownload} fixedWidth ml={0.5} />
                 </StyledButton>
               </StyledOption>
+            </StyledPage>
+          )}
+          {currentPage === 'Mobile' && (
+            <StyledPage>
+              <LoginForm />
             </StyledPage>
           )}
           {currentPage === 'Motyw' && (

@@ -247,7 +247,7 @@ function GradesTable({ gradesData, behaviourData, semester }) {
                 ),
               )}
             </StyledParagraph>
-            <StyledParagraph color={parseFloat(avg) <= 1.85 ? 'red' : 'text'}>
+            <StyledParagraph color={parseFloat(avg) <= gradesSteps[0] - 0.01 ? 'red' : 'text'}>
               {!Number.isNaN(parseFloat(avg)) && avg}
             </StyledParagraph>
             <StyledParagraph color={parseFloat(est) === 1 ? 'red' : 'text'}>
