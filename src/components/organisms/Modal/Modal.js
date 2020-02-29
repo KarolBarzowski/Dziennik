@@ -9,7 +9,7 @@ import Switch from 'components/atoms/Switch/Switch';
 import Radio from 'components/atoms/Radio/Radio';
 import TimePicker from 'components/atoms/TimePicker/TimePicker';
 import Collapsible from 'components/molecules/Collapsible/Collapsible';
-import LoginForm from 'components/molecules/LoginForm/LoginForm';
+// import LoginForm from 'components/molecules/LoginForm/LoginForm';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faSyncAlt,
@@ -20,7 +20,7 @@ import {
   faExclamation,
   faDownload,
   faCodeBranch,
-  faMobileAlt,
+  // faMobileAlt,
 } from '@fortawesome/free-solid-svg-icons';
 import { faFacebookMessenger } from '@fortawesome/free-brands-svg-icons';
 
@@ -71,12 +71,14 @@ const StyledWrapper = styled.div`
   ${({ isVisible }) =>
     isVisible
       ? css`
-          transform: translateY(0);
+          display: flex;
           opacity: 1;
+          transform: translateY(0);
         `
       : css`
           transform: translateY(-2.5rem);
           opacity: 0;
+          display: none;
         `}
 `;
 
@@ -410,7 +412,7 @@ function Modal({
 }) {
   const outsideRef = useRef();
   const { userData } = useData();
-  const [currentPage, setCurrentPage] = useState('Mobile');
+  const [currentPage, setCurrentPage] = useState('Synchronizacja');
   const [syncDate, setSyncDate] = useState('Ładowanie...');
   const [lastSync, setLastSync] = useState('Ładowanie...');
   const [gradesSteps, setGradesSteps] = useState(
@@ -447,6 +449,7 @@ function Modal({
     const settingsRegulation = JSON.parse(window.localStorage.getItem('settings_regulation'));
     if (settingsRegulation) setGradesSteps(settingsRegulation);
     else window.localStorage.setItem('settings_regulation', JSON.stringify(gradesSteps));
+    // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
@@ -495,13 +498,13 @@ function Modal({
               <StyledIcon icon={faSyncAlt} fixedWidth mr={1.5} />
               <Paragraph>Synchronizacja</Paragraph>
             </StyledListItem>
-            <StyledListItem
+            {/* <StyledListItem
               active={currentPage === 'Mobile'}
               onClick={() => handleNavClick('Mobile')}
             >
               <StyledIcon icon={faMobileAlt} fixedWidth mr={1.5} />
               <Paragraph>Mobile</Paragraph>
-            </StyledListItem>
+            </StyledListItem> */}
             <StyledListItem
               active={currentPage === 'Motyw'}
               onClick={() => handleNavClick('Motyw')}
@@ -556,8 +559,7 @@ function Modal({
                   <li>
                     Po prawej u góry powinien być przycisk Synchronizuj - kliknij go i czekaj.
                   </li>
-                  <li>Na końcu synchronizacji pokaże się informacja o sukcesie.</li>
-                  <li>Po zakończeniu - odśwież tą stronę.</li>
+                  <li>Po zakończeniu synchronizacji nastąpi przekierowanie na tą stronę.</li>
                 </ol>
               </StyledSeparator>
               <StyledSeparator mt={1.5} />
@@ -579,11 +581,11 @@ function Modal({
               </StyledOption>
             </StyledPage>
           )}
-          {currentPage === 'Mobile' && (
+          {/* {currentPage === 'Mobile' && (
             <StyledPage>
               <LoginForm />
             </StyledPage>
-          )}
+          )} */}
           {currentPage === 'Motyw' && (
             <StyledPage>
               <StyledPreviewsContainer>
@@ -674,7 +676,29 @@ function Modal({
           )}
           {currentPage === 'Funkcje' && (
             <StyledPage>
-              <Collapsible title="Regulacja progów ocen" opened>
+              <Collapsible title="Skróty klawiaturowe" opened>
+                <>
+                  <StyledRow>
+                    <StyledParagraph>&quot;1&quot; - Podsumowanie</StyledParagraph>
+                  </StyledRow>
+                  <StyledRow>
+                    <StyledParagraph>&quot;2&quot; - Oceny</StyledParagraph>
+                  </StyledRow>
+                  <StyledRow>
+                    <StyledParagraph>&quot;3&quot; - Plan lekcji</StyledParagraph>
+                  </StyledRow>
+                  <StyledRow>
+                    <StyledParagraph>&quot;4&quot; - Sprawdziany</StyledParagraph>
+                  </StyledRow>
+                  <StyledRow>
+                    <StyledParagraph>&quot;5&quot; - Frekwencja</StyledParagraph>
+                  </StyledRow>
+                  <StyledRow>
+                    <StyledParagraph>&quot;s&quot; - Otwiera edziennik</StyledParagraph>
+                  </StyledRow>
+                </>
+              </Collapsible>
+              <Collapsible title="Regulacja progów ocen">
                 <>
                   <StyledRow>
                     <StyledParagraph>1</StyledParagraph>
@@ -784,8 +808,8 @@ function Modal({
           )}
           {currentPage === 'Wersja' && (
             <StyledPage>
-              <StyledParagraph regular>Aktualna wersja: 1.2.0</StyledParagraph>
-              <StyledParagraph regular>Zalecana wersja skryptu: 2.0.1</StyledParagraph>
+              <StyledParagraph regular>Aktualna wersja: 1.3.0</StyledParagraph>
+              <StyledParagraph regular>Zalecana wersja skryptu: 2.2.0</StyledParagraph>
               <StyledButton
                 as="a"
                 href="https://github.com/KarolBarzowski/Dziennik/raw/master/script.user.js"

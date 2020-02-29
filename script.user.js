@@ -1,10 +1,9 @@
 // ==UserScript==
 // @name         Pobieracz danych z e-dziennika
-// @version      2.0.1
+// @version      2.2.0
 // @description  Pobiera dane z e-dziennika.
 // @author       Karol Barzowski
 // @match        https://nasze.miasto.gdynia.pl/ed_miej/*
-// @match        http://localhost:*/*
 // @match        https://edziennik.netlify.com/*
 // @exclude      https://nasze.miasto.gdynia.pl/ed_miej/login.pl*
 // @downloadURL  https://raw.githubusercontent.com/KarolBarzowski/Dziennik/master/script.user.js
@@ -35,12 +34,15 @@ const URLS = {
     'https://nasze.miasto.gdynia.pl/ed_miej/zest_ed_planowane_zadania.pl?f_g_start=0&iframe_name=zest&print_version=1&simple_mode=1&uczen_login=',
   behaviour:
     'https://nasze.miasto.gdynia.pl/ed_miej/zest_ed_zachowanie_ucznia.pl?f_g_start=0&print_version=1',
+  points:
+    'https://nasze.miasto.gdynia.pl/ed_miej/zest_ed_uwagi_ucznia.pl?&f_g_start=0&iframe_name=zest&print_version=1&punkty_semestr=',
 };
 
 if (window.location.href.includes('https://edziennik.netlify.com/')) {
   const dataToExport = GM_getValue('data', null);
   const storageData = localStorage.getItem('data');
   const parsedStorageData = JSON.parse(storageData);
+  localStorage.setItem('script_version', '2.2.0');
   if (dataToExport !== null && storageData === null) {
     // after 1st sync
     localStorage.setItem('data', JSON.stringify(dataToExport));
@@ -64,11 +66,7 @@ const finish = () => {
   localStorage.removeItem('data');
   localStorage.removeItem('LOGIN');
 
-  document.body.innerHTML = `
-  <div style="min-height: 80vh; margin: 0; display: flex; flex-flow: column nowrap; justify-content: center; align-items: center;">
-    <h1>Sukces!</h1><h2>Możesz zamknąć tą kartę</h2>
-  </div>
-  `;
+  window.location.href = 'https://edziennik.netlify.com';
 };
 
 const displayButtons = () => {
@@ -411,8 +409,45 @@ const getBehaviour = () => {
   };
   const storageData = JSON.parse(localStorage.getItem('data'));
   storageData.behaviour = behaviour;
+  localStorage.setItem('actualAction', 'firstSemPoints');
   localStorage.setItem('data', JSON.stringify(storageData));
-  finish();
+  window.location.href = URLS.points + 1;
+};
+
+const getPoints = semester => {
+  const pointsList = [];
+  const rows = Array.from(document.querySelectorAll('.dataRowExport'));
+
+  rows.forEach(row => {
+    const desc = row.children[2].textContent.trim();
+    const type = row.children[3].textContent.trim();
+    const points = row.children[4].textContent.trim();
+    const date = row.children[5].textContent.trim();
+    const teacher = row.children[6].textContent.trim();
+    const lesson = row.children[7].textContent.trim();
+    const isCounted = row.children[8].textContent.trim() === 'Tak';
+
+    const point = {
+      desc,
+      type,
+      points,
+      date,
+      teacher,
+      lesson,
+      isCounted,
+      semester,
+    };
+    pointsList.push(point);
+  });
+
+  const storageData = JSON.parse(localStorage.getItem('data'));
+  if (!storageData.points) storageData.points = [];
+  storageData.points.push(pointsList);
+  localStorage.setItem('data', JSON.stringify(storageData));
+  if (semester === 1) {
+    localStorage.setItem('actualAction', 'secondSemPoints');
+    window.location.href = URLS.points + 2;
+  } else finish();
 };
 
 function init() {
@@ -451,6 +486,16 @@ function init() {
       case 'behaviour':
         if (ACTUAL_URL.includes(URLS.behaviour)) {
           getBehaviour();
+        }
+        break;
+      case 'firstSemPoints':
+        if (ACTUAL_URL.includes(URLS.points + 1)) {
+          getPoints(1);
+        }
+        break;
+      case 'secondSemPoints':
+        if (ACTUAL_URL.includes(URLS.points + 2)) {
+          getPoints(2);
         }
         break;
       default:

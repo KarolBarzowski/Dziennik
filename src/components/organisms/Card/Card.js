@@ -133,7 +133,7 @@ const StyledDescription = styled(Paragraph)`
   animation: ${DelayedAppear} 0.3s ease-in-out backwards 0.3s;
 `;
 
-function Card({ children, cardType, lessons, exams, grades, link, ctaText, nextDayExams }) {
+function Card({ children, cardType, lessons, exams, grades, link, ctaText, nextDayExams, active }) {
   const [uniqueLessons, setUniqueLessons] = useState(null);
   const [time, setTime] = useState('Ładowanie...');
 
@@ -235,7 +235,7 @@ function Card({ children, cardType, lessons, exams, grades, link, ctaText, nextD
   }, [nextDayExams, uniqueLessons]);
 
   return (
-    <StyledWrapper>
+    <StyledWrapper active={active}>
       {children}
       {cardType === 'plan' && (
         <StyledContent>
@@ -286,7 +286,10 @@ function Card({ children, cardType, lessons, exams, grades, link, ctaText, nextD
                 <StyledSpan>{name}</StyledSpan>
                 <StyledGradesWrapper>
                   {gradesList.map(
-                    ({ color, grade, notCounted, category, weight, date, desc }, i) => (
+                    (
+                      { color, grade, notCounted, category, weight, date, gradeDesc, categoryDesc },
+                      i,
+                    ) => (
                       <React.Fragment key={i.toString()}>
                         <StyledGrade>
                           <StyledColor color={color}>{grade}</StyledColor>
@@ -302,8 +305,10 @@ function Card({ children, cardType, lessons, exams, grades, link, ctaText, nextD
                             Waga {weight}
                             <br />
                             {date}
-                            <br />
-                            {desc}
+                            {gradeDesc && <br />}
+                            {gradeDesc}
+                            {categoryDesc && <br />}
+                            {categoryDesc}
                           </StyledTip>
                         </StyledGrade>
                         {i !== gradesList.length - 1 && <StyledSeparator>, </StyledSeparator>}
@@ -359,6 +364,7 @@ Card.propTypes = {
       ]),
     ),
   ),
+  active: PropTypes.bool,
 };
 
 Card.defaultProps = {
@@ -369,6 +375,7 @@ Card.defaultProps = {
   ctaText: '',
   nextDayExams: [],
   grades: null,
+  active: false,
 };
 
 export default Card;

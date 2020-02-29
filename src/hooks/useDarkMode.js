@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 
 export const useDarkMode = weather => {
   const { localStorage } = window;
-  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
+  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark');
   const [isAutomatic, setIsAutomatic] = useState(localStorage.getItem('isAutomatic') || 'false');
   const [isCustom, setIsCustom] = useState(localStorage.getItem('isCustom') || 'false');
   const [schedule, setSchedule] = useState(
@@ -62,7 +62,7 @@ export const useDarkMode = weather => {
     } else {
       const currentTheme = localStorage.getItem('theme');
       if (currentTheme) setTheme(currentTheme);
-      else setMode('light');
+      else setMode('dark');
     }
     // eslint-disable-next-line
   }, [weather, isAutomatic, isCustom, schedule]);

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import { HotKeys } from 'react-hotkeys';
 import DynamicHeader from 'components/molecules/DynamicHeader/DynamicHeader';
 import Navbar from 'components/organisms/Navbar/Navbar';
 import Modal from 'components/organisms/Modal/Modal';
@@ -29,7 +30,7 @@ function UserTemplate({
   const handleModalToggle = () => setModalOpen(!isModalOpen);
 
   return (
-    <>
+    <HotKeys>
       <StyledTopbar>
         <DynamicHeader />
         <Navbar handleModalToggle={handleModalToggle} />
@@ -45,7 +46,7 @@ function UserTemplate({
         schedule={schedule}
       />
       {children}
-    </>
+    </HotKeys>
   );
 }
 

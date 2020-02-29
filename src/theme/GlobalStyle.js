@@ -25,6 +25,10 @@ const GlobalStyle = createGlobalStyle`
         font-size: 1.6rem;
         font-family: 'Montserrat', sans-serif;
     }
+
+    div[tabindex="-1"]:focus {
+        outline: 0;
+    }
 `;
 
 export default GlobalStyle;

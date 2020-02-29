@@ -78,8 +78,8 @@ const Tutorial = () => (
 
       <br />
       <h3>
-        2. Po pobraniu, pobierz skrypt. (otworzy się nowe okno z instalacją skryptu, naciśnij
-        przycisk Zainstaluj){' '}
+        2. Po pobraniu dodatku, pobierz skrypt. (otworzy się nowe okno z instalacją skryptu,
+        naciśnij przycisk Zainstaluj){' '}
         <a href="https://github.com/KarolBarzowski/Dziennik/raw/master/script.user.js">Pobierz</a>
       </h3>
       <br />
@@ -99,11 +99,7 @@ const Tutorial = () => (
         </li>
         <li>Zaloguj się na konto ucznia lub rodzica i przejdź do zakładki Ogłoszenia.</li>
         <li>Po prawej u góry powinien być przycisk Synchronizuj - kliknij go i czekaj.</li>
-        <li>Na końcu synchronizacji pokaże się informacja o sukcesie.</li>
-        <li>
-          Po zakończeniu - <a href="https://edziennik.netlify.com/">odśwież</a>, przeniesie cię do
-          aplikacji.
-        </li>
+        <li>Po zakończeniu, przeniesie cię na tą stronę.</li>
         <h4>
           <StyledWarn icon={faExclamation} />
           Uwaga! Jeżeli wystąpił jakikolwiek błąd, przez co synchronizacja nie zakończyła się

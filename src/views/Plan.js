@@ -7,10 +7,23 @@ import Paragraph from 'components/atoms/Paragraph/Paragraph';
 import Card from 'components/organisms/Card/Card';
 
 const StyledWrapper = styled.div`
-  display: flex;
-  flex-flow: row wrap;
-  justify-content: center;
-  width: 100%;
+  column-count: 1;
+
+  @media screen and (min-width: 600px) {
+    column-count: 2;
+  }
+
+  @media screen and (min-width: 1200px) {
+    column-count: 3;
+  }
+
+  @media screen and (min-width: 1600px) {
+    column-count: 4;
+  }
+
+  @media screen and (min-width: 1920px) {
+    column-count: 5;
+  }
 `;
 
 const StyledCenter = styled.div`

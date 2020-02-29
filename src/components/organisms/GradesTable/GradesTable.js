@@ -120,7 +120,17 @@ function GradesTable({ gradesData, behaviourData, semester }) {
           grades: [],
         };
         gradesList.forEach(
-          ({ semester: gradeSem, isCounted, grade, weight, category, gradeDesc, value, date }) => {
+          ({
+            semester: gradeSem,
+            isCounted,
+            grade,
+            weight,
+            category,
+            gradeDesc,
+            value,
+            date,
+            categoryDesc,
+          }) => {
             if (gradeSem === semester) {
               if (category === 'Ocena przewidywana') {
                 actualObj.est = value;
@@ -147,6 +157,7 @@ function GradesTable({ gradesData, behaviourData, semester }) {
                 grade,
                 weight,
                 category,
+                categoryDesc,
                 desc: gradeDesc,
                 dateSyntax: date,
                 date: actualDate,
@@ -212,7 +223,7 @@ function GradesTable({ gradesData, behaviourData, semester }) {
       setAvgFin(avgF);
       setGrades(results);
     }
-  }, [gradesData, behaviourData, semester]);
+  }, [gradesData, behaviourData, semester, gradesSteps]);
 
   return (
     <StyledWrapper>
@@ -222,7 +233,10 @@ function GradesTable({ gradesData, behaviourData, semester }) {
             <StyledTitle>{name}</StyledTitle>
             <StyledParagraph>
               {gradesList.map(
-                ({ grade, category, weight, desc, dateSyntax, color, notCounted }, i) => (
+                (
+                  { grade, category, weight, desc, dateSyntax, color, notCounted, categoryDesc },
+                  i,
+                ) => (
                   <React.Fragment key={dateSyntax}>
                     <StyledGradeWrapper>
                       <StyledGrade color={color}>{grade}</StyledGrade>
@@ -238,7 +252,9 @@ function GradesTable({ gradesData, behaviourData, semester }) {
                         Waga {weight}
                         <br />
                         {dateSyntax}
-                        <br />
+                        {categoryDesc && <br />}
+                        {categoryDesc}
+                        {desc && <br />}
                         {desc}
                       </StyledTip>
                     </StyledGradeWrapper>

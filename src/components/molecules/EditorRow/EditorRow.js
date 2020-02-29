@@ -220,7 +220,17 @@ function EditorRow({ grades: { name, grades: gradesData }, semester, avgCallback
       const avgGrades = [];
       const avgWeights = [];
       gradesData.forEach(
-        ({ semester: gradeSem, isCounted, category, grade, weight, value, date, gradeDesc }) => {
+        ({
+          semester: gradeSem,
+          isCounted,
+          category,
+          categoryDesc,
+          grade,
+          weight,
+          value,
+          date,
+          gradeDesc,
+        }) => {
           if (isCounted && gradeSem === semester) {
             if (category === 'Ocena przewidywana' || category === 'Ocena za półrocze') return;
 
@@ -240,6 +250,7 @@ function EditorRow({ grades: { name, grades: gradesData }, semester, avgCallback
               grade,
               weight,
               category,
+              categoryDesc,
               desc: gradeDesc,
               dateSyntax: date,
               date: actualDate,
@@ -290,7 +301,7 @@ function EditorRow({ grades: { name, grades: gradesData }, semester, avgCallback
       setDefaultAvg(avg);
       setGrades(results);
     }
-  }, [gradesData]);
+  }, [gradesData, avgCallback, defaultAvg, defaultFinal, gradesSteps, name, semester]);
 
   const getAverage = () => {
     const avgGrades = [];
@@ -346,44 +357,78 @@ function EditorRow({ grades: { name, grades: gradesData }, semester, avgCallback
     setAvg(avg);
   };
 
-  const handleAddGrade = (grade = '', weight = '', index, isAdded, category, desc, dateSyntax) => {
+  const handleAddGrade = (
+    grade = '',
+    weight = '',
+    index,
+    isAdded,
+    category,
+    desc,
+    dateSyntax,
+    categoryDesc,
+  ) => {
     const newGrades = grades;
     if (index || index === 0)
-      newGrades[index] = { grade, weight, isAdded, category, desc, dateSyntax };
+      newGrades[index] = { grade, weight, isAdded, category, desc, dateSyntax, categoryDesc };
     else newGrades.push({ grade, weight, isAdded: true });
     setGrades(newGrades);
     getAverage();
     forceUpdate();
   };
 
-  const handleGradeChange = (e, index, isAdded = false, category, desc, dateSyntax) => {
+  const handleGradeChange = (
+    e,
+    index,
+    isAdded = false,
+    category,
+    desc,
+    dateSyntax,
+    categoryDesc,
+  ) => {
     const { value } = e.target;
     const { weight } = grades[index];
     if (value.length === 1) {
       if (!Number.isNaN(parseFloat(value))) {
-        handleAddGrade(parseFloat(value), weight, index, isAdded, category, desc, dateSyntax);
+        handleAddGrade(
+          parseFloat(value),
+          weight,
+          index,
+          isAdded,
+          category,
+          desc,
+          dateSyntax,
+          categoryDesc,
+        );
       }
     } else if (value.length === 2) {
       const [grade, mark] = value;
       if (!Number.isNaN(parseFloat(grade)) && Number.isNaN(parseFloat(mark))) {
         if (mark === '-' || mark === '+') {
-          handleAddGrade(value, weight, index, isAdded, category, desc, dateSyntax);
+          handleAddGrade(value, weight, index, isAdded, category, desc, dateSyntax, categoryDesc);
         }
       } else if (!Number.isNaN(parseFloat(grade)) && !Number.isNaN(parseFloat(mark))) {
         handleAddGrade(value, weight, index, isAdded, category, desc, dateSyntax);
       }
     } else if (value.length > 2) {
       if (!Number.isNaN(parseFloat(value))) {
-        handleAddGrade(value, weight, index, isAdded, category, desc, dateSyntax);
+        handleAddGrade(value, weight, index, isAdded, category, desc, dateSyntax, categoryDesc);
       }
     }
   };
 
-  const handleWeightChange = (e, index, isAdded = false, category, desc, dateSyntax) => {
+  const handleWeightChange = (
+    e,
+    index,
+    isAdded = false,
+    category,
+    desc,
+    dateSyntax,
+    categoryDesc,
+  ) => {
     const { value } = e.target;
     const { grade } = grades[index];
     if (value.length > 0) {
-      handleAddGrade(grade, value, index, isAdded, category, desc, dateSyntax);
+      handleAddGrade(grade, value, index, isAdded, category, desc, dateSyntax, categoryDesc);
     }
   };
 
@@ -406,38 +451,62 @@ function EditorRow({ grades: { name, grades: gradesData }, semester, avgCallback
           <br />
         </StyledGradesGroup>
         {grades &&
-          grades.map(({ grade, weight, category, desc, dateSyntax, isAdded }, gradeIndex) => (
-            <StyledGradesGroup key={gradeIndex.toString()}>
-              <Input
-                type="text"
-                value={grade}
-                func={e => handleGradeChange(e, gradeIndex, isAdded, category, desc, dateSyntax)}
-                placeholder={grade}
-              />
-              <Input
-                type="number"
-                value={weight}
-                func={e => handleWeightChange(e, gradeIndex, isAdded, category, desc, dateSyntax)}
-                placeholder={weight}
-              />
-              {isAdded ? (
-                <StyledButtonIcon type="button" onClick={() => handleRemoveGrade(gradeIndex)}>
-                  <StyledRemoveIcon fontSize="large" />
-                </StyledButtonIcon>
-              ) : (
-                <StyledIconWrapper>
-                  <StyledInfoIcon fontSize="large" />
-                  <Tooltip>
-                    {category}
-                    <br />
-                    {dateSyntax}
-                    <br />
-                    {desc}
-                  </Tooltip>
-                </StyledIconWrapper>
-              )}
-            </StyledGradesGroup>
-          ))}
+          grades.map(
+            ({ grade, weight, category, desc, dateSyntax, isAdded, categoryDesc }, gradeIndex) => (
+              <StyledGradesGroup key={gradeIndex.toString()}>
+                <Input
+                  type="text"
+                  value={grade}
+                  func={e =>
+                    handleGradeChange(
+                      e,
+                      gradeIndex,
+                      isAdded,
+                      category,
+                      desc,
+                      dateSyntax,
+                      categoryDesc,
+                    )
+                  }
+                  placeholder={grade}
+                />
+                <Input
+                  type="number"
+                  value={weight}
+                  func={e =>
+                    handleWeightChange(
+                      e,
+                      gradeIndex,
+                      isAdded,
+                      category,
+                      desc,
+                      dateSyntax,
+                      categoryDesc,
+                    )
+                  }
+                  placeholder={weight}
+                />
+                {isAdded ? (
+                  <StyledButtonIcon type="button" onClick={() => handleRemoveGrade(gradeIndex)}>
+                    <StyledRemoveIcon fontSize="large" />
+                  </StyledButtonIcon>
+                ) : (
+                  <StyledIconWrapper>
+                    <StyledInfoIcon fontSize="large" />
+                    <Tooltip>
+                      {category}
+                      <br />
+                      {dateSyntax}
+                      {categoryDesc && <br />}
+                      {categoryDesc}
+                      {desc && <br />}
+                      {desc}
+                    </Tooltip>
+                  </StyledIconWrapper>
+                )}
+              </StyledGradesGroup>
+            ),
+          )}
         <StyledGradesGroup>
           <StyledButtonIcon type="button" onClick={() => handleAddGrade()}>
             <AddCircleRounded fontSize="inherit" />

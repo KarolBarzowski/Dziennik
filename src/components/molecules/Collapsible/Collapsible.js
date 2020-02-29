@@ -14,7 +14,7 @@ const StyledWrapper = styled.div`
   width: 100%;
   background-color: ${({ theme }) => theme.card};
   border-radius: 1rem;
-  margin: 1.5rem 0;
+  margin: 1.5rem 0 0.5rem;
   box-shadow: rgba(0, 0, 0, 0.16) 0 1px 2px;
 `;
 

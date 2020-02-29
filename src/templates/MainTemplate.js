@@ -14,13 +14,13 @@ function MainTemplate({ children, theme, isUser }) {
       enqueueSnackbar('Zaktualizowano dane', { variant: 'success', autoHideDuration: 3000 });
       window.localStorage.removeItem('isUpdate');
     }
-  }, [isUpdate]);
+  }, [isUpdate, enqueueSnackbar]);
 
   useEffect(() => {
     if (isUser) {
       enqueueSnackbar('Zalogowano', { variant: 'success', autoHideDuration: 3000 });
     }
-  }, [isUser]);
+  }, [isUser, enqueueSnackbar]);
 
   return (
     <ThemeProvider theme={themeTemplate[theme]}>

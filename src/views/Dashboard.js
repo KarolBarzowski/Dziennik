@@ -45,6 +45,7 @@ function Dashboard() {
   const [absences, setAbsences] = useState(0);
   const [exams, setExams] = useState(null);
   const [grades, setGrades] = useState(null);
+  const [isScriptUpdate, setScriptUpdate] = useState(false);
 
   const daysInWeek = [
     'Niedziela',
@@ -196,6 +197,12 @@ function Dashboard() {
     }
   }, [gradesData]);
 
+  useEffect(() => {
+    const ACTUAL_SCRIPT_VERSION = '2.2.0';
+    const scriptVersion = window.localStorage.getItem('script_version');
+    setScriptUpdate(scriptVersion !== ACTUAL_SCRIPT_VERSION);
+  }, []);
+
   return (
     <Section>
       <StyledWrapper>
@@ -219,6 +226,18 @@ function Dashboard() {
             <>
               <Heading>Synchronizacja</Heading>
               <Paragraph>Ostatnia synchronizacja była {sync.days} dni temu.</Paragraph>
+            </>
+          </Card>
+        )}
+        {isScriptUpdate && (
+          <Card
+            cardType="mini"
+            link="https://github.com/KarolBarzowski/Dziennik/raw/master/script.user.js"
+            ctaText="Aktualizuj"
+          >
+            <>
+              <Heading>Aktualizacja</Heading>
+              <Paragraph>Dostępna jest aktualizacja skryptu.</Paragraph>
             </>
           </Card>
         )}

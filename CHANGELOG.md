@@ -2,7 +2,17 @@
 
 Wszystkie zmiany w projekcie zostaną tutaj zapisane.
 
-## [Unreleased]
+## [1.3.0] - 2020-02-29
+
+### DODANO
+
+- **[ogólne]** Dodano skróty klawiaturowe.
+- **[Oceny]** Dodano opis kategorii oceny do jej opisu.
+- **[Podsumowanie]** Dodano powiadomienie o aktualizacji skryptu.
+
+### ZMIENIONO
+
+- **[Plan lekcji]** Poprawiono wygląd strony.
 
 ## [1.2.0] - 2020-01-31
 
