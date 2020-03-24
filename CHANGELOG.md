@@ -2,6 +2,12 @@
 
 Wszystkie zmiany w projekcie zostaną tutaj zapisane.
 
+## [1.4.1] - 2020-03-24
+
+### NAPRAWIONO
+
+- Kompatybilność skryptu.
+
 ## [1.4.0] - 2020-03-24
 
 ### DODANO
