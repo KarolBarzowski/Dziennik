@@ -332,6 +332,11 @@ const StyledWarnIcon = styled(FontAwesomeIcon)`
   margin-right: 0.5rem;
 `;
 
+const StyledContact = styled.a`
+  color: ${({ theme }) => theme.blue};
+  font-size: 1.6rem;
+`;
+
 const StyledNumberInput = styled.input`
   width: 6rem;
   padding: 0.2rem 0.4rem;
@@ -541,7 +546,7 @@ function Modal({
               <StyledParagraph regular>Data sychronizacji e-dziennika: {lastSync}</StyledParagraph>
               <StyledButton
                 as="a"
-                href="https://nasze.miasto.gdynia.pl/ed_miej/login.pl"
+                href="https://nasze.miasto.gdynia.pl/ed_miej/zest_start.pl?autoSync=true"
                 target="_blank"
                 rel="noreferrer noopener"
               >
@@ -555,19 +560,25 @@ function Modal({
               <StyledSeparator ml={2} mt={1}>
                 <ol>
                   <li>Naciśnij przycisk Synchronizuj, otworzy się e-dziennik w nowym oknie.</li>
-                  <li>Zaloguj się na konto ucznia lub rodzica i przejdź do zakładki Ogłoszenia.</li>
                   <li>
-                    Po prawej u góry powinien być przycisk Synchronizuj - kliknij go i czekaj.
+                    Zaloguj się na konto ucznia lub rodzica, synchronizacja przebiegnie
+                    automatycznie.
                   </li>
-                  <li>Po zakończeniu synchronizacji nastąpi przekierowanie na tą stronę.</li>
                 </ol>
               </StyledSeparator>
               <StyledSeparator mt={1.5} />
               <StyledOption>
                 <StyledWarnIcon icon={faExclamation} />
                 <Paragraph>
-                  Uwaga! Jeżeli wystąpił jakikolwiek błąd, przez co synchronizacja nie zakończyła
-                  się sukcesem, wciśnij przycisk Resetuj (w Ogłoszeniach).
+                  Uwaga! Jeżeli coś się stało i się nie zsynchronizowało skontaktuj się ze mną{' '}
+                  <StyledContact
+                    href="https://m.me/walterbialy"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    przez messengera <FontAwesomeIcon icon={faFacebookMessenger} />
+                  </StyledContact>
+                  .
                 </Paragraph>
               </StyledOption>
               <StyledOption>
@@ -676,29 +687,7 @@ function Modal({
           )}
           {currentPage === 'Funkcje' && (
             <StyledPage>
-              <Collapsible title="Skróty klawiaturowe" opened>
-                <>
-                  <StyledRow>
-                    <StyledParagraph>&quot;1&quot; - Podsumowanie</StyledParagraph>
-                  </StyledRow>
-                  <StyledRow>
-                    <StyledParagraph>&quot;2&quot; - Oceny</StyledParagraph>
-                  </StyledRow>
-                  <StyledRow>
-                    <StyledParagraph>&quot;3&quot; - Plan lekcji</StyledParagraph>
-                  </StyledRow>
-                  <StyledRow>
-                    <StyledParagraph>&quot;4&quot; - Sprawdziany</StyledParagraph>
-                  </StyledRow>
-                  <StyledRow>
-                    <StyledParagraph>&quot;5&quot; - Frekwencja</StyledParagraph>
-                  </StyledRow>
-                  <StyledRow>
-                    <StyledParagraph>&quot;s&quot; - Otwiera edziennik</StyledParagraph>
-                  </StyledRow>
-                </>
-              </Collapsible>
-              <Collapsible title="Regulacja progów ocen">
+              <Collapsible title="Regulacja progów ocen" opened>
                 <>
                   <StyledRow>
                     <StyledParagraph>1</StyledParagraph>
@@ -808,8 +797,8 @@ function Modal({
           )}
           {currentPage === 'Wersja' && (
             <StyledPage>
-              <StyledParagraph regular>Aktualna wersja: 1.3.0</StyledParagraph>
-              <StyledParagraph regular>Zalecana wersja skryptu: 2.2.0</StyledParagraph>
+              <StyledParagraph regular>Aktualna wersja: 1.4.0</StyledParagraph>
+              <StyledParagraph regular>Zalecana wersja skryptu: 2.3.0</StyledParagraph>
               <StyledButton
                 as="a"
                 href="https://github.com/KarolBarzowski/Dziennik/raw/master/script.user.js"

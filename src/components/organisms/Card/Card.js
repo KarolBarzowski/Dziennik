@@ -133,7 +133,18 @@ const StyledDescription = styled(Paragraph)`
   animation: ${DelayedAppear} 0.3s ease-in-out backwards 0.3s;
 `;
 
-function Card({ children, cardType, lessons, exams, grades, link, ctaText, nextDayExams, active }) {
+function Card({
+  children,
+  cardType,
+  lessons,
+  exams,
+  grades,
+  points,
+  link,
+  ctaText,
+  nextDayExams,
+  active,
+}) {
   const [uniqueLessons, setUniqueLessons] = useState(null);
   const [time, setTime] = useState('Ładowanie...');
 
@@ -323,13 +334,28 @@ function Card({ children, cardType, lessons, exams, grades, link, ctaText, nextD
           )}
         </StyledMiniCard>
       )}
+      {cardType === 'points' && (
+        <StyledMiniCard>
+          {points && points.length ? (
+            points.map(({ type = 'Inne', points, teacher, color, isCounted }, i) => (
+              <StyledRow key={i.toString()}>
+                <StyledColor color={isCounted ? color : null}>{type}</StyledColor>
+                <StyledColor>{points > 0 ? `+${points}` : points}</StyledColor>
+                <StyledSpan>{teacher}</StyledSpan>
+              </StyledRow>
+            ))
+          ) : (
+            <StyledDescription secondary>Brak nowych uwag</StyledDescription>
+          )}
+        </StyledMiniCard>
+      )}
     </StyledWrapper>
   );
 }
 
 Card.propTypes = {
   children: PropTypes.element,
-  cardType: PropTypes.oneOf(['plan', 'grades', 'exams', 'mini']).isRequired,
+  cardType: PropTypes.oneOf(['plan', 'grades', 'exams', 'mini', 'points']).isRequired,
   lessons: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.arrayOf(
@@ -364,6 +390,9 @@ Card.propTypes = {
       ]),
     ),
   ),
+  points: PropTypes.arrayOf(
+    PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.bool])),
+  ),
   active: PropTypes.bool,
 };
 
@@ -371,6 +400,7 @@ Card.defaultProps = {
   lessons: null,
   children: null,
   exams: null,
+  points: null,
   link: '',
   ctaText: '',
   nextDayExams: [],

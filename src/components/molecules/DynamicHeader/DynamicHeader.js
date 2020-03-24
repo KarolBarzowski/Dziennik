@@ -75,6 +75,9 @@ function DynamicHeader() {
       case '/frekwencja':
         currentPage = 'Frekwencja';
         break;
+      case '/uwagi':
+        currentPage = 'Uwagi';
+        break;
       default:
         break;
     }

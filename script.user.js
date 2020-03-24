@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Pobieracz danych z e-dziennika
-// @version      2.2.0
+// @version      2.3.0
 // @description  Pobiera dane z e-dziennika.
 // @author       Karol Barzowski
 // @match        https://nasze.miasto.gdynia.pl/ed_miej/*
@@ -42,7 +42,7 @@ if (window.location.href.includes('https://edziennik.netlify.com/')) {
   const dataToExport = GM_getValue('data', null);
   const storageData = localStorage.getItem('data');
   const parsedStorageData = JSON.parse(storageData);
-  localStorage.setItem('script_version', '2.2.0');
+  localStorage.setItem('script_version', '2.3.0');
   if (dataToExport !== null && storageData === null) {
     // after 1st sync
     localStorage.setItem('data', JSON.stringify(dataToExport));
@@ -70,6 +70,32 @@ const finish = () => {
 };
 
 const displayButtons = () => {
+  const { href } = window.location;
+
+  const isAutoSync = new URL(href).searchParams.get('autoSync') === 'true';
+
+  if (isAutoSync) {
+    localStorage.removeItem('shouldStart');
+    localStorage.removeItem('actualAction');
+    localStorage.removeItem('user');
+    localStorage.removeItem('data');
+    localStorage.removeItem('names');
+    localStorage.removeItem('actualName');
+    localStorage.removeItem('LOGIN');
+
+    localStorage.setItem('actualAction', 'settings');
+    localStorage.setItem('shouldStart', 'true');
+
+    const menu = document.getElementById('menu');
+    let user;
+
+    if (menu.children.length > 1) user = 'parent';
+    else user = 'student';
+    localStorage.setItem('user', user);
+
+    window.location.href = URLS.settings;
+  }
+
   GM_addStyle(`
   .box {
   position: absolute;
@@ -288,7 +314,7 @@ const getGrades = () => {
       grade.weight = row.children[7].textContent.trim();
       grade.semester = row.children[8].textContent.trim();
       const isCounted = row.children[9].textContent.trim();
-      grade.isCounted = isCounted === 'Tak' ? true : false;
+      grade.isCounted = isCounted === 'Tak';
     } else {
       // Desktop
       grade.categoryDesc = row.children[1].textContent.trim();
@@ -298,7 +324,7 @@ const getGrades = () => {
       grade.weight = row.children[4].textContent.trim();
       grade.semester = row.children[5].textContent.trim();
       const isCounted = row.children[6].textContent.trim();
-      grade.isCounted = isCounted === 'Tak' ? true : false;
+      grade.isCounted = isCounted === 'Tak';
       grade.date = row.children[9].textContent.trim();
       grade.teacher = row.children[10].textContent.trim();
     }
@@ -387,7 +413,10 @@ const getExams = () => {
 const getBehaviour = () => {
   const row = document.querySelector('#gridRow_0');
 
-  let estSemI, semI, estSemII, semII;
+  let estSemI;
+  let semI;
+  let estSemII;
+  let semII;
 
   if (USER === 'parent') {
     estSemI = row.children[2].textContent.trim();
@@ -442,7 +471,7 @@ const getPoints = semester => {
 
   const storageData = JSON.parse(localStorage.getItem('data'));
   if (!storageData.points) storageData.points = [];
-  storageData.points.push(pointsList);
+  storageData.points.push(...pointsList);
   localStorage.setItem('data', JSON.stringify(storageData));
   if (semester === 1) {
     localStorage.setItem('actualAction', 'secondSemPoints');
@@ -503,7 +532,7 @@ function init() {
     }
   }
 
-  if (ACTUAL_URL === URLS.start) displayButtons();
+  if (ACTUAL_URL.includes(URLS.start)) displayButtons();
 }
 
 window.addEventListener('load', init);
