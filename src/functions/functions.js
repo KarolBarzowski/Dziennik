@@ -4,6 +4,7 @@ export const getColor = name => {
     case 'Test':
     case 'Praca klasowa':
     case 'unexcused':
+    case 'negatywna':
       return 'red';
     case 'Kartkówka':
       return 'orange';
@@ -14,6 +15,7 @@ export const getColor = name => {
     case 'Aktywność':
     case 'Praca domowa':
     case 'excused':
+    case 'pozytywna':
       return 'green';
     case 'Praca pisemna/referat':
     case 'Projekt/zadanie':

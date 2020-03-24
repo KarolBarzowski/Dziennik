@@ -8,18 +8,20 @@ export const useData = () => {
   const [behaviourData, setBehaviour] = useState(null);
   const [absencesData, setAbsences] = useState(null);
   const [examsData, setExams] = useState(null);
+  const [pointsData, setPoints] = useState(null);
 
   useEffect(() => {
     const actualData = JSON.parse(window.localStorage.getItem('data'));
     if (actualData !== null) {
       setData(actualData);
-      const { grades, user, plan, behaviour, absences, exams } = actualData;
+      const { grades, user, plan, behaviour, absences, exams, points } = actualData;
       setGrades(grades);
       setUser(user);
       setPlan(plan);
       setBehaviour(behaviour);
       setAbsences(absences);
       setExams(exams);
+      setPoints(points);
     } else setData(null);
   }, []);
 
@@ -39,5 +41,14 @@ export const useData = () => {
     }
   }, [userData]);
 
-  return { data, gradesData, userData, planData, behaviourData, absencesData, examsData };
+  return {
+    data,
+    gradesData,
+    userData,
+    planData,
+    behaviourData,
+    absencesData,
+    examsData,
+    pointsData,
+  };
 };

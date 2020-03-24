@@ -21,43 +21,43 @@ const StyledWrapper = styled.div`
   animation: ${slideInDown} ${({ theme }) => theme.slideTransition} 0.1s;
 `;
 
-const StyledRadioGroup = styled.div`
+const StyledSwitchWrapper = styled.div`
+  position: relative;
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
+  justify-content: center;
   align-self: center;
+  border-radius: 5rem;
+  background-color: ${({ theme }) => theme.gray3};
+  height: 4.2rem;
+  padding: 0 0.5rem;
   margin-bottom: 1.5rem;
-  border: 0.2rem solid ${({ theme }) => theme.border};
-  border-radius: 10px;
-  overflow: hidden;
-  opacity: ${({ disabled }) => (disabled ? 0.38 : 1)};
-  transition: opacity 0.3s ease-in-out;
 `;
 
 const StyledLabel = styled.label`
-  padding: 0.4rem 0.8rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   cursor: pointer;
-  transition: background-color 0.1s ease-in-out, opacity 0.3s ease-in-out;
+  border-radius: 5rem;
+  height: 100%;
+  padding: 0 1rem;
 
   :not(:first-of-type) {
-    border-left: 0.2rem solid ${({ theme }) => theme.border};
+    margin-left: 2rem;
+  }
+
+  ${Paragraph} {
+    color: ${({ theme }) => theme.textSecondary};
+    transition: color 0.1s ease-in-out, font-size 0.2s ease-in-out;
+    z-index: 1;
   }
 
   :hover {
-    background-color: ${({ theme }) => theme.buttonHover};
-  }
-`;
-
-const StyledInput = styled.input`
-  display: none;
-
-  :checked + ${StyledLabel} {
-    background-color: ${({ theme }) => theme.border};
-  }
-
-  :disabled + ${StyledLabel} {
-    opacity: 0.38;
-    pointer-events: none;
+    ${Paragraph} {
+      color: ${({ theme }) => theme.text};
+    }
   }
 `;
 
@@ -113,6 +113,49 @@ const StyledHeadItem = styled(Paragraph)`
     `}
 `;
 
+const StyledRadio = styled.input`
+  display: none;
+
+  :checked + ${StyledLabel} {
+    cursor: default;
+
+    ${Paragraph} {
+      color: ${({ theme }) => theme.textInvert};
+      font-size: ${({ theme }) => theme.m};
+      transition: color 0s ease-in-out 0.1s, font-size 0.2s ease-in-out;
+    }
+  }
+
+  :disabled + ${StyledLabel} {
+    opacity: 0.38;
+    pointer-events: none;
+
+    :hover {
+      cursor: default;
+    }
+  }
+`;
+
+const StyledIndicator = styled.span`
+  position: absolute;
+  top: 50%;
+  left: 0;
+  height: 4.8rem;
+  width: 11.5rem;
+  background-color: ${({ theme }) => (theme.name === 'dark' ? '#ffffff' : 'rgb(44, 44, 46)')};
+  border-radius: 5rem;
+  transition: transform 0.2s ease-in-out;
+
+  ${({ isLeft }) =>
+    isLeft
+      ? css`
+          transform: translate(-0.5rem, -50%);
+        `
+      : css`
+          transform: translate(9.6rem, -50%);
+        `}
+`;
+
 function Grades() {
   const { gradesData, behaviourData } = useData(null);
   const [isEditor, setIsEditor] = useState(false);
@@ -126,8 +169,9 @@ function Grades() {
   return (
     <Section>
       <StyledWrapper>
-        <StyledRadioGroup disabled={isEditor}>
-          <StyledInput
+        <StyledSwitchWrapper disabled={isEditor}>
+          <StyledIndicator isLeft={semester === '1'} />
+          <StyledRadio
             type="radio"
             id="semI"
             name="semester"
@@ -136,9 +180,9 @@ function Grades() {
             disabled={isEditor}
           />
           <StyledLabel htmlFor="semI">
-            <Paragraph>I sem.</Paragraph>
+            <Paragraph>I semestr</Paragraph>
           </StyledLabel>
-          <StyledInput
+          <StyledRadio
             type="radio"
             id="semII"
             name="semester"
@@ -147,9 +191,9 @@ function Grades() {
             disabled={isEditor}
           />
           <StyledLabel htmlFor="semII">
-            <Paragraph>II sem.</Paragraph>
+            <Paragraph>II semestr</Paragraph>
           </StyledLabel>
-        </StyledRadioGroup>
+        </StyledSwitchWrapper>
         <StyledPanel>
           <StyledSwitchParagraph highlight={isEditor}>Symulator</StyledSwitchParagraph>
           <StyledSwitch onChange={() => setIsEditor(!isEditor)} checked={isEditor} />

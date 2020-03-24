@@ -195,6 +195,11 @@ function Navbar({ handleModalToggle }) {
                     Frekwencja
                   </StyledParagraph>
                 </StyledListItem>
+                <StyledListItem>
+                  <StyledParagraph as={NavLink} secondary="true" to="/uwagi">
+                    Uwagi
+                  </StyledParagraph>
+                </StyledListItem>
               </StyledList>
               <StyledBtn type="button" onClick={() => handleModalToggle()}>
                 <FontAwesomeIcon icon={faCog} />
@@ -259,6 +264,16 @@ function Navbar({ handleModalToggle }) {
                       onClick={() => handleToggle()}
                     >
                       Frekwencja
+                    </StyledParagraph>
+                  </StyledListItem>
+                  <StyledListItem>
+                    <StyledParagraph
+                      as={NavLink}
+                      secondary="true"
+                      to="/uwagi"
+                      onClick={() => handleToggle()}
+                    >
+                      Uwagi
                     </StyledParagraph>
                   </StyledListItem>
                 </StyledMobileList>

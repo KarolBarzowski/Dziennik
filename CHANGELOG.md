@@ -2,6 +2,21 @@
 
 Wszystkie zmiany w projekcie zostaną tutaj zapisane.
 
+## Unreleased
+
+### DODANO
+
+- **[ogólne]** Dodano automatyczną synchronizację.
+- **[ogólne]** Dodano Uwagi.
+
+### USUNIĘTO
+
+- **[ogólne]** Usunięto skróty klawiaturowe.
+
+### DO USUNIĘCIA
+
+- **[ogólne]** Jasny motyw zostanie usunięty na stałe.
+
 ## [1.3.0] - 2020-02-29
 
 ### DODANO

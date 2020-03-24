@@ -37,7 +37,7 @@ const StyledColor = styled.span`
 `;
 
 function Dashboard() {
-  const { planData, userData, examsData, absencesData, gradesData } = useData(null);
+  const { planData, userData, examsData, absencesData, gradesData, pointsData } = useData(null);
   const [dateSyntax, setDateSyntax] = useState('');
   const [plan, setPlan] = useState('Ładowanie...');
   const [nextDayExams, setNextDayExams] = useState([]);
@@ -45,6 +45,7 @@ function Dashboard() {
   const [absences, setAbsences] = useState(0);
   const [exams, setExams] = useState(null);
   const [grades, setGrades] = useState(null);
+  const [points, setPoints] = useState(null);
   const [isScriptUpdate, setScriptUpdate] = useState(false);
 
   const daysInWeek = [
@@ -198,7 +199,39 @@ function Dashboard() {
   }, [gradesData]);
 
   useEffect(() => {
-    const ACTUAL_SCRIPT_VERSION = '2.2.0';
+    const lastTs = JSON.parse(window.localStorage.getItem('lastTs'));
+    if (pointsData && lastTs) {
+      const results = [];
+      pointsData.forEach(point => {
+        const dateArray = point.date.split('/');
+        const day = parseFloat(dateArray[0]);
+        const month = parseFloat(dateArray[1]) - 1;
+        const year = `20${dateArray[2]}`;
+        const dateResult = new Date(year, month, day);
+        const dd = dateResult.getDate();
+        const mm = monthsInYear[dateResult.getMonth()];
+
+        const capitalizedType = point.type.length
+          ? point.type[0].toUpperCase() + point.type.slice(1)
+          : 'Inne';
+
+        if (dateResult.getTime() > lastTs) {
+          // eslint-disable-next-line
+          point.color = getColor(point.type);
+          // eslint-disable-next-line
+          point.type = capitalizedType;
+          // eslint-disable-next-line
+          point.dateSyntax = `${dd} ${mm}`;
+          results.push(point);
+        }
+      });
+      setPoints(results);
+    }
+    // eslint-disable-next-line
+  }, [pointsData]);
+
+  useEffect(() => {
+    const ACTUAL_SCRIPT_VERSION = '2.3.0';
     const scriptVersion = window.localStorage.getItem('script_version');
     setScriptUpdate(scriptVersion !== ACTUAL_SCRIPT_VERSION);
   }, []);
@@ -220,12 +253,16 @@ function Dashboard() {
         {sync.isSync && (
           <Card
             cardType="mini"
-            link="https://nasze.miasto.gdynia.pl/ed_miej/login.pl"
+            link="https://nasze.miasto.gdynia.pl/ed_miej/zest_start.pl?autoSync=true"
             ctaText="Synchronizuj"
           >
             <>
               <Heading>Synchronizacja</Heading>
-              <Paragraph>Ostatnia synchronizacja była {sync.days} dni temu.</Paragraph>
+              <Paragraph secondary>Ostatnia synchronizacja była {sync.days} dni temu.</Paragraph>
+              <br />
+              <Paragraph>
+                Kliknij Synchronizuj i się zaloguj, cały proces przebiegnie automatycznie.
+              </Paragraph>
             </>
           </Card>
         )}
@@ -237,7 +274,7 @@ function Dashboard() {
           >
             <>
               <Heading>Aktualizacja</Heading>
-              <Paragraph>Dostępna jest aktualizacja skryptu.</Paragraph>
+              <Paragraph secondary>Dostępna jest aktualizacja skryptu.</Paragraph>
             </>
           </Card>
         )}
@@ -262,6 +299,17 @@ function Dashboard() {
               <Paragraph secondary>Nadchodzące sprawdziany i inne zadania</Paragraph>
             </div>
             <Button as={Link} to="/sprawdziany">
+              Wszystkie
+            </Button>
+          </StyledHeader>
+        </Card>
+        <Card cardType="points" points={points}>
+          <StyledHeader>
+            <div>
+              <Heading>Uwagi</Heading>
+              <Paragraph secondary>Nowe uwagi od ostatniej synchronizacji.</Paragraph>
+            </div>
+            <Button as={Link} to="/uwagi">
               Wszystkie
             </Button>
           </StyledHeader>

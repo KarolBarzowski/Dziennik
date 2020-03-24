@@ -4,7 +4,6 @@ import { createBrowserHistory } from 'history';
 import { Router, Switch, Route } from 'react-router-dom';
 // import firebase from 'firebase/config';
 import { SnackbarProvider } from 'notistack';
-import { HotKeys } from 'react-hotkeys';
 import { useDarkMode } from 'hooks/useDarkMode';
 import { useData } from 'hooks/useData';
 import { useWeather } from 'hooks/useWeather';
@@ -17,6 +16,7 @@ import Plan from 'views/Plan';
 import Exams from 'views/Exams';
 import Absences from 'views/Absences';
 import Tutorial from 'views/Tutorial';
+import Points from 'views/Points';
 // import Login from 'views/Login';
 import GlobalStyle from 'theme/GlobalStyle';
 
@@ -28,45 +28,6 @@ history.listen(location => {
   ReactGA.set({ page: location.pathname });
   ReactGA.pageview(location.pathname);
 });
-
-const keyMap = {
-  SYNC: 's',
-  DASHBOARD: '1',
-  GRADES: '2',
-  PLAN: '3',
-  EXAMS: '4',
-  ABSENCES: '5',
-};
-
-const shortcuts = {
-  sync: () => {
-    window.location.href = 'https://nasze.miasto.gdynia.pl/ed_miej/zest_start.pl';
-  },
-  dashboard: () => {
-    window.location.pathname = '/';
-  },
-  grades: () => {
-    window.location.pathname = '/oceny';
-  },
-  plan: () => {
-    window.location.pathname = '/plan';
-  },
-  exams: () => {
-    window.location.pathname = '/sprawdziany';
-  },
-  absences: () => {
-    window.location.pathname = '/frekwencja';
-  },
-};
-
-const handlers = {
-  SYNC: shortcuts.sync,
-  DASHBOARD: shortcuts.dashboard,
-  GRADES: shortcuts.grades,
-  PLAN: shortcuts.plan,
-  EXAMS: shortcuts.exams,
-  ABSENCES: shortcuts.absences,
-};
 
 function Root() {
   const { data } = useData();
@@ -89,7 +50,7 @@ function Root() {
     return <Tutorial />;
   }
   return (
-    <HotKeys keyMap={keyMap} handlers={handlers}>
+    <>
       <GlobalStyle />
       <SnackbarProvider>
         <Router history={history}>
@@ -111,13 +72,14 @@ function Root() {
                   <Route path="/plan" component={Plan} />
                   <Route path="/sprawdziany" component={Exams} />
                   <Route path="/frekwencja" component={Absences} />
+                  <Route path="/uwagi" component={Points} />
                 </>
               </UserTemplate>
             </Switch>
           </MainTemplate>
         </Router>
       </SnackbarProvider>
-    </HotKeys>
+    </>
   );
 }
 

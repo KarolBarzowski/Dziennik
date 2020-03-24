@@ -11,6 +11,11 @@ ReactGA.pageview('tutorial');
 
 const StyledWrapper = styled.div`
   padding: 2.5rem;
+
+  ol,
+  ul {
+    margin-left: 3.5rem;
+  }
 `;
 
 const StyledWarn = styled(FontAwesomeIcon)`
@@ -35,7 +40,7 @@ const Tutorial = () => (
         Aktualnie aplikacja działa wyłącznie na komputerze, w przyszłości powstanie wersja mobilna.
       </p>
       <br />
-      <h3>1. Aby móc używać aplikacji, wymagany jest dodatek Tampermonkey.</h3>
+      <h3>1. Aby móc używać aplikacji, wymagany jest dodatek do przeglądarki Tampermonkey.</h3>
       <p>Linki do pobrania (otworzą się w nowym oknie): </p>
       <ul>
         <li>
@@ -83,33 +88,31 @@ const Tutorial = () => (
         <a href="https://github.com/KarolBarzowski/Dziennik/raw/master/script.user.js">Pobierz</a>
       </h3>
       <br />
-      <h3>3. Po zainstalowaniu skryptu, trzeba go użyć.</h3>
-      <h3>Instrukcja:</h3>
+      <h3>3. Jeżeli skrypt został zainstalowany, należy wykonać synchronizację:</h3>
       <br />
       <ol>
         <li>
+          Wystarczy, że{' '}
           <a
-            href="https://nasze.miasto.gdynia.pl/ed_miej/login.pl"
+            href="https://nasze.miasto.gdynia.pl/ed_miej/zest_start.pl?autoSync=true"
             target="_blank"
             rel="noopener noreferrer"
           >
-            Naciśnij tu
-          </a>
-          , otworzy się e-dziennik w nowym oknie.
+            klikniesz tutaj
+          </a>{' '}
+          i się zalogujesz (na ucznia lub rodzica, nie ma to znaczenia).
         </li>
-        <li>Zaloguj się na konto ucznia lub rodzica i przejdź do zakładki Ogłoszenia.</li>
-        <li>Po prawej u góry powinien być przycisk Synchronizuj - kliknij go i czekaj.</li>
-        <li>Po zakończeniu, przeniesie cię na tą stronę.</li>
+        <li>Po zalogowaniu się synchronizacja przebiegnie automatycznie.</li>
+        <br />
         <h4>
           <StyledWarn icon={faExclamation} />
-          Uwaga! Jeżeli wystąpił jakikolwiek błąd, przez co synchronizacja nie zakończyła się
-          sukcesem, wciśnij przycisk Resetuj (w Ogłoszeniach), następnie ponów instrukcję lub
-          skontaktuj się ze mną{' '}
+          Uwaga! Jeżeli coś się stało i się nie zsynchronizowało skontaktuj się ze mną{' '}
           <a href="https://m.me/walterbialy" target="_blank" rel="noopener noreferrer">
             <FontAwesomeIcon icon={faFacebookMessenger} />
           </a>
           .
         </h4>
+        <br />
       </ol>
       <StyledInfo>
         <a href="https://m.me/walterbialy" target="_blank" rel="noopener noreferrer">
@@ -118,17 +121,21 @@ const Tutorial = () => (
       </StyledInfo>
       <StyledInfo>
         <h4>
-          <FontAwesomeIcon icon={faInfoCircle} fixedWidth />
-          Jak działa skrypt?
+          <FontAwesomeIcon icon={faInfoCircle} fixedWidth /> Jak działa skrypt?
         </h4>
         <br />
-        Skrypt pobiera dane (oceny, plan lekcji, sprawdziany i nieobecności) z dziennika
+        Skrypt pobiera dane (oceny, plan lekcji, sprawdziany, nieobecności i uwagi) z dziennika
         elektornicznego, następnie zapisuje je w pamięci dodatku Tampermonkey oraz w pamięci
         lokalnej przeglądarki.
         <br />
         Pobrane dane są widoczne tylko dla Ciebie.
         <br />
         Twórca tej aplikacji nie ma dostępu do żadnych z tych danych.
+        <br />
+        <br />W razie pytań:{' '}
+        <a href="https://m.me/walterbialy" target="_blank" rel="noopener noreferrer">
+          Kontakt przez messengera <FontAwesomeIcon icon={faFacebookMessenger} />
+        </a>
       </StyledInfo>
     </StyledWrapper>
   </>
