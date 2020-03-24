@@ -21,7 +21,7 @@ export const useData = () => {
       setBehaviour(behaviour);
       setAbsences(absences);
       setExams(exams);
-      if (points[0]) {
+      if (Array.isArray(points[0])) {
         // script compatibility
         setPoints([...points[0], ...points[1]]);
       } else setPoints(points);
