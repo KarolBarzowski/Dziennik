@@ -21,7 +21,10 @@ export const useData = () => {
       setBehaviour(behaviour);
       setAbsences(absences);
       setExams(exams);
-      setPoints(points);
+      if (Array.isArray(points[0])) {
+        // script compatibility
+        setPoints([...points[0], ...points[1]]);
+      } else setPoints(points);
     } else setData(null);
   }, []);
 

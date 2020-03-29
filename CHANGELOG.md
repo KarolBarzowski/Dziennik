@@ -2,12 +2,22 @@
 
 Wszystkie zmiany w projekcie zostaną tutaj zapisane.
 
-## Unreleased
+## [1.4.1] - 2020-03-24
+
+### NAPRAWIONO
+
+- Kompatybilność skryptu.
+
+## [1.4.0] - 2020-03-24
 
 ### DODANO
 
 - **[ogólne]** Dodano automatyczną synchronizację.
 - **[ogólne]** Dodano Uwagi.
+
+### ZMIENIONO
+
+- **[Oceny]** Poprawiono wygląd strony.
 
 ### USUNIĘTO
 
