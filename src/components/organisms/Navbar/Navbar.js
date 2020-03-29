@@ -4,8 +4,9 @@ import styled from 'styled-components';
 import { NavLink } from 'react-router-dom';
 import Media from 'react-media';
 import Paragraph from 'components/atoms/Paragraph/Paragraph';
+import Tooltip from 'components/atoms/Tooltip/Tooltip';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCog } from '@fortawesome/free-solid-svg-icons';
+import { faCog, faSyncAlt } from '@fortawesome/free-solid-svg-icons';
 
 const StyledWrapper = styled.nav`
   position: fixed;
@@ -45,6 +46,7 @@ const StyledList = styled.ul`
   flex-flow: row nowrap;
   align-items: center;
   list-style: none;
+  margin-right: 1.5rem;
 `;
 
 const StyledListItem = styled.li`
@@ -58,6 +60,7 @@ const StyledListItem = styled.li`
 `;
 
 const StyledBtn = styled.button`
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -71,12 +74,12 @@ const StyledBtn = styled.button`
   cursor: pointer;
   transition: transform 0.15s ease-in-out, color ${({ theme }) => theme.themeTransition};
 
-  :hover {
-    transform: rotate(90deg);
+  :hover ${Tooltip} {
+    transform: translate(-50%, 1rem) scale(1);
   }
 
   @media screen and (min-width: 600px) {
-    margin-left: 5rem;
+    margin-left: 2.5rem;
     padding: 0;
   }
 `;
@@ -201,8 +204,16 @@ function Navbar({ handleModalToggle }) {
                   </StyledParagraph>
                 </StyledListItem>
               </StyledList>
+              <StyledBtn
+                as="a"
+                href="https://nasze.miasto.gdynia.pl/ed_miej/zest_start.pl?autoSync=true"
+              >
+                <FontAwesomeIcon icon={faSyncAlt} />
+                <Tooltip>Synchronizuj</Tooltip>
+              </StyledBtn>
               <StyledBtn type="button" onClick={() => handleModalToggle()}>
                 <FontAwesomeIcon icon={faCog} />
+                <Tooltip>Ustawienia</Tooltip>
               </StyledBtn>
             </StyledWrapper>
           )}

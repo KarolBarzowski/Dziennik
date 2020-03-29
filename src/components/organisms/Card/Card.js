@@ -267,7 +267,7 @@ function Card({
       )}
       {cardType === 'mini' && (
         <StyledMiniCard>
-          <Button as="a" href={link} target="_blank" rel="noopener noreferrer">
+          <Button as="a" href={link}>
             {ctaText} <FontAwesomeIcon icon={faExternalLinkAlt} fixedWidth />
           </Button>
         </StyledMiniCard>
