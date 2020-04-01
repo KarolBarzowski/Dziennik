@@ -547,11 +547,8 @@ function Modal({
               <StyledButton
                 as="a"
                 href="https://nasze.miasto.gdynia.pl/ed_miej/zest_start.pl?autoSync=true"
-                target="_blank"
-                rel="noreferrer noopener"
               >
                 Synchronizuj
-                <StyledIcon icon={faExternalLinkAlt} fixedWidth ml={0.5} />
               </StyledButton>
               <StyledSeparator mt={1.5} />
               <StyledOption>
@@ -797,7 +794,7 @@ function Modal({
           )}
           {currentPage === 'Wersja' && (
             <StyledPage>
-              <StyledParagraph regular>Aktualna wersja: 1.4.1</StyledParagraph>
+              <StyledParagraph regular>Aktualna wersja: 1.5.0</StyledParagraph>
               <StyledParagraph regular>Zalecana wersja skryptu: 2.3.0</StyledParagraph>
               <StyledButton
                 as="a"

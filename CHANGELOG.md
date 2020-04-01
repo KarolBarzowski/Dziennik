@@ -2,6 +2,13 @@
 
 Wszystkie zmiany w projekcie zostaną tutaj zapisane.
 
+## [1.5.0] - 2020-04-01
+
+### DODANO
+
+- **[Nawigacja]** Dodano przycisk synchronizacji.
+- **[ogólne]** Poprawki i ulepszenia aplikacji.
+
 ## [1.4.1] - 2020-03-24
 
 ### NAPRAWIONO
