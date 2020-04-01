@@ -5,8 +5,6 @@ import Paragraph from 'components/atoms/Paragraph/Paragraph';
 import Button from 'components/atoms/Button/Button';
 import Lesson from 'components/molecules/Lesson/Lesson';
 import { slideInDown } from 'functions/animations';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
 
 const DelayedAppear = keyframes`
   from {
@@ -267,8 +265,8 @@ function Card({
       )}
       {cardType === 'mini' && (
         <StyledMiniCard>
-          <Button as="a" href={link} target="_blank" rel="noopener noreferrer">
-            {ctaText} <FontAwesomeIcon icon={faExternalLinkAlt} fixedWidth />
+          <Button as="a" href={link}>
+            {ctaText}
           </Button>
         </StyledMiniCard>
       )}

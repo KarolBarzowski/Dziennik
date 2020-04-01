@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { withRouter } from 'react-router';
+import PropTypes from 'prop-types';
 import styled, { keyframes, css } from 'styled-components';
 import { useWindowWidth } from 'hooks/useWindowWidth';
 
@@ -35,7 +36,7 @@ const StyledAnimated = styled.span`
   animation: ${SlideInDown} 0.3s ease-in-out both;
 `;
 
-function DynamicHeader() {
+function DynamicHeader({ location }) {
   const headerRef = useRef();
   const width = useWindowWidth();
   const [visible, setVisible] = useState(false);
@@ -59,7 +60,7 @@ function DynamicHeader() {
 
   useEffect(() => {
     let currentPage;
-    switch (window.location.pathname) {
+    switch (location.pathname) {
       case '/':
         currentPage = 'Podsumowanie';
         break;
@@ -82,7 +83,7 @@ function DynamicHeader() {
         break;
     }
     setPage(currentPage);
-  }, [window.location.pathname]);
+  }, [location]);
 
   useEffect(() => {
     const headerWidth = headerRef.current.offsetWidth;
@@ -96,5 +97,9 @@ function DynamicHeader() {
     </StyledHeader>
   );
 }
+
+DynamicHeader.propTypes = {
+  location: PropTypes.objectOf(PropTypes.string).isRequired,
+};
 
 export default withRouter(DynamicHeader);
