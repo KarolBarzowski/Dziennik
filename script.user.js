@@ -1,10 +1,11 @@
 // ==UserScript==
 // @name         Pobieracz danych z e-dziennika
-// @version      2.3.0
-// @description  Pobiera dane z e-dziennika.
+// @version      2.3.1
+// @description  Skrypt synchronizuje e-dziennik szkolny z aplikacją.
 // @author       Karol Barzowski
 // @match        https://nasze.miasto.gdynia.pl/ed_miej/*
 // @match        https://edziennik.netlify.com/*
+// @match        https://edziennik.netlify.app/*
 // @exclude      https://nasze.miasto.gdynia.pl/ed_miej/login.pl*
 // @downloadURL  https://raw.githubusercontent.com/KarolBarzowski/Dziennik/master/script.user.js
 // @updateURL    https://raw.githubusercontent.com/KarolBarzowski/Dziennik/master/script.user.js
@@ -14,6 +15,7 @@
 // @grant        GM_getValue
 // ==/UserScript==
 
+const SCRIPT_VERSION = '2.3.1';
 const ACTUAL_ACTION = localStorage.getItem('actualAction');
 const SHOULD_START = localStorage.getItem('shouldStart');
 const ACTUAL_URL = window.location.href;
@@ -38,11 +40,14 @@ const URLS = {
     'https://nasze.miasto.gdynia.pl/ed_miej/zest_ed_uwagi_ucznia.pl?&f_g_start=0&iframe_name=zest&print_version=1&punkty_semestr=',
 };
 
-if (window.location.href.includes('https://edziennik.netlify.com/')) {
+if (
+  window.location.href.includes('https://edziennik.netlify.com/') ||
+  window.location.href.includes('https://edziennik.netlify.app/')
+) {
   const dataToExport = GM_getValue('data', null);
   const storageData = localStorage.getItem('data');
   const parsedStorageData = JSON.parse(storageData);
-  localStorage.setItem('script_version', '2.3.0');
+  localStorage.setItem('script_version', SCRIPT_VERSION);
   if (dataToExport !== null && storageData === null) {
     // after 1st sync
     localStorage.setItem('data', JSON.stringify(dataToExport));
@@ -66,7 +71,7 @@ const finish = () => {
   localStorage.removeItem('data');
   localStorage.removeItem('LOGIN');
 
-  window.location.href = 'https://edziennik.netlify.com';
+  window.location.href = 'https://edziennik.netlify.app';
 };
 
 const displayButtons = () => {

@@ -231,7 +231,7 @@ function Dashboard() {
   }, [pointsData]);
 
   useEffect(() => {
-    const ACTUAL_SCRIPT_VERSION = '2.3.0';
+    const ACTUAL_SCRIPT_VERSION = '2.3.1';
     const scriptVersion = window.localStorage.getItem('script_version');
     setScriptUpdate(scriptVersion !== ACTUAL_SCRIPT_VERSION);
   }, []);
