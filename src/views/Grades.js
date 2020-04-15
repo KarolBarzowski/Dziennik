@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled, { css } from 'styled-components';
 import { useData } from 'hooks/useData';
 import Section from 'components/atoms/Section/Section';
@@ -6,7 +6,9 @@ import Paragraph from 'components/atoms/Paragraph/Paragraph';
 import Switch from 'components/atoms/Switch/Switch';
 import Editor from 'components/molecules/Editor/Editor';
 import GradesTable from 'components/organisms/GradesTable/GradesTable';
+// import GradesRow from 'components/molecules/GradesRow/GradesRow';
 import { slideInDown } from 'functions/animations';
+import { getColor } from 'functions/functions';
 
 const StyledWrapper = styled.div`
   position: relative;
@@ -160,6 +162,135 @@ function Grades() {
   const { gradesData, behaviourData } = useData(null);
   const [isEditor, setIsEditor] = useState(false);
   const [semester, setSemester] = useState(window.localStorage.getItem('semester') || '1');
+  const [grades, setGrades] = useState(null);
+  const [avgEst, setAvgEst] = useState('');
+  const [avgFin, setAvgFin] = useState('');
+  const [gradesSteps] = useState(
+    JSON.parse(window.localStorage.getItem('settings_regulation')) || [
+      1.86,
+      2.86,
+      3.86,
+      4.86,
+      5.51,
+    ],
+  );
+
+  useEffect(() => {
+    if (gradesData) {
+      const results = [];
+      gradesData.forEach(({ name, grades: gradesList }) => {
+        const avgGrades = [];
+        const avgWeights = [];
+        const actualObj = {
+          name,
+          grades: [],
+        };
+        gradesList.forEach(
+          ({
+            semester: gradeSem,
+            isCounted,
+            grade,
+            weight,
+            category,
+            gradeDesc,
+            value,
+            date,
+            categoryDesc,
+          }) => {
+            if (gradeSem === semester) {
+              if (category === 'Ocena przewidywana') {
+                actualObj.est = value;
+                return;
+              }
+              if (category === 'Ocena za półrocze') {
+                actualObj.fin = value;
+                return;
+              }
+
+              const dateArray = date.split(' ');
+              const [day, month, year] = dateArray[0].split('/');
+              const [hour, minute, second] = dateArray[1].split(':');
+              const actualDate = new Date(
+                `20${year}`,
+                parseFloat(month) - 1,
+                parseFloat(day),
+                parseFloat(hour),
+                parseFloat(minute),
+                parseFloat(second),
+              );
+
+              const gradeObj = {
+                grade,
+                weight,
+                category,
+                categoryDesc,
+                desc: gradeDesc,
+                dateSyntax: date,
+                date: actualDate,
+                notCounted: !isCounted,
+              };
+
+              if (isCounted) {
+                gradeObj.color = getColor(category);
+                avgGrades.push(parseFloat(value) * parseFloat(weight));
+                avgWeights.push(parseFloat(weight));
+              } else gradeObj.color = 'textSecondary';
+
+              actualObj.grades.push(gradeObj);
+            }
+          },
+        );
+        const sortedGrades = actualObj.grades.sort((a, b) => b.date - a.date);
+        sortedGrades.reverse();
+
+        let nominator = 0;
+        let denominator = 0;
+        for (let i = 0; i < avgGrades.length; i += 1) {
+          nominator += avgGrades[i];
+          denominator += avgWeights[i];
+        }
+
+        const avg = (nominator / denominator).toFixed(2);
+        actualObj.avg = avg;
+
+        if (!actualObj.est) {
+          if (avg <= gradesSteps[0] - 0.01) actualObj.est = 1;
+          else if (avg >= gradesSteps[0] && avg <= gradesSteps[1] - 0.01) actualObj.est = 2;
+          else if (avg >= gradesSteps[1] && avg <= gradesSteps[2] - 0.01) actualObj.est = 3;
+          else if (avg >= gradesSteps[2] && avg <= gradesSteps[3] - 0.01) actualObj.est = 4;
+          else if (avg >= gradesSteps[3] && avg <= gradesSteps[4] - 0.01) actualObj.est = 5;
+          else if (avg >= gradesSteps[4]) actualObj.est = 6;
+        }
+
+        if (!actualObj.fin) {
+          if (avg <= gradesSteps[0] - 0.01) actualObj.fin = 1;
+          else if (avg >= gradesSteps[0] && avg <= gradesSteps[1] - 0.01) actualObj.fin = 2;
+          else if (avg >= gradesSteps[1] && avg <= gradesSteps[2] - 0.01) actualObj.fin = 3;
+          else if (avg >= gradesSteps[2] && avg <= gradesSteps[3] - 0.01) actualObj.fin = 4;
+          else if (avg >= gradesSteps[3] && avg <= gradesSteps[4] - 0.01) actualObj.fin = 5;
+          else if (avg >= gradesSteps[4]) actualObj.fin = 6;
+        }
+
+        results.push(actualObj);
+      });
+
+      let estSum = 0;
+      let finSum = 0;
+
+      results.forEach(({ est, fin }) => {
+        estSum += parseFloat(est);
+        finSum += parseFloat(fin);
+      });
+
+      const avgE = (estSum / results.length).toFixed(2);
+      const avgF = (finSum / results.length).toFixed(2);
+
+      setAvgEst(avgE);
+      setAvgFin(avgF);
+      setGrades(results);
+      console.log(results);
+    }
+  }, [gradesData, behaviourData, semester, gradesSteps]);
 
   const handleSemesterChange = sem => {
     setSemester(sem);
@@ -214,6 +345,10 @@ function Grades() {
         ) : (
           <GradesTable gradesData={gradesData} behaviourData={behaviourData} semester={semester} />
         )}
+        {/* {grades &&
+          grades.map(({ grades: gradesList, name }) => (
+            <GradesRow key={name} grades={gradesList} name={name} />
+          ))} */}
       </StyledWrapper>
     </Section>
   );

@@ -6,7 +6,7 @@ Wszystkie zmiany w projekcie zostaną tutaj zapisane.
 
 ### DODANO
 
-- **[Nawigacja]** Dodano przycisk synchronizacji.
+- **[Nawigacja]** Dodano przycisk synchronizacji w nawigacji.
 - **[ogólne]** Poprawki i ulepszenia aplikacji.
 
 ## [1.4.1] - 2020-03-24
