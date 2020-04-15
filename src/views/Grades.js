@@ -288,7 +288,7 @@ function Grades() {
       setAvgEst(avgE);
       setAvgFin(avgF);
       setGrades(results);
-      console.log(results);
+      // console.log(results);
     }
   }, [gradesData, behaviourData, semester, gradesSteps]);
 
