@@ -794,7 +794,7 @@ function Modal({
           )}
           {currentPage === 'Wersja' && (
             <StyledPage>
-              <StyledParagraph regular>Aktualna wersja: 1.5.0</StyledParagraph>
+              <StyledParagraph regular>Aktualna wersja: 1.5.1</StyledParagraph>
               <StyledParagraph regular>Zalecana wersja skryptu: 2.3.1</StyledParagraph>
               <StyledButton
                 as="a"

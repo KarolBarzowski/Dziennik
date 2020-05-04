@@ -144,10 +144,10 @@ function Card({
   active,
 }) {
   const [uniqueLessons, setUniqueLessons] = useState(null);
-  const [time, setTime] = useState('Ładowanie...');
+  const [time, setTime] = useState('Brak danych');
 
   useEffect(() => {
-    if (lessons !== 'Ładowanie...') {
+    if (lessons && lessons.length) {
       const createUniqueLessons = () => {
         const duplicates = {};
 

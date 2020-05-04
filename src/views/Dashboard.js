@@ -39,7 +39,7 @@ const StyledColor = styled.span`
 function Dashboard() {
   const { planData, userData, examsData, absencesData, gradesData, pointsData } = useData(null);
   const [dateSyntax, setDateSyntax] = useState('');
-  const [plan, setPlan] = useState('Ładowanie...');
+  const [plan, setPlan] = useState(null);
   const [nextDayExams, setNextDayExams] = useState([]);
   const [sync, setSync] = useState({ isSync: false });
   const [absences, setAbsences] = useState(0);

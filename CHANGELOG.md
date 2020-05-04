@@ -2,6 +2,12 @@
 
 Wszystkie zmiany w projekcie zostaną tutaj zapisane.
 
+## [1.5.1] - 2020-05-04
+
+### NAPRAWIONO
+
+- **[ogólne]** Naprawa crashowania.
+
 ## [1.5.0] - 2020-04-01
 
 ### DODANO
