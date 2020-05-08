@@ -35,13 +35,7 @@ const StyledCenter = styled.div`
 
 function Plan() {
   const { planData, examsData } = useData(null);
-  const [plan, setPlan] = useState([
-    'Ładowanie...',
-    'Ładowanie...',
-    'Ładowanie...',
-    'Ładowanie...',
-    'Ładowanie...',
-  ]);
+  const [plan, setPlan] = useState([null, null, null, null, null]);
   const [exams, setExams] = useState([]);
 
   const date = new Date();

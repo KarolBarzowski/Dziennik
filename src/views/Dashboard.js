@@ -39,7 +39,7 @@ const StyledColor = styled.span`
 function Dashboard() {
   const { planData, userData, examsData, absencesData, gradesData, pointsData } = useData(null);
   const [dateSyntax, setDateSyntax] = useState('');
-  const [plan, setPlan] = useState('Ładowanie...');
+  const [plan, setPlan] = useState(null);
   const [nextDayExams, setNextDayExams] = useState([]);
   const [sync, setSync] = useState({ isSync: false });
   const [absences, setAbsences] = useState(0);
@@ -231,7 +231,7 @@ function Dashboard() {
   }, [pointsData]);
 
   useEffect(() => {
-    const ACTUAL_SCRIPT_VERSION = '2.3.0';
+    const ACTUAL_SCRIPT_VERSION = '2.3.1';
     const scriptVersion = window.localStorage.getItem('script_version');
     setScriptUpdate(scriptVersion !== ACTUAL_SCRIPT_VERSION);
   }, []);
