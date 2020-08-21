@@ -15,7 +15,13 @@ import { faSyncAlt } from '@fortawesome/free-solid-svg-icons';
 import { ReactComponent as Laurels } from 'assets/laurels.svg';
 
 const StyledHeading = styled(Heading)`
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
+`;
+
+const StyledParagraph = styled(Paragraph)`
+  text-transform: uppercase;
+  letter-spacing: 0.1rem;
+  margin-bottom: 1rem;
 `;
 
 const StyledRow = styled.div`
@@ -59,21 +65,26 @@ const StyledNumber = styled(Paragraph)`
 
 const StyledBox = styled.div`
   position: relative;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: space-between;
   border-radius: 1.5rem;
   background-color: ${({ theme }) => theme.card};
   box-shadow: rgba(0, 0, 0, 0.16) 0 3px 6px;
   padding: 1.5rem;
   margin: 0 1.5rem 0 0;
   z-index: 1;
+  min-width: 15rem;
 
   :last-of-type {
     margin-right: 0;
   }
 
-  ${({ marginTop }) =>
-    marginTop &&
+  ${({ main }) =>
+    main &&
     css`
       margin-top: 1.5rem;
+      padding: 1.5rem 0;
     `}
 `;
 
@@ -93,6 +104,7 @@ const StyledSwitchBtn = styled.button`
   background-color: rgb(10, 132, 255);
   color: ${({ theme }) => theme.text};
   cursor: pointer;
+  outline: none;
 
   ::before {
     content: '';
@@ -101,14 +113,20 @@ const StyledSwitchBtn = styled.button`
     left: 0;
     height: 100%;
     width: 100%;
-    background-color: #ffffff;
+    background-color: #000000;
     opacity: 0;
-    transition: opacity 0.15s ease-in-out;
+    transition: opacity 0.05s ease-in-out;
   }
 
   :hover {
     ::before {
-      opacity: 0.08;
+      opacity: 0.04;
+    }
+  }
+
+  :focus {
+    ::before {
+      opacity: 0.12;
     }
   }
 `;
@@ -124,18 +142,73 @@ const StyledColumnTitle = styled(Paragraph)`
   letter-spacing: 0.2rem;
 `;
 
-const StyledSubjectRow = styled(StyledRow)`
-  
+const StyledInfo = styled(Paragraph)`
+  text-align: center;
+  font-size: 1.6rem;
+  margin: 1rem 0;
 `;
 
-const StyledSubjectTitle = styled(Paragraph)`
-  font-size: 1.6rem;
+const StyledEmoji = styled.span`
+  color: #ffffff;
 `;
+
+const monthsInYearInGenitive = [
+  'stycznia',
+  'lutego',
+  'marca',
+  'kwietnia',
+  'maja',
+  'czerwca',
+  'lipca',
+  'sierpnia',
+  'września',
+  'października',
+  'listopada',
+  'grudnia',
+];
 
 function NewGrades() {
   const [currentSemester, setCurrentSemester] = useState(
     window.localStorage.getItem('semester') || '1',
   );
+  const [lastSyncDate, setLastSyncDate] = useState(null);
+
+  const { userData, gradesData } = useData();
+
+  useEffect(() => {
+    if (userData) {
+      let fullDate = '';
+
+      const { lastSync } = userData;
+      const [date, time] = lastSync.split(' ');
+
+      let [, month, day] = date.split('-');
+      day = parseFloat(day);
+      month = parseFloat(month) - 1;
+
+      let [hour, minute] = time.split(':');
+      hour = parseFloat(hour);
+
+      const today = new Date();
+      const currentDay = today.getDate();
+      const currentMonth = today.getMonth();
+
+      let yesterday = new Date(today);
+      yesterday.setDate(today.getDate() - 1);
+      const yesterdayMonth = yesterday.getMonth();
+      yesterday = yesterday.getDate();
+
+      if (currentDay === day && currentMonth === month) {
+        fullDate = `Dzisiaj o ${hour}:${minute}`;
+      } else if (yesterday === day && yesterdayMonth === month) {
+        fullDate = `Wczoraj o ${hour}:${minute}`;
+      } else {
+        fullDate = `${day} ${monthsInYearInGenitive[month]} o ${hour}:${minute}`;
+      }
+
+      setLastSyncDate(fullDate);
+    }
+  }, [userData]);
 
   const handleSwitchSemester = () => {
     const semester = currentSemester === '1' ? '2' : '1';
@@ -159,28 +232,20 @@ function NewGrades() {
             </StyledRomanNumber>
           </StyledSwitchBtn>
         </StyledBox>
-        {/* <StyledBox>
-          <StyledHeading>
-            Semestr <StyledRomanNumber>{currentSemester === '1' ? 'I' : 'II'}</StyledRomanNumber>
-          </StyledHeading>
-          <StyledSwitchBtn type="button" onClick={handleSwitchSemester}>
-            Zmień
-          </StyledSwitchBtn>
-        </StyledBox> */}
         <StyledBox>
-          <StyledHeading>Ostatnia aktualizacja</StyledHeading>
-          <Heading>12.06.2020 16:30:04</Heading>
+          <StyledParagraph secondary>Ostatnia aktualizacja</StyledParagraph>
+          <Heading>{lastSyncDate}</Heading>
         </StyledBox>
         <StyledBox>
-          <StyledHeading>Śr. przewidywana</StyledHeading>
+          <StyledParagraph secondary>Średnia przewidywana</StyledParagraph>
           <StyledNumber>4.87</StyledNumber>
         </StyledBox>
         <StyledBox>
-          <StyledHeading>Śr. końcowa</StyledHeading>
+          <StyledParagraph secondary>Średnia końcowa</StyledParagraph>
           <StyledNumber>4.64</StyledNumber>
         </StyledBox>
       </StyledRow>
-      <StyledBox marginTop>
+      <StyledBox main>
         <StyledColumn>
           <StyledRow spacing="true" border>
             <StyledColumnTitle>Przedmiot</StyledColumnTitle>
@@ -189,20 +254,18 @@ function NewGrades() {
             <StyledColumnTitle>Przewidywana</StyledColumnTitle>
             <StyledColumnTitle>Końcowa</StyledColumnTitle>
           </StyledRow>
-          <StyledSubjectRow>
-            <StyledSubjectTitle>Bazy danych</StyledSubjectTitle>
-            <StyledSubjectTitle>1, 2, 3, 4, 5, 6</StyledSubjectTitle>
-            <StyledSubjectTitle>5.23</StyledSubjectTitle>
-            <StyledSubjectTitle>4</StyledSubjectTitle>
-            <StyledSubjectTitle>5</StyledSubjectTitle>
-          </StyledSubjectRow>
-          <StyledSubjectRow>
-            <StyledSubjectTitle>Informatyka</StyledSubjectTitle>
-            <StyledSubjectTitle>1, 2, 3, 4, 5, 6</StyledSubjectTitle>
-            <StyledSubjectTitle>5.23</StyledSubjectTitle>
-            <StyledSubjectTitle>4</StyledSubjectTitle>
-            <StyledSubjectTitle>5</StyledSubjectTitle>
-          </StyledSubjectRow>
+          {gradesData.length ? (
+            gradesData.map(({ name, grades }) => (
+              <GradesRow key={name} name={name} grades={grades} />
+            ))
+          ) : (
+            <StyledInfo secondary>
+              Brak ocen do wyświetlenia{' '}
+              <StyledEmoji role="img" aria-label="Sad">
+                🙁
+              </StyledEmoji>
+            </StyledInfo>
+          )}
         </StyledColumn>
       </StyledBox>
     </Section>

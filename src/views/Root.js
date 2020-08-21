@@ -59,8 +59,8 @@ function Root() {
               <UserTemplate>
                 <>
                   <Route exact path="/" component={Dashboard} />
-                  {/* <Route path="/oceny" component={NewGrades} /> */}
-                  <Route path="/oceny" component={Grades} />
+                  <Route path="/oceny" component={NewGrades} />
+                  {/* <Route path="/oceny" component={Grades} /> */}
                   <Route path="/plan" component={Plan} />
                   <Route path="/sprawdziany" component={Exams} />
                   <Route path="/frekwencja" component={Absences} />

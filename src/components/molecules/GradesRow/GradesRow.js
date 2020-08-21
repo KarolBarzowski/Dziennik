@@ -1,95 +1,114 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled, { css } from 'styled-components';
 import Paragraph from 'components/atoms/Paragraph/Paragraph';
+import Collapse from '@kunukn/react-collapse';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronUp } from '@fortawesome/free-solid-svg-icons';
 import { getCleanName } from 'functions/functions';
 
 const StyledWrapper = styled.div`
   display: flex;
-  flex-flow: row wrap;
-  align-items: center;
-  justify-content: flex-start;
-  min-height: 6.4rem;
-  padding: 0.8rem;
-  border-radius: 1rem;
-
-  :nth-of-type(even) {
-    background-color: ${({ theme }) => theme.modalHover};
-  }
-
-  :hover {
-    background-color: ${({ theme }) => theme.modalFocus};
-  }
-`;
-
-const StyledParagraph = styled(Paragraph)`
-  font-size: 1.6rem;
-  color: ${({ theme, color }) => (color ? theme[color] : theme.text)};
-`;
-
-const StyledRow = styled.div`
-  display: flex;
-  flex-flow: row wrap;
-  align-items: center;
-  height: 100%;
+  flex-flow: column nowrap;
   width: 100%;
 
-  :first-of-type {
-    width: 15%;
-  }
-
-  :nth-of-type(2) {
-    width: 30%;
-    /* flex-flow: row nowrap; */
-  }
-`;
-
-const StyledGradeWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 0.1rem;
-  height: 4rem;
-  width: 3.6rem;
-  border-radius: 0.5rem;
-  cursor: default;
+  /* :nth-of-type(odd) {
+    background-color: ${({ theme }) => theme.hover};
+  } */
 
   :hover {
-    background-color: ${({ theme }) => theme.modalFocus};
+    /* background-color: ${({ theme }) => theme.modalHover}; */
+    background-color: ${({ theme }) => theme.hover};
   }
 
-  ${({ highlight, color, theme }) =>
-    highlight &&
+  ${({ isOpen }) =>
+    isOpen &&
     css`
-      background-color: ${theme[color]};
-      text-shadow: #000000 0px 0px 4px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.16), 0 2px 4px rgba(0, 0, 0, 0.23);
     `}
 `;
 
-const StyledGrade = styled(StyledParagraph)`
-  font-size: 2.1rem;
-  font-family: 'Roboto';
+const StyledButtonMark = styled.span`
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  left: 1.5rem;
+  height: 3.4rem;
+  width: 3.4rem;
+  background-color: ${({ theme }) => theme.modalHover};
+  border-radius: 0.8rem;
+  transition: background-color 0.1s ease-in-out;
+
+  ${({ isOpen }) =>
+    isOpen &&
+    css`
+      background-color: ${({ theme }) => theme.blue};
+    `};
+`;
+
+const StyledIcon = styled(FontAwesomeIcon)`
+  transform: rotate(${({ isopen }) => (isopen ? '180deg' : '0deg')});
+  color: ${({ theme, isopen }) => (isopen ? theme.text : theme.textSecondary)};
+  font-size: 1.6rem;
+  transition: transform 0.2s ease-in-out, color 0.1s ease-in-out;
+`;
+
+const StyledHeader = styled.button`
+  position: relative;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: space-between;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 1.5rem 1.5rem 1.5rem 8.9rem;
+  min-height: 6.4rem;
+
+  ${({ isOpen }) =>
+    isOpen &&
+    css`
+      ::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: -1.5rem;
+        width: calc(100% + 3rem);
+        height: 0.1rem;
+        background-color: ${({ theme }) => theme.background};
+      }
+    `}
+`;
+
+const StyledCollapse = styled(Collapse)`
+  padding: 0 1.5rem;
+  transition: height 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+`;
+
+const StyledSpan = styled.span`
+  color: ${({ theme, color }) => (theme[color] ? theme[color] : theme.text)};
+  font-size: 1.6rem;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 500;
 `;
 
 function GradesRow({ name, grades }) {
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
   return (
-    <StyledWrapper>
-      <StyledRow>
-        <StyledParagraph color={getCleanName(name)}>{name}</StyledParagraph>
-      </StyledRow>
-      <StyledRow>
-        {grades.length ? (
-          grades.map(grade => (
-            <StyledGradeWrapper>
-              <StyledGrade color={grade.color}>{grade.grade}</StyledGrade>
-            </StyledGradeWrapper>
-          ))
-        ) : (
-          <StyledParagraph>Brak ocen</StyledParagraph>
-        )}
-        {/* <StyledGradeWrapper highlight color="green">
-          <StyledGrade>5</StyledGrade>
-        </StyledGradeWrapper> */}
-      </StyledRow>
+    <StyledWrapper isOpen={isCollapsed}>
+      <StyledHeader
+        type="button"
+        onClick={() => setIsCollapsed(prevState => !prevState)}
+        isOpen={isCollapsed}
+      >
+        <StyledButtonMark isOpen={isCollapsed}>
+          <StyledIcon icon={faChevronUp} fixedWidth isopen={isCollapsed ? 1 : 0} />
+        </StyledButtonMark>
+        <StyledSpan color={getCleanName(name)}>{name}</StyledSpan>
+      </StyledHeader>
+      <StyledCollapse isOpen={isCollapsed}>expandable content here</StyledCollapse>
     </StyledWrapper>
   );
 }

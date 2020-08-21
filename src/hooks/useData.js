@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 
 export const useData = () => {
   const [data, setData] = useState(JSON.parse(window.localStorage.getItem('data')));
-  const [gradesData, setGrades] = useState(null);
+  const [gradesData, setGrades] = useState([]);
   const [userData, setUser] = useState(null);
   const [planData, setPlan] = useState(null);
   const [behaviourData, setBehaviour] = useState(null);
@@ -30,7 +30,10 @@ export const useData = () => {
 
   useEffect(() => {
     if (userData) {
-      const actualTs = JSON.parse(window.localStorage.getItem('actualTs'));
+      let actualTs = window.localStorage.getItem('actualTs');
+      if (actualTs === 'undefined') actualTs = null;
+      else actualTs = JSON.parse(actualTs);
+
       const { timestamp } = userData;
       if (actualTs) {
         if (actualTs !== timestamp) {

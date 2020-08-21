@@ -222,7 +222,10 @@ function Exams() {
             ))
           ) : (
             <StyledInfo secondary>
-              Brak nadchodzących zadań <StyledEmoji>😎</StyledEmoji>
+              Brak nadchodzących zadań{' '}
+              <StyledEmoji role="img" aria-label="Sunglasses">
+                😎
+              </StyledEmoji>
             </StyledInfo>
           )}
         </StyledBox>

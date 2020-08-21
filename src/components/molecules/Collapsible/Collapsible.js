@@ -31,6 +31,7 @@ const StyledHeader = styled.div`
   align-items: center;
   padding: 1rem 1.5rem;
   cursor: pointer;
+
   ${StyledIcon} {
     transform: rotate(${({ isOpen }) => (isOpen ? '90deg' : '-90deg')});
   }
@@ -38,7 +39,7 @@ const StyledHeader = styled.div`
 
 const StyledCollapse = styled(Collapse)`
   padding: 0 1.5rem;
-  transition: height 0.25s ease-in-out 0.05s;
+  transition: height 0.28s cubic-bezier(0.4, 0, 0.2, 1);
 `;
 
 const StyledColor = styled.span`

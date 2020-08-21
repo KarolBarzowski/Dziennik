@@ -209,8 +209,6 @@ function Absences() {
         }
       });
 
-      console.log(absencesObj);
-
       const dataObj = {
         labels: [
           'Usprawiedliwione',
