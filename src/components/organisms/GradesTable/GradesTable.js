@@ -131,6 +131,10 @@ function GradesTable({ gradesData, behaviourData, semester }) {
             date,
             categoryDesc,
           }) => {
+            if (gradeSem === '') {
+              actualObj.fin = value;
+              return;
+            }
             if (gradeSem === semester) {
               if (category === 'Ocena przewidywana') {
                 actualObj.est = value;

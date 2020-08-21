@@ -20,6 +20,8 @@ import Points from 'views/Points';
 // import Login from 'views/Login';
 import GlobalStyle from 'theme/GlobalStyle';
 
+import NewGrades from 'views/NewGrades';
+
 ReactGA.initialize(process.env.REACT_APP_TRACKING_ID);
 
 const history = createBrowserHistory();
@@ -68,6 +70,7 @@ function Root() {
               >
                 <>
                   <Route exact path="/" component={Dashboard} />
+                  {/* <Route path="/oceny" component={NewGrades} /> */}
                   <Route path="/oceny" component={Grades} />
                   <Route path="/plan" component={Plan} />
                   <Route path="/sprawdziany" component={Exams} />

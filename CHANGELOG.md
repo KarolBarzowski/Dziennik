@@ -2,6 +2,19 @@
 
 Wszystkie zmiany w projekcie zostaną tutaj zapisane.
 
+## UNRELEASED
+
+### DODANO
+
+- **[Frekwencja]** Dodano numer z ilością nieobecności przy każdej z list.
+- **[Frekwencja]** Dodano grupowanie nieobecności według miesięcy.
+- **[Frekwencja]** Dodano kolorowe nazwy przedmiotów.
+
+### ZMIENIONO
+
+- **[Frekwencja]** Zmiana stylistyki podsumowania.
+- **[Frekwencja]** Zmieniono sposób wyświetlania daty, godziny i statusu nieobecności.
+
 ## [1.5.1] - 2020-05-04
 
 ### NAPRAWIONO

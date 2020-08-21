@@ -3,6 +3,7 @@ import { createGlobalStyle } from 'styled-components';
 const GlobalStyle = createGlobalStyle`
   @import url('https://fonts.googleapis.com/css?family=Montserrat:400,500,600,700&display=swap');
   @import url('https://fonts.googleapis.com/css?family=Roboto:400,500&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@500,600&display=swap');
 
   *, *::before, *::after {
         box-sizing: border-box;

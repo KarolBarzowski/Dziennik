@@ -6,7 +6,7 @@ import Paragraph from 'components/atoms/Paragraph/Paragraph';
 import Switch from 'components/atoms/Switch/Switch';
 import Editor from 'components/molecules/Editor/Editor';
 import GradesTable from 'components/organisms/GradesTable/GradesTable';
-// import GradesRow from 'components/molecules/GradesRow/GradesRow';
+import GradesRow from 'components/molecules/GradesRow/GradesRow';
 import { slideInDown } from 'functions/animations';
 import { getColor } from 'functions/functions';
 
@@ -197,6 +197,10 @@ function Grades() {
             date,
             categoryDesc,
           }) => {
+            if (gradeSem === '') {
+              actualObj.fin = value;
+              return;
+            }
             if (gradeSem === semester) {
               if (category === 'Ocena przewidywana') {
                 actualObj.est = value;

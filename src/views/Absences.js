@@ -8,7 +8,7 @@ import Paragraph from 'components/atoms/Paragraph/Paragraph';
 import Collapsible from 'components/molecules/Collapsible/Collapsible';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExclamation, faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
-import { getColor, getStatus } from 'functions/functions';
+import { getColor, getStatus, getCleanName } from 'functions/functions';
 import { slideInDown } from 'functions/animations';
 
 const StyledWrapper = styled.div`
@@ -32,6 +32,7 @@ const StyledBox = styled.div`
 const StyledRow = styled.div`
   display: flex;
   justify-content: space-between;
+  width: 100%;
 `;
 
 const StyledHeader = styled(StyledRow)`
@@ -41,10 +42,11 @@ const StyledHeader = styled(StyledRow)`
 
 const StyledParagraph = styled(Paragraph)`
   font-size: ${({ theme }) => theme.m};
-  margin-top: 0.6rem;
 `;
 
 const StyledItemRow = styled(StyledRow)`
+  padding: 0.5rem 0;
+
   :nth-of-type(even) {
     background-color: ${({ theme }) => theme.modalHover};
   }
@@ -59,11 +61,14 @@ const StyledItemRow = styled(StyledRow)`
 `;
 
 const StyledItem = styled(StyledParagraph)`
-  width: 100%;
+  width: 50%;
   color: ${({ theme, color }) => (color ? theme[color] : theme.text)};
-  :nth-of-type(1) {
-    max-width: 14rem;
-  }
+`;
+
+const StyledItemsWrapper = styled.div`
+  display: flex;
+  flex-flow: row nowrap;
+  width: 50%;
 `;
 
 const StyledWarnIcon = styled(FontAwesomeIcon)`
@@ -72,7 +77,7 @@ const StyledWarnIcon = styled(FontAwesomeIcon)`
 `;
 
 const StyledColor = styled.span`
-  color: ${({ theme, color }) => theme[color]};
+  color: ${({ theme, color }) => (theme[color] ? theme[color] : theme.text)};
 `;
 
 const StyledLink = styled.a`
@@ -95,35 +100,55 @@ const StyledContent = styled.div`
   flex-flow: column-reverse nowrap;
 `;
 
+const StyledList = styled.ul`
+  margin-top: 1.5rem;
+  list-style-type: none;
+`;
+
+const StyledSection = styled.div`
+  margin: 1.5rem 0 0;
+`;
+
+const StyledSectionTitle = styled(Paragraph)`
+  font-size: 1.6rem;
+`;
+
+const daysInWeek = ['Niedziela', 'Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota'];
+const monthsInYearInGenitive = [
+  'stycznia',
+  'lutego',
+  'marca',
+  'kwietnia',
+  'maja',
+  'czerwca',
+  'lipca',
+  'sierpnia',
+  'września',
+  'października',
+  'listopada',
+  'grudnia',
+];
+const monthsInYear = [
+  'Styczeń',
+  'Luty',
+  'Marzec',
+  'Kwiecień',
+  'Maj',
+  'Czerwiec',
+  'Lipiec',
+  'Sierpień',
+  'Wrzesień',
+  'Październik',
+  'Listopad',
+  'Grudzień',
+];
+
 function Absences() {
   const { absencesData } = useData(null);
   const [data, setData] = useState({ labels: [], datasets: [] });
   const [frequency, setFrequency] = useState(null);
   const [absences, setAbsences] = useState(null);
-
-  const daysInWeek = [
-    'Niedziela',
-    'Poniedziałek',
-    'Wtorek',
-    'Środa',
-    'Czwartek',
-    'Piątek',
-    'Sobota',
-  ];
-  const monthsInYear = [
-    'stycznia',
-    'lutego',
-    'marca',
-    'kwietnia',
-    'maja',
-    'czerwca',
-    'lipca',
-    'sierpnia',
-    'września',
-    'października',
-    'listopada',
-    'grudnia',
-  ];
+  const [lessonAbsences, setLessonAbsences] = useState(null);
 
   useEffect(() => {
     if (absencesData) {
@@ -135,6 +160,7 @@ function Absences() {
       };
 
       const absencesObj = {};
+      const lessonsAbsences = {};
 
       absencesData.forEach(({ name, date, hours, status }) => {
         const item = {
@@ -145,22 +171,45 @@ function Absences() {
         };
 
         const [day, month, year] = date.split('/');
-        const dateSyntax = `${parseFloat(day)} ${monthsInYear[month - 1]} 20${year}`;
+        const dateSyntax = `${parseFloat(day)} ${monthsInYearInGenitive[month - 1]} 20${year}`;
         const actualDate = new Date(`20${year}`, month - 1, parseFloat(day));
         const dayName = daysInWeek[actualDate.getDay()];
+        const monthName = monthsInYear[parseFloat(month - 1)];
 
         absencesSorted[status].push({ status });
-        if (absencesObj[date]) {
-          absencesObj[date].lessons.push(item);
-          absencesObj[date].types.push(status);
+
+        if (absencesObj[monthName]) {
+          if (absencesObj[monthName][date]) {
+            // add items to date object
+            absencesObj[monthName][date].lessons.push(item);
+            absencesObj[monthName][date].types.push(status);
+          } else {
+            // create date object
+            absencesObj[monthName][date] = {
+              date: `${dateSyntax} (${dayName})`,
+              types: [status],
+              lessons: [item],
+            };
+          }
         } else {
-          absencesObj[date] = {
-            date: `${dateSyntax} (${dayName})`,
-            types: [status],
-            lessons: [item],
+          // create monthName object
+          absencesObj[monthName] = {
+            [date]: {
+              date: `${dateSyntax} (${dayName})`,
+              types: [status],
+              lessons: [item],
+            },
           };
         }
+
+        if (lessonsAbsences[name]) {
+          lessonsAbsences[name].push({ ...item, date: `${dateSyntax} (${dayName})` });
+        } else {
+          lessonsAbsences[name] = [{ ...item, date: `${dateSyntax} (${dayName})` }];
+        }
       });
+
+      console.log(absencesObj);
 
       const dataObj = {
         labels: [
@@ -186,6 +235,8 @@ function Absences() {
           },
         ],
       };
+
+      setLessonAbsences(lessonsAbsences);
       setAbsences(absencesObj);
       setFrequency(absencesSorted);
       setData(dataObj);
@@ -198,44 +249,57 @@ function Absences() {
       <StyledWrapper>
         <StyledRow>
           <StyledBox>
-            <Heading>Frekwencja - podsumowanie</Heading>
+            <Heading>Podsumowanie</Heading>
             {frequency && (
               <>
-                {frequency.unexcused.length !== 0 && (
+                {frequency.unexcused.length !== 0 ? (
                   <StyledParagraph>
                     <StyledWarnIcon icon={faExclamation} />
                     Masz nieusprawiedliwione nieobecności:{' '}
                     <StyledColor color="red">{frequency.unexcused.length}</StyledColor>{' '}
                     <StyledLink
-                      href="https://nasze.miasto.gdynia.pl/ed_miej/login.pl"
+                      href="https://nasze.miasto.gdynia.pl/ed_miej/display.pl?form=ed_nieobecnosci_ucznia"
                       target="_blank"
                       rel="noopener noreferrer"
                     >
                       Usprawiedliwienie <FontAwesomeIcon icon={faExternalLinkAlt} />
                     </StyledLink>
                   </StyledParagraph>
-                )}
-                <StyledParagraph>
-                  Łączna liczba nieobecności: {absencesData ? absencesData.length : 'Ładowanie...'}
-                </StyledParagraph>
-                <StyledParagraph>
-                  Łączna liczba godzin <StyledColor color="green">usprawiedliwionych</StyledColor>:{' '}
-                  {frequency ? frequency.excused.length : 'Ładowanie...'}
-                </StyledParagraph>
-                <StyledParagraph>
-                  Łączna liczba godzin <StyledColor color="red">nieusprawiedliwionych</StyledColor>:{' '}
-                  {frequency ? frequency.unexcused.length : 'Ładowanie...'}
-                </StyledParagraph>
-                <StyledParagraph>
-                  Łączna liczba godzin{' '}
-                  <StyledColor color="blue">wnioskowanych do usprawiedliwienia</StyledColor>:{' '}
-                  {frequency ? frequency.pending.length : 'Ładowanie...'}
-                </StyledParagraph>
-                <StyledParagraph>
-                  Łączna liczba godzin{' '}
-                  <StyledColor color="teal">nieliczonych do frekwencji</StyledColor> :{' '}
-                  {frequency ? frequency.notCounted.length : 'Ładowanie...'}
-                </StyledParagraph>
+                ) : null}
+                {/* <StyledParagraph>Łącznie:</StyledParagraph> */}
+                <StyledList>
+                  <li>
+                    <StyledParagraph>
+                      &bull; Nieobecności: {absencesData ? absencesData.length : 'Brak danych'}
+                    </StyledParagraph>
+                  </li>
+                  <li>
+                    <StyledParagraph>
+                      &bull; Godziny <StyledColor color="green">usprawiedliwione</StyledColor>:{' '}
+                      {frequency ? frequency.excused.length : 'Brak danych'}
+                    </StyledParagraph>
+                  </li>
+                  <li>
+                    <StyledParagraph>
+                      &bull; Godziny <StyledColor color="red">nieusprawiedliwione</StyledColor>:{' '}
+                      {frequency ? frequency.unexcused.length : 'Brak danych'}
+                    </StyledParagraph>
+                  </li>
+                  <li>
+                    <StyledParagraph>
+                      &bull; Godziny{' '}
+                      <StyledColor color="blue">wnioskowane do usprawiedliwienia</StyledColor>:{' '}
+                      {frequency ? frequency.pending.length : 'Brak danych'}
+                    </StyledParagraph>
+                  </li>
+                  <li>
+                    <StyledParagraph>
+                      &bull; Godziny{' '}
+                      <StyledColor color="teal">nieliczone do frekwencji</StyledColor> :{' '}
+                      {frequency ? frequency.notCounted.length : 'Brak danych'}
+                    </StyledParagraph>
+                  </li>
+                </StyledList>
               </>
             )}
           </StyledBox>
@@ -254,28 +318,68 @@ function Absences() {
           </StyledBox>
         </StyledRow>
         {absencesData && (
-          <StyledBox>
-            <StyledHeader>
-              <Heading>Nieobecności</Heading>
-              <Heading>{absencesData.length}</Heading>
-            </StyledHeader>
-            <StyledContent>
-              {absences &&
-                Object.keys(absences).map(key => (
-                  <Collapsible key={key} title={absences[key].date} info={absences[key].types}>
-                    <>
-                      {absences[key].lessons.map(({ name, hours, status, statusColor }) => (
-                        <StyledItemRow key={hours}>
-                          <StyledItem>{hours}</StyledItem>
-                          <StyledItem>{name}</StyledItem>
-                          <StyledItem color={statusColor}>{status}</StyledItem>
-                        </StyledItemRow>
-                      ))}
-                    </>
-                  </Collapsible>
-                ))}
-            </StyledContent>
-          </StyledBox>
+          <>
+            <StyledBox>
+              <StyledHeader>
+                <Heading>Nieobecności z poszczególnych przedmiotów</Heading>
+              </StyledHeader>
+              <StyledContent>
+                {lessonAbsences &&
+                  Object.keys(lessonAbsences).map(key => (
+                    <Collapsible key={key} title={key} count={lessonAbsences[key].length}>
+                      <>
+                        {lessonAbsences[key].map(({ date, hours, status, statusColor }, i) => (
+                          <StyledItemRow key={i.toString()}>
+                            <StyledItemsWrapper>
+                              <StyledItem>{date}</StyledItem>
+                              <StyledItem>{hours}</StyledItem>
+                            </StyledItemsWrapper>
+                            <StyledItem color={statusColor}>{status}</StyledItem>
+                          </StyledItemRow>
+                        ))}
+                      </>
+                    </Collapsible>
+                  ))}
+              </StyledContent>
+            </StyledBox>
+            <StyledBox>
+              <StyledHeader>
+                <Heading>Wszystkie nieobecności</Heading>
+                <Heading>{absencesData.length}</Heading>
+              </StyledHeader>
+              <StyledContent>
+                {absences
+                  ? Object.keys(absences).map(monthName => (
+                      <StyledSection key={monthName}>
+                        <StyledSectionTitle secondary>{monthName}</StyledSectionTitle>
+                        {Object.keys(absences[monthName]).map(key => (
+                          <Collapsible
+                            key={key}
+                            title={absences[monthName][key].date}
+                            info={absences[monthName][key].types}
+                            count={absences[monthName][key].lessons.length}
+                          >
+                            <>
+                              {absences[monthName][key].lessons.map(
+                                ({ name, hours, status, statusColor }) => (
+                                  <StyledItemRow key={hours}>
+                                    <StyledItemsWrapper>
+                                      <StyledItem>{hours}</StyledItem>
+                                      <StyledItem color={getCleanName(name)}>{name}</StyledItem>
+                                    </StyledItemsWrapper>
+                                    <StyledItem color={statusColor}>{status}</StyledItem>
+                                  </StyledItemRow>
+                                ),
+                              )}
+                            </>
+                          </Collapsible>
+                        ))}
+                      </StyledSection>
+                    ))
+                  : null}
+              </StyledContent>
+            </StyledBox>
+          </>
         )}
       </StyledWrapper>
     </Section>

@@ -248,19 +248,24 @@ function Card({
       {children}
       {cardType === 'plan' && (
         <StyledContent>
-          <StyledParagraph>{time}</StyledParagraph>
-          {uniqueLessons &&
-            uniqueLessons.map(({ name, hours, teacher, room, multiple, warn }) => (
-              <Lesson
-                key={name}
-                hours={hours}
-                name={name}
-                room={room}
-                teacher={teacher}
-                multiple={multiple}
-                warn={warn}
-              />
-            ))}
+          {uniqueLessons ? (
+            <>
+              <StyledParagraph>{time}</StyledParagraph>
+              {uniqueLessons.map(({ name, hours, teacher, room, multiple, warn }) => (
+                <Lesson
+                  key={name}
+                  hours={hours}
+                  name={name}
+                  room={room}
+                  teacher={teacher}
+                  multiple={multiple}
+                  warn={warn}
+                />
+              ))}
+            </>
+          ) : (
+            <StyledDescription secondary>Brak danych</StyledDescription>
+          )}
         </StyledContent>
       )}
       {cardType === 'mini' && (
