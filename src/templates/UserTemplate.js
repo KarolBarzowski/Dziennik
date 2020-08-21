@@ -15,15 +15,7 @@ const StyledTopbar = styled.div`
   transition: background-color ${({ theme }) => theme.themeTransition};
 `;
 
-function UserTemplate({
-  children,
-  toggleTheme,
-  isAutomatic,
-  isCustom,
-  setOptions,
-  schedule,
-  theme,
-}) {
+function UserTemplate({ children }) {
   const [isModalOpen, setModalOpen] = useState(false);
 
   const handleModalToggle = () => setModalOpen(!isModalOpen);
@@ -34,16 +26,7 @@ function UserTemplate({
         <DynamicHeader />
         <Navbar handleModalToggle={handleModalToggle} />
       </StyledTopbar>
-      <Modal
-        isVisible={isModalOpen}
-        handleModalToggle={handleModalToggle}
-        toggleTheme={toggleTheme}
-        theme={theme}
-        isAutomatic={isAutomatic}
-        isCustom={isCustom}
-        setOptions={setOptions}
-        schedule={schedule}
-      />
+      <Modal isVisible={isModalOpen} handleModalToggle={handleModalToggle} />
       {children}
     </>
   );
@@ -51,12 +34,6 @@ function UserTemplate({
 
 UserTemplate.propTypes = {
   children: PropTypes.element.isRequired,
-  theme: PropTypes.string.isRequired,
-  toggleTheme: PropTypes.func.isRequired,
-  isAutomatic: PropTypes.string.isRequired,
-  isCustom: PropTypes.string.isRequired,
-  setOptions: PropTypes.func.isRequired,
-  schedule: PropTypes.objectOf(PropTypes.string).isRequired,
 };
 
 export default UserTemplate;

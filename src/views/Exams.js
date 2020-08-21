@@ -39,8 +39,7 @@ const StyledRow = styled(Paragraph)`
 
 const StyledItem = styled.span`
   width: 100%;
-  ${({ color, theme }) =>
-    theme[color] !== undefined ? `color: ${theme[color]}` : `color: ${theme.text}`};
+  ${({ color, theme }) => (theme[color] ? `color: ${theme[color]}` : `color: ${theme.text}`)};
 
   :first-of-type {
     min-width: 15rem;
@@ -54,14 +53,12 @@ const StyledItem = styled.span`
 
 const StyledName = styled(StyledItem)`
   ${({ color, theme }) =>
-    theme[color] !== undefined && theme.name === 'light'
+    theme[color]
       ? css`
-          border-left: 0.5rem solid ${theme[color]};
-          padding: 0.2rem 0 0.2rem 0.4rem;
-          color: ${theme.text};
+          color: ${theme[color]};
         `
       : css`
-          color: ${theme[color]};
+          color: ${theme.text};
         `}
 `;
 
@@ -73,6 +70,16 @@ const StyledHeading = styled(Heading)`
   padding-bottom: 0.5rem;
   margin-bottom: 1.5rem;
   border-bottom: 0.1rem solid ${({ theme }) => theme.border};
+`;
+
+const StyledInfo = styled(Paragraph)`
+  text-align: center;
+  font-size: 1.6rem;
+  margin: 1rem 0;
+`;
+
+const StyledEmoji = styled.span`
+  color: #ffffff;
 `;
 
 function Exams() {
@@ -204,7 +211,7 @@ function Exams() {
             <span>Nadchodzące</span>
             <span>{upcoming && upcoming.length}</span>
           </StyledHeading>
-          {upcoming &&
+          {upcoming ? (
             upcoming.map(({ name, dateSyntax, desc, category, color, nameColor }) => (
               <StyledRow key={desc}>
                 <StyledItem>{dateSyntax}</StyledItem>
@@ -212,7 +219,12 @@ function Exams() {
                 <StyledName color={nameColor}>{name}</StyledName>
                 <StyledItem>{desc}</StyledItem>
               </StyledRow>
-            ))}
+            ))
+          ) : (
+            <StyledInfo secondary>
+              Brak nadchodzących zadań <StyledEmoji>😎</StyledEmoji>
+            </StyledInfo>
+          )}
         </StyledBox>
         <StyledBox>
           <StyledHeading>

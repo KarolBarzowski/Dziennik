@@ -4,9 +4,7 @@ import { createBrowserHistory } from 'history';
 import { Router, Switch, Route } from 'react-router-dom';
 // import firebase from 'firebase/config';
 import { SnackbarProvider } from 'notistack';
-import { useDarkMode } from 'hooks/useDarkMode';
 import { useData } from 'hooks/useData';
-import { useWeather } from 'hooks/useWeather';
 // import { isMobile } from 'react-device-detect';
 import MainTemplate from 'templates/MainTemplate';
 import UserTemplate from 'templates/UserTemplate';
@@ -33,8 +31,6 @@ history.listen(location => {
 
 function Root() {
   const { data } = useData();
-  const weather = useWeather();
-  const [theme, toggleTheme, isAutomatic, isCustom, setOptions, schedule] = useDarkMode(weather);
   const [isUser, setIsUser] = useState(false);
 
   // useEffect(() => {
@@ -56,18 +52,11 @@ function Root() {
       <GlobalStyle />
       <SnackbarProvider>
         <Router history={history}>
-          <MainTemplate theme={theme} isUser={isUser}>
+          <MainTemplate isUser={isUser}>
             <Switch>
               {/* {isMobile && !isUser ? <Login /> : null} */}
               {/* <Route path="/login" component={Login} /> */}
-              <UserTemplate
-                theme={theme}
-                toggleTheme={toggleTheme}
-                isAutomatic={isAutomatic}
-                isCustom={isCustom}
-                setOptions={setOptions}
-                schedule={schedule}
-              >
+              <UserTemplate>
                 <>
                   <Route exact path="/" component={Dashboard} />
                   {/* <Route path="/oceny" component={NewGrades} /> */}

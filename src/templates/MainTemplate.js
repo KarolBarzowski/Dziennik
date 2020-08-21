@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import { ThemeProvider } from 'styled-components';
 import { useSnackbar } from 'notistack';
 import GlobalStyle from 'theme/GlobalStyle';
-import { theme as themeTemplate } from 'theme/mainTheme';
+import { theme } from 'theme/mainTheme';
 
-function MainTemplate({ children, theme, isUser }) {
+function MainTemplate({ children, isUser }) {
   const [isUpdate] = useState(JSON.parse(window.localStorage.getItem('isUpdate')));
   const { enqueueSnackbar } = useSnackbar();
 
@@ -23,7 +23,7 @@ function MainTemplate({ children, theme, isUser }) {
   }, [isUser, enqueueSnackbar]);
 
   return (
-    <ThemeProvider theme={themeTemplate[theme]}>
+    <ThemeProvider theme={theme}>
       <GlobalStyle />
       {children}
     </ThemeProvider>
@@ -32,7 +32,6 @@ function MainTemplate({ children, theme, isUser }) {
 
 MainTemplate.propTypes = {
   children: PropTypes.element.isRequired,
-  theme: PropTypes.string.isRequired,
   isUser: PropTypes.bool,
 };
 

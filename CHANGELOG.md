@@ -15,6 +15,10 @@ Wszystkie zmiany w projekcie zostaną tutaj zapisane.
 - **[Frekwencja]** Zmiana stylistyki podsumowania.
 - **[Frekwencja]** Zmieniono sposób wyświetlania daty, godziny i statusu nieobecności.
 
+### USUNIĘTO
+
+- **[ogólnie]** Usunięto jasny motyw aplikacji.
+
 ## [1.5.1] - 2020-05-04
 
 ### NAPRAWIONO

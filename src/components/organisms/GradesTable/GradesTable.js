@@ -30,7 +30,7 @@ const StyledHeadItem = styled(Paragraph)`
 
 const StyledParagraph = styled(StyledHeadItem)`
   font-size: ${({ theme }) => theme.m};
-  color: ${({ theme, color }) => (color ? theme[color] : theme.text)};
+  color: ${({ theme, color }) => (theme[color] ? theme[color] : theme.text)};
   cursor: default;
 `;
 

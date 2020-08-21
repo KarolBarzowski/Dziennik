@@ -144,7 +144,7 @@ const StyledIndicator = styled.span`
   left: 0;
   height: 4.8rem;
   width: 11.5rem;
-  background-color: ${({ theme }) => (theme.name === 'dark' ? '#ffffff' : 'rgb(44, 44, 46)')};
+  background-color: ${({ theme }) => theme.text};
   border-radius: 5rem;
   transition: transform 0.2s ease-in-out;
 

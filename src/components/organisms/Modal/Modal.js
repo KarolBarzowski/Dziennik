@@ -5,15 +5,11 @@ import { useData } from 'hooks/useData';
 import { useOutsideClick } from 'hooks/useOutsideClick';
 import Paragraph from 'components/atoms/Paragraph/Paragraph';
 import Heading from 'components/atoms/Heading/Heading';
-import Switch from 'components/atoms/Switch/Switch';
-import Radio from 'components/atoms/Radio/Radio';
-import TimePicker from 'components/atoms/TimePicker/TimePicker';
 import Collapsible from 'components/molecules/Collapsible/Collapsible';
 // import LoginForm from 'components/molecules/LoginForm/LoginForm';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faSyncAlt,
-  faPalette,
   faCogs,
   faTimes,
   faExternalLinkAlt,
@@ -159,6 +155,7 @@ const StyledPage = styled.div`
   height: 90%;
   width: 100%;
   overflow-y: scroll;
+
   @media screen and (min-width: 600px) {
     overflow-y: auto;
   }
@@ -190,116 +187,6 @@ const StyledButton = styled.button`
   }
 `;
 
-const StyledPreviewsContainer = styled.div`
-  display: flex;
-  margin-bottom: 2.5rem;
-`;
-
-const StyledCheckmark = styled.span`
-  height: 2rem;
-  width: 2rem;
-  background-color: transparent;
-  border-radius: 50%;
-  border: 1px solid silver;
-  margin-top: 0.5rem;
-  transition: background-color 0.15s ease-in-out 0.05s;
-
-  ::after {
-    content: '';
-    position: absolute;
-    display: none;
-    left: 50%;
-    bottom: 0.3rem;
-    width: 0.6rem;
-    height: 1.2rem;
-    border: solid ${({ theme }) => theme.checkmark};
-    border-width: 0 1.5px 1.5px 0;
-    transform: rotate(45deg) translateX(-50%);
-    transition: border-color 0.15s ease-in-out 0.05s;
-  }
-`;
-
-const StyledCheckbox = styled.input`
-  position: absolute;
-  opacity: 0;
-  cursor: pointer;
-
-  :checked ~ ${StyledCheckmark} {
-    background-color: ${({ theme }) => theme.blue};
-    border-color: ${({ theme }) => theme.blue};
-  }
-
-  :checked ~ ${StyledCheckmark}::after {
-    display: block;
-  }
-`;
-
-const StyledPreviewWrapper = styled.label`
-  position: relative;
-  display: flex;
-  flex-flow: column nowrap;
-  align-items: center;
-  cursor: pointer;
-  :last-child {
-    margin-left: 1.5rem;
-  }
-
-  :hover ${StyledCheckbox}:not(:checked) ~ ${StyledCheckmark} {
-    background-color: ${({ theme }) => theme.modalHover};
-  }
-`;
-
-const StyledPreview = styled.div`
-  position: relative;
-  height: 5.5rem;
-  width: 8.9rem;
-  background-color: ${({ theme, dark }) =>
-    dark ? theme.themePreviewDark : theme.themePreviewLight};
-  margin-bottom: 0.5rem;
-  border-radius: 0.4rem;
-  border: 1px solid ${({ theme, dark }) => (dark ? theme.themePreviewDark : theme.gray5)};
-`;
-
-const StyledPreviewNav = styled.div`
-  position: absolute;
-  top: 0.3rem;
-  right: 0.4rem;
-  height: 0.6rem;
-  width: 60%;
-  background-color: ${({ theme, dark }) => (dark ? theme.dp08 : theme.gray5)};
-  border-radius: 5rem;
-`;
-
-const StyledPreviewCard = styled.div`
-  position: absolute;
-  top: 1.4rem;
-  left: 50%;
-  transform: translateX(-50%);
-  height: 3.4rem;
-  width: 2.4rem;
-  background-color: ${({ theme, dark }) => (dark ? theme.dp08 : theme.gray5)};
-  border-radius: 0.4rem;
-
-  ::before,
-  ::after {
-    content: '';
-    position: absolute;
-    width: 100%;
-    background-color: ${({ theme, dark }) => (dark ? theme.dp08 : theme.gray5)};
-    border-radius: 0.4rem;
-  }
-
-  ::before {
-    right: 2.8rem;
-    height: 60%;
-  }
-
-  ::after {
-    left: 2.8rem;
-    height: 80%;
-  }
-`;
-
 const StyledOption = styled.div`
   display: flex;
   justify-content: space-between;
@@ -309,21 +196,8 @@ const StyledOption = styled.div`
   }
 `;
 
-const StyledOptionsWrapper = styled.div`
-  min-width: 25rem;
-`;
-
 const StyledSeparator = styled.div`
   margin: ${({ mt = 0, mr = 0, mb = 0, ml = 0 }) => `${mt}rem ${mr}rem ${mb}rem ${ml}rem`};
-`;
-
-const StyledSlideAnimation = styled.div`
-  opacity: ${({ active }) => (active ? 1 : 0)};
-  transform: ${({ active }) => (active ? 'translateY(0)' : 'translateY(-1.5rem)')};
-  visibility: ${({ active }) => (active ? 'visible' : 'hidden')};
-  transition: opacity ${({ active }) => (active ? '.15s' : '.25s')} ease-in-out 0.05s,
-    transform ${({ active }) => (active ? '.15s' : '.25s')} ease-in-out 0.05s,
-    visibility 0s ${({ active }) => (active ? '0s' : '.3s')};
 `;
 
 const StyledWarnIcon = styled(FontAwesomeIcon)`
@@ -405,17 +279,9 @@ NumberInput.defaultProps = {
   func: null,
 };
 
-function Modal({
-  isVisible,
-  handleModalToggle,
-  toggleTheme,
-  theme,
-  isAutomatic,
-  isCustom,
-  setOptions,
-  schedule,
-}) {
-  const outsideRef = useRef();
+function Modal({ isVisible, handleModalToggle }) {
+  const outsideRef = useRef(null);
+
   const { userData } = useData();
   const [currentPage, setCurrentPage] = useState('Synchronizacja');
   const [syncDate, setSyncDate] = useState('Ładowanie...');
@@ -468,19 +334,6 @@ function Modal({
 
   const handleNavClick = page => setCurrentPage(page);
 
-  const handleTimeChange = (e, option) => {
-    switch (option) {
-      case 'start':
-        setOptions('schedule', { ...schedule, start: e.target.value });
-        break;
-      case 'end':
-        setOptions('schedule', { ...schedule, end: e.target.value });
-        break;
-      default:
-        break;
-    }
-  };
-
   const handleGradeChange = (e, index) => {
     const newObj = gradesSteps;
     const value = parseFloat(e.target.value);
@@ -510,13 +363,6 @@ function Modal({
               <StyledIcon icon={faMobileAlt} fixedWidth mr={1.5} />
               <Paragraph>Mobile</Paragraph>
             </StyledListItem> */}
-            <StyledListItem
-              active={currentPage === 'Motyw'}
-              onClick={() => handleNavClick('Motyw')}
-            >
-              <StyledIcon icon={faPalette} fixedWidth mr={1.5} />
-              <Paragraph>Motyw</Paragraph>
-            </StyledListItem>
             <StyledListItem
               active={currentPage === 'Funkcje'}
               onClick={() => handleNavClick('Funkcje')}
@@ -594,94 +440,6 @@ function Modal({
               <LoginForm />
             </StyledPage>
           )} */}
-          {currentPage === 'Motyw' && (
-            <StyledPage>
-              <StyledPreviewsContainer>
-                <StyledPreviewWrapper onClick={() => toggleTheme('light')}>
-                  <StyledPreview>
-                    <StyledPreviewNav />
-                    <StyledPreviewCard />
-                  </StyledPreview>
-                  <Paragraph>Jasny</Paragraph>
-                  <StyledCheckbox
-                    type="radio"
-                    checked={theme === 'light'}
-                    name="theme"
-                    onChange={() => null}
-                  />
-                  <StyledCheckmark />
-                </StyledPreviewWrapper>
-                <StyledPreviewWrapper onClick={() => toggleTheme('dark')}>
-                  <StyledPreview dark>
-                    <StyledPreviewNav dark />
-                    <StyledPreviewCard dark />
-                  </StyledPreview>
-                  <Paragraph>Ciemny</Paragraph>
-                  <StyledCheckbox
-                    type="radio"
-                    checked={theme === 'dark'}
-                    name="theme"
-                    onChange={() => null}
-                  />
-                  <StyledCheckmark />
-                </StyledPreviewWrapper>
-              </StyledPreviewsContainer>
-              <StyledOptionsWrapper>
-                <StyledOption>
-                  <Paragraph regular>Automatycznie</Paragraph>
-                  <Switch
-                    onChange={() =>
-                      setOptions('isAutomatic', isAutomatic === 'true' ? 'false' : 'true')
-                    }
-                    checked={isAutomatic === 'true'}
-                  />
-                </StyledOption>
-                <StyledSeparator mt={1} />
-                <StyledSlideAnimation active={isAutomatic === 'true'}>
-                  <StyledOption>
-                    <Radio
-                      name="schedule"
-                      checked={isCustom === 'false' || !isCustom}
-                      onChange={() => setOptions('isCustom', 'false')}
-                    >
-                      <Paragraph regular>Od zmierzchu do świtu</Paragraph>
-                    </Radio>
-                  </StyledOption>
-                  <StyledSeparator mt={0.4} />
-                  <StyledOption>
-                    <Radio
-                      name="schedule"
-                      checked={isCustom === 'true'}
-                      onChange={() => setOptions('isCustom', 'true')}
-                    >
-                      <Paragraph regular>Własny harmonogram</Paragraph>
-                    </Radio>
-                  </StyledOption>
-                </StyledSlideAnimation>
-                <StyledSeparator mt={1} />
-                <StyledSlideAnimation active={isCustom === 'true' && isAutomatic === 'true'}>
-                  <StyledOption>
-                    <Paragraph regular>Jasny motyw od:</Paragraph>
-                    <StyledSeparator ml={2} />
-                    <TimePicker
-                      type="time"
-                      value={schedule.end}
-                      onChange={e => handleTimeChange(e, 'end')}
-                    />
-                  </StyledOption>
-                  <StyledOption>
-                    <Paragraph regular>Ciemny motyw od:</Paragraph>
-                    <StyledSeparator ml={1} />
-                    <TimePicker
-                      type="time"
-                      value={schedule.start}
-                      onChange={e => handleTimeChange(e, 'start')}
-                    />
-                  </StyledOption>
-                </StyledSlideAnimation>
-              </StyledOptionsWrapper>
-            </StyledPage>
-          )}
           {currentPage === 'Funkcje' && (
             <StyledPage>
               <Collapsible title="Regulacja progów ocen" opened>
@@ -832,16 +590,6 @@ function Modal({
 Modal.propTypes = {
   isVisible: PropTypes.bool.isRequired,
   handleModalToggle: PropTypes.func.isRequired,
-  toggleTheme: PropTypes.func.isRequired,
-  theme: PropTypes.string,
-  isAutomatic: PropTypes.string.isRequired,
-  isCustom: PropTypes.string.isRequired,
-  setOptions: PropTypes.func.isRequired,
-  schedule: PropTypes.objectOf(PropTypes.string).isRequired,
-};
-
-Modal.defaultProps = {
-  theme: 'light',
 };
 
 export default Modal;

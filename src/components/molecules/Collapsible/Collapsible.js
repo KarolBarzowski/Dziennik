@@ -111,7 +111,7 @@ Collapsible.defaultProps = {
   opened: false,
   children: null,
   info: null,
-  count: 0,
+  count: null,
 };
 
 export default Collapsible;
