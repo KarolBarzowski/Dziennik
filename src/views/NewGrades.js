@@ -1,18 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import styled, { css } from 'styled-components';
 import { useData } from 'hooks/useData';
-import Section from 'components/atoms/Section/Section';
-import Paragraph from 'components/atoms/Paragraph/Paragraph';
-import Heading from 'components/atoms/Heading/Heading';
-import Switch from 'components/atoms/Switch/Switch';
-import Editor from 'components/molecules/Editor/Editor';
-import GradesTable from 'components/organisms/GradesTable/GradesTable';
-import GradesRow from 'components/molecules/GradesRow/GradesRow';
 import { slideInDown } from 'functions/animations';
 import { getColor } from 'functions/functions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSyncAlt } from '@fortawesome/free-solid-svg-icons';
 import { ReactComponent as Laurels } from 'assets/laurels.svg';
+import Section from 'components/atoms/Section/Section';
+import Paragraph from 'components/atoms/Paragraph/Paragraph';
+import Heading from 'components/atoms/Heading/Heading';
+import GradesRow from 'components/molecules/GradesRow/GradesRow';
 
 const StyledHeading = styled(Heading)`
   margin-bottom: 1rem;
@@ -28,17 +25,12 @@ const StyledRow = styled.div`
   position: relative;
   display: flex;
   flex-flow: row nowrap;
-
-  ${({ spacing }) =>
-    spacing &&
-    css`
-      justify-content: space-around;
-    `}
+  width: 100%;
 
   ${({ border }) =>
     border &&
     css`
-      padding: 0 0 1.7rem;
+      padding: 0 0 1.7rem 0;
 
       ::after {
         content: '';
@@ -75,6 +67,7 @@ const StyledBox = styled.div`
   margin: 0 1.5rem 0 0;
   z-index: 1;
   min-width: 15rem;
+  animation: ${slideInDown} ${({ theme }) => theme.slideTransition} 0.15s;
 
   :last-of-type {
     margin-right: 0;
@@ -140,6 +133,16 @@ const StyledColumnTitle = styled(Paragraph)`
   color: ${({ theme }) => theme.textSecondary};
   text-transform: uppercase;
   letter-spacing: 0.2rem;
+  text-align: center;
+  width: 15%;
+
+  :nth-of-type(1) {
+    width: 20%;
+  }
+
+  :nth-of-type(2) {
+    width: 50%;
+  }
 `;
 
 const StyledInfo = styled(Paragraph)`
@@ -172,8 +175,50 @@ function NewGrades() {
     window.localStorage.getItem('semester') || '1',
   );
   const [lastSyncDate, setLastSyncDate] = useState(null);
+  const [estimatedGrades, setEstimatedGrades] = useState([]);
+  const [finalGrades, setFinalGrades] = useState([]);
+  const [estimatedAverage, setEstimatedAverage] = useState();
+  const [finalAverage, setFinalAverage] = useState();
 
   const { userData, gradesData } = useData();
+
+  useEffect(() => {
+    if (estimatedGrades.length) {
+      let sum = 0;
+      estimatedGrades.forEach(grade => {
+        sum += parseFloat(grade);
+      });
+
+      const avg = (sum / estimatedGrades.length).toFixed(2);
+
+      setEstimatedAverage(avg);
+    }
+  }, [estimatedGrades]);
+
+  useEffect(() => {
+    if (finalGrades.length) {
+      let sum = 0;
+      finalGrades.forEach(grade => {
+        sum += parseFloat(grade);
+      });
+
+      const avg = (sum / finalGrades.length).toFixed(2);
+
+      setFinalAverage(avg);
+    }
+  }, [finalGrades]);
+
+  useEffect(() => {
+    if (estimatedAverage) {
+      setEstimatedGrades([]);
+    }
+  }, [estimatedAverage]);
+
+  useEffect(() => {
+    if (finalAverage) {
+      setFinalGrades([]);
+    }
+  }, [finalAverage]);
 
   useEffect(() => {
     if (userData) {
@@ -232,18 +277,24 @@ function NewGrades() {
             </StyledRomanNumber>
           </StyledSwitchBtn>
         </StyledBox>
-        <StyledBox>
-          <StyledParagraph secondary>Ostatnia aktualizacja</StyledParagraph>
-          <Heading>{lastSyncDate}</Heading>
-        </StyledBox>
-        <StyledBox>
-          <StyledParagraph secondary>Średnia przewidywana</StyledParagraph>
-          <StyledNumber>4.87</StyledNumber>
-        </StyledBox>
-        <StyledBox>
-          <StyledParagraph secondary>Średnia końcowa</StyledParagraph>
-          <StyledNumber>4.64</StyledNumber>
-        </StyledBox>
+        {lastSyncDate ? (
+          <StyledBox>
+            <StyledParagraph secondary>Ostatnia aktualizacja</StyledParagraph>
+            <Heading>{lastSyncDate}</Heading>
+          </StyledBox>
+        ) : null}
+        {estimatedAverage !== 'NaN' ? (
+          <StyledBox>
+            <StyledParagraph secondary>Średnia przewidywana</StyledParagraph>
+            <StyledNumber>{estimatedAverage}</StyledNumber>
+          </StyledBox>
+        ) : null}
+        {finalAverage !== 'NaN' ? (
+          <StyledBox>
+            <StyledParagraph secondary>Średnia końcowa</StyledParagraph>
+            <StyledNumber>{finalAverage}</StyledNumber>
+          </StyledBox>
+        ) : null}
       </StyledRow>
       <StyledBox main>
         <StyledColumn>
@@ -256,7 +307,14 @@ function NewGrades() {
           </StyledRow>
           {gradesData.length ? (
             gradesData.map(({ name, grades }) => (
-              <GradesRow key={name} name={name} grades={grades} />
+              <GradesRow
+                key={name}
+                name={name}
+                grades={grades}
+                semester={currentSemester}
+                setEstimatedGrades={setEstimatedGrades}
+                setFinalGrades={setFinalGrades}
+              />
             ))
           ) : (
             <StyledInfo secondary>

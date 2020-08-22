@@ -55,3 +55,22 @@ export const getStatus = status => {
       return '';
   }
 };
+
+export const getRGBColor = color => {
+  switch (color) {
+    case 'red':
+      return 'rgb(255, 69, 58)';
+    case 'blue':
+      return 'rgb(10, 132, 255)';
+    case 'orange':
+      return 'rgb(255, 159, 10)';
+    case 'green':
+      return 'rgb(48, 209, 88)';
+    case 'purple':
+      return 'rgb(191, 90, 242)';
+    case 'teal':
+      return 'rgb(100, 210, 255)';
+    default:
+      return 'rgba(255, 255, 255, .87)';
+  }
+};

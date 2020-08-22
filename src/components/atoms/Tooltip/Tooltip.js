@@ -7,7 +7,7 @@ const Tooltip = styled.span`
   padding: 0.8rem;
   background-color: rgb(58, 58, 60);
   border-radius: 0.4rem;
-  color: #ffffff;
+  color: ${({ theme }) => theme.text};
   font-size: ${({ theme }) => theme.s};
   font-weight: ${({ theme }) => theme.medium};
   font-family: 'Montserrat';
