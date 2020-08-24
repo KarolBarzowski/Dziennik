@@ -11,6 +11,11 @@ ReactGA.pageview('tutorial');
 
 const StyledWrapper = styled.div`
   padding: 2.5rem;
+  color: rgba(255, 255, 255, 0.87);
+
+  a {
+    color: rgb(10, 132, 255);
+  }
 
   ol,
   ul {
@@ -28,6 +33,13 @@ const StyledInfo = styled.div`
   font-size: 1.6rem;
   font-weight: 400;
 `;
+
+const handleAddEvent = () => {
+  ReactGA.event({
+    category: 'Synchronizacja',
+    action: 'Z tutoriala',
+  });
+};
 
 const Tutorial = () => (
   <>
@@ -97,6 +109,7 @@ const Tutorial = () => (
             href="https://nasze.miasto.gdynia.pl/ed_miej/zest_start.pl?autoSync=true"
             target="_blank"
             rel="noopener noreferrer"
+            onClick={handleAddEvent}
           >
             klikniesz tutaj
           </a>{' '}
