@@ -1,12 +1,12 @@
 import React, { useState, useRef, useEffect, useReducer } from 'react';
 import PropTypes from 'prop-types';
+import ReactGA from 'react-ga';
 import styled, { css } from 'styled-components';
 import { useData } from 'hooks/useData';
 import { useOutsideClick } from 'hooks/useOutsideClick';
 import Paragraph from 'components/atoms/Paragraph/Paragraph';
 import Heading from 'components/atoms/Heading/Heading';
 import Collapsible from 'components/molecules/Collapsible/Collapsible';
-// import LoginForm from 'components/molecules/LoginForm/LoginForm';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faSyncAlt,
@@ -16,7 +16,6 @@ import {
   faExclamation,
   faDownload,
   faCodeBranch,
-  // faMobileAlt,
 } from '@fortawesome/free-solid-svg-icons';
 import { faFacebookMessenger } from '@fortawesome/free-brands-svg-icons';
 
@@ -343,6 +342,14 @@ function Modal({ isVisible, handleModalToggle }) {
     forceUpdate();
   };
 
+  const handleAddEvent = () => {
+    ReactGA.event({
+      category: 'Synchronizacja',
+      action: 'Z ustawień',
+      label: userData.name,
+    });
+  };
+
   return (
     <StyledBackground isVisible={isVisible}>
       <StyledWrapper ref={outsideRef} isVisible={isVisible} transformOrigin={transformOrigin}>
@@ -356,13 +363,6 @@ function Modal({ isVisible, handleModalToggle }) {
               <StyledIcon icon={faSyncAlt} fixedWidth mr={1.5} />
               <Paragraph>Synchronizacja</Paragraph>
             </StyledListItem>
-            {/* <StyledListItem
-              active={currentPage === 'Mobile'}
-              onClick={() => handleNavClick('Mobile')}
-            >
-              <StyledIcon icon={faMobileAlt} fixedWidth mr={1.5} />
-              <Paragraph>Mobile</Paragraph>
-            </StyledListItem> */}
             <StyledListItem
               active={currentPage === 'Funkcje'}
               onClick={() => handleNavClick('Funkcje')}
@@ -393,6 +393,7 @@ function Modal({ isVisible, handleModalToggle }) {
               <StyledButton
                 as="a"
                 href="https://nasze.miasto.gdynia.pl/ed_miej/zest_start.pl?autoSync=true"
+                onClick={handleAddEvent}
               >
                 Synchronizuj
               </StyledButton>
@@ -435,11 +436,6 @@ function Modal({ isVisible, handleModalToggle }) {
               </StyledOption>
             </StyledPage>
           )}
-          {/* {currentPage === 'Mobile' && (
-            <StyledPage>
-              <LoginForm />
-            </StyledPage>
-          )} */}
           {currentPage === 'Funkcje' && (
             <StyledPage>
               <Collapsible title="Regulacja progów ocen" opened>
@@ -552,7 +548,7 @@ function Modal({ isVisible, handleModalToggle }) {
           )}
           {currentPage === 'Wersja' && (
             <StyledPage>
-              <StyledParagraph regular>Aktualna wersja: 1.5.1</StyledParagraph>
+              <StyledParagraph regular>Aktualna wersja: 1.6.0</StyledParagraph>
               <StyledParagraph regular>Zalecana wersja skryptu: 2.3.1</StyledParagraph>
               <StyledButton
                 as="a"

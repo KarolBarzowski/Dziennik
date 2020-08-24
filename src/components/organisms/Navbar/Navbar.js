@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
+import ReactGA from 'react-ga';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { NavLink } from 'react-router-dom';
 import Media from 'react-media';
-import Paragraph from 'components/atoms/Paragraph/Paragraph';
-import Tooltip from 'components/atoms/Tooltip/Tooltip';
+import { useData } from 'hooks/useData';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCog, faSyncAlt } from '@fortawesome/free-solid-svg-icons';
+import Paragraph from 'components/atoms/Paragraph/Paragraph';
+import Tooltip from 'components/atoms/Tooltip/Tooltip';
 
 const StyledWrapper = styled.nav`
   position: fixed;
@@ -164,7 +166,17 @@ const StyledMobileList = styled(StyledList)`
 function Navbar({ handleModalToggle }) {
   const [isOpen, setIsOpen] = useState(false);
 
+  const { userData } = useData();
+
   const handleToggle = () => setIsOpen(!isOpen);
+
+  const handleAddEvent = () => {
+    ReactGA.event({
+      category: 'Synchronizacja',
+      action: 'Z nawigacji',
+      label: userData.name,
+    });
+  };
 
   return (
     <Media queries={{ mobile: '(max-width: 599px)', desktop: '(min-width: 600px)' }}>
@@ -207,6 +219,7 @@ function Navbar({ handleModalToggle }) {
               <StyledBtn
                 as="a"
                 href="https://nasze.miasto.gdynia.pl/ed_miej/zest_start.pl?autoSync=true"
+                onClick={handleAddEvent}
               >
                 <FontAwesomeIcon icon={faSyncAlt} />
                 <Tooltip>Synchronizuj</Tooltip>

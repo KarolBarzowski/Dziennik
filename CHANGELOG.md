@@ -2,7 +2,7 @@
 
 Wszystkie zmiany w projekcie zostaną tutaj zapisane.
 
-## UNRELEASED
+## [1.6.0] - 2020-08-24
 
 ### DODANO
 
@@ -12,6 +12,7 @@ Wszystkie zmiany w projekcie zostaną tutaj zapisane.
 
 ### ZMIENIONO
 
+- **[Oceny]** Cała podstrona została odnowiona, zyskując zupełnie nowy wygląd oraz nowe funkcjonalności.
 - **[Frekwencja]** Zmiana stylistyki podsumowania.
 - **[Frekwencja]** Zmieniono sposób wyświetlania daty, godziny i statusu nieobecności.
 

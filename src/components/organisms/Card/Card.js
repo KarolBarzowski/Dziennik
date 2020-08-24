@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import ReactGA from 'react-ga';
 import styled, { css, keyframes } from 'styled-components';
 import Paragraph from 'components/atoms/Paragraph/Paragraph';
 import Button from 'components/atoms/Button/Button';
 import Lesson from 'components/molecules/Lesson/Lesson';
 import { slideInDown } from 'functions/animations';
 import Tooltip from 'components/atoms/Tooltip/Tooltip';
+import { useData } from 'hooks/useData';
 
 const DelayedAppear = keyframes`
   from {
@@ -205,6 +207,8 @@ function Card({
   const [uniqueLessons, setUniqueLessons] = useState(null);
   const [time, setTime] = useState('Brak danych');
 
+  const { userData } = useData();
+
   useEffect(() => {
     if (lessons && lessons.length) {
       const createUniqueLessons = () => {
@@ -302,6 +306,14 @@ function Card({
     }
   }, [nextDayExams, uniqueLessons]);
 
+  const handleAddEvent = () => {
+    ReactGA.event({
+      category: 'Synchronizacja',
+      action: 'Z CTA',
+      label: userData.name,
+    });
+  };
+
   return (
     <StyledWrapper active={active}>
       {children}
@@ -329,7 +341,7 @@ function Card({
       )}
       {cardType === 'mini' && (
         <StyledMiniCard>
-          <Button as="a" href={link}>
+          <Button as="a" href={link} onClick={handleAddEvent}>
             {ctaText}
           </Button>
         </StyledMiniCard>
