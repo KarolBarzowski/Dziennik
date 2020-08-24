@@ -10,6 +10,8 @@ import Card from 'components/organisms/Card/Card';
 import { getColor, getCleanName } from 'functions/functions';
 
 const StyledWrapper = styled.div`
+  position: relative;
+  min-height: calc(100vh - 7.9rem);
   width: 100%;
   column-count: 1;
 
@@ -36,6 +38,32 @@ const StyledColor = styled.span`
   color: ${({ theme, color }) => theme[color]};
 `;
 
+const daysInWeek = ['Niedziela', 'Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota'];
+
+const monthsInYear = [
+  'stycznia',
+  'lutego',
+  'marca',
+  'kwietnia',
+  'maja',
+  'czerwca',
+  'lipca',
+  'sierpnia',
+  'września',
+  'października',
+  'listopada',
+  'grudnia',
+];
+
+const today = new Date();
+const currentDay = today.getDate();
+const currentMonth = today.getMonth();
+
+let yesterday = new Date(today);
+yesterday.setDate(today.getDate() - 1);
+const yesterdayMonth = yesterday.getMonth();
+yesterday = yesterday.getDate();
+
 function Dashboard() {
   const { planData, userData, examsData, absencesData, gradesData, pointsData } = useData(null);
   const [dateSyntax, setDateSyntax] = useState('');
@@ -48,36 +76,10 @@ function Dashboard() {
   const [points, setPoints] = useState(null);
   const [isScriptUpdate, setScriptUpdate] = useState(false);
 
-  const daysInWeek = [
-    'Niedziela',
-    'Poniedziałek',
-    'Wtorek',
-    'Środa',
-    'Czwartek',
-    'Piątek',
-    'Sobota',
-  ];
-  const monthsInYear = [
-    'stycznia',
-    'lutego',
-    'marca',
-    'kwietnia',
-    'maja',
-    'czerwca',
-    'lipca',
-    'sierpnia',
-    'września',
-    'października',
-    'listopada',
-    'grudnia',
-  ];
-  const date = new Date();
-  const today = date.getDay();
-
   useEffect(() => {
-    const tomorrow = new Date(date);
-    let planDay = date.getDay();
-    if (date.getDay() > 4) planDay = 0;
+    const tomorrow = new Date(today);
+    let planDay = today.getDay();
+    if (today.getDay() > 4) planDay = 0;
     if (today < 5) tomorrow.setDate(tomorrow.getDate() + 1);
     else if (today === 5) tomorrow.setDate(tomorrow.getDate() + 3);
     else tomorrow.setDate(tomorrow.getDate() + 2);
@@ -92,7 +94,7 @@ function Dashboard() {
   useEffect(() => {
     if (userData) {
       const lastTs = userData.timestamp;
-      const actualTs = date.getTime();
+      const actualTs = today.getTime();
       const difference = actualTs - lastTs;
       const dayInSeconds = 1000 * 60 * 60 * 24;
       const daysDifference = Math.floor(difference / dayInSeconds);
@@ -116,8 +118,8 @@ function Dashboard() {
         const dd = dateResult.getDate();
         const mm = monthsInYear[dateResult.getMonth()];
 
-        if (date < dateResult) {
-          const difference = dateResult.getTime() - date.getTime();
+        if (today < dateResult) {
+          const difference = dateResult.getTime() - today.getTime();
           const dayInSeconds = 1000 * 60 * 60 * 24;
           const daysDifference = Math.floor(difference / dayInSeconds);
           const isNextWeek = daysDifference < 6;
@@ -138,7 +140,7 @@ function Dashboard() {
       const sortedUpcoming = upcomingExams.sort((a, b) => b.date - a.date);
       sortedUpcoming.reverse();
 
-      const tomorrow = new Date(date);
+      const tomorrow = new Date(today);
       tomorrow.setDate(tomorrow.getDate() + 1);
       tomorrow.setHours(0, 0, 0, 0);
 
@@ -174,19 +176,35 @@ function Dashboard() {
         const actualGrades = [];
         gradesList.forEach(grade => {
           const dateArray = grade.date.split(' ');
-          const [day, month, year] = dateArray[0].split('/');
+          let [day, month, year] = dateArray[0].split('/');
+          day = parseFloat(day);
+          month = parseFloat(month);
+          year = parseFloat(year);
           const [hour, minute, second] = dateArray[1].split(':');
           const actualDate = new Date(
             `20${year}`,
-            parseFloat(month) - 1,
-            parseFloat(day),
+            month - 1,
+            day,
             parseFloat(hour),
             parseFloat(minute),
             parseFloat(second),
           ).getTime();
+
+          let fullDate;
+
+          if (currentDay === day && currentMonth === month - 1) {
+            fullDate = `Dzisiaj o ${hour}:${minute}`;
+          } else if (yesterday === day && yesterdayMonth === month - 1) {
+            fullDate = `Wczoraj o ${hour}:${minute}`;
+          } else {
+            fullDate = `${day} ${monthsInYear[month - 1]} | ${hour}:${minute}`;
+          }
+
           if (actualDate > lastTs) {
             // eslint-disable-next-line
             grade.color = getColor(grade.category);
+            // eslint-disable-next-line
+            grade.dateSyntax = fullDate;
             actualGrades.push(grade);
           }
         });

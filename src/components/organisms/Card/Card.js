@@ -5,6 +5,7 @@ import Paragraph from 'components/atoms/Paragraph/Paragraph';
 import Button from 'components/atoms/Button/Button';
 import Lesson from 'components/molecules/Lesson/Lesson';
 import { slideInDown } from 'functions/animations';
+import Tooltip from 'components/atoms/Tooltip/Tooltip';
 
 const DelayedAppear = keyframes`
   from {
@@ -50,17 +51,18 @@ const StyledRow = styled(StyledParagraph)`
   align-items: center;
   padding: 0.4rem;
   width: 100%;
+  break-inside: avoid-column;
 
   ${({ color, theme }) =>
-      theme[color] !== undefined && theme.name === 'light'
-        ? css`
-            border-left: 0.5rem solid ${theme[color]};
-            padding-left: 0.8rem;
-          `
-        : css`
-            color: ${theme[color]};
-          `}
-    :nth-of-type(even) {
+    theme[color]
+      ? css`
+          color: theme[color];
+        `
+      : css`
+          color: theme.text;
+        `};
+
+  :nth-of-type(even) {
     background-color: ${({ theme }) => theme.modalHover};
   }
 
@@ -81,32 +83,8 @@ const StyledSpan = styled.span`
   }
 `;
 
-const StyledTip = styled.span`
-  position: absolute;
-  top: 2rem;
-  left: 50%;
-  transform: translateX(-50%);
-  border-radius: 0.5rem;
-  padding: 0.6rem;
-  font-size: ${({ theme }) => theme.s};
-  color: ${({ theme }) => theme.text};
-  white-space: nowrap;
-  text-align: left;
-  opacity: 0;
-  visibility: hidden;
-  background-color: ${({ theme }) => theme.tip};
-  box-shadow: rgba(0, 0, 0, 0.16) 0 3px 6px;
-  transition: opacity 0.04s ease-in-out 0.02s;
-  break-inside: avoid-column;
-  z-index: 10;
-`;
-
 const StyledColor = styled(StyledSpan)`
   color: ${({ theme, color }) => (theme[color] !== undefined ? theme[color] : theme.text)};
-  :hover + ${StyledTip} {
-    visibility: visible;
-    opacity: 1;
-  }
 `;
 
 const StyledMiniCard = styled(StyledContent)`
@@ -114,16 +92,97 @@ const StyledMiniCard = styled(StyledContent)`
 `;
 
 const StyledGradesWrapper = styled.span`
-  text-align: left;
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  justify-content: flex-start;
   min-width: 16rem;
+`;
+
+const StyledTip = styled.span`
+  position: absolute;
+  top: calc(100% + 1rem);
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 1rem;
+  padding: 0.8rem;
+  font-size: ${({ theme }) => theme.m};
+  color: ${({ theme }) => theme.text};
+  white-space: nowrap;
+  text-align: left;
+  opacity: 0;
+  background-color: ${({ theme }) => theme.tip};
+  box-shadow: rgba(0, 0, 0, 0.16) 0 3px 6px;
+  transition: opacity 0.04s ease-in-out 0.02s;
+  break-inside: avoid-column;
+  z-index: 10;
+  visibility: hidden;
+  transition: opacity 0.15s ease-in-out, visibility 0s linear 0.15s;
+
+  ::before {
+    content: '';
+    display: block;
+    width: 0;
+    height: 0;
+    position: absolute;
+
+    border-bottom: 0.8rem solid rgb(58, 58, 60);
+    border-top: 0.8rem solid transparent;
+    border-right: 0.8rem solid transparent;
+    border-left: 0.8rem solid transparent;
+
+    top: -1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+  }
 `;
 
 const StyledGrade = styled.span`
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 3.4rem;
+  width: 3.4rem;
+  background-color: ${({ theme, isNotCounted }) =>
+    isNotCounted ? 'rgba(255, 255, 255, 0.12)' : theme.modalHover};
+  border-radius: 0.8rem;
+  margin: 0.5rem 0.5rem 0 0;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.12);
+
+  :hover ${StyledTip} {
+    transition: opacity 0.15s ease-in-out;
+    opacity: 1;
+    visibility: visible;
+  }
 `;
 
-const StyledSeparator = styled.span`
-  color: ${({ theme }) => theme.text};
+const StyledNumber = styled.span`
+  position: relative;
+  color: ${({ theme, color }) => (theme[color] ? theme[color] : theme.text)};
+  font-size: 2.1rem;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 500;
+  text-align: center;
+
+  :hover ${Tooltip} {
+    transform: translateX(-50%) scale(1);
+  }
+`;
+
+const StyledBorder = styled.hr`
+  margin: 0.4rem 0 0.2rem;
+  border: none;
+  border-top: 1px solid ${({ theme }) => theme.textSecondary};
+`;
+
+const StyledTooltipDescription = styled.span`
+  color: ${({ theme, color }) => (theme[color] ? theme[color] : theme.text)};
+  display: block;
+  width: 100%;
+  text-align: left;
+  font-size: 1.6rem;
+  margin: 0.2rem 0 0;
 `;
 
 const StyledDescription = styled(Paragraph)`
@@ -301,32 +360,36 @@ function Card({
                 <StyledGradesWrapper>
                   {gradesList.map(
                     (
-                      { color, grade, notCounted, category, weight, date, gradeDesc, categoryDesc },
+                      {
+                        color,
+                        grade,
+                        notCounted,
+                        category,
+                        weight,
+                        dateSyntax,
+                        gradeDesc,
+                        categoryDesc,
+                      },
                       i,
                     ) => (
-                      <React.Fragment key={i.toString()}>
-                        <StyledGrade>
-                          <StyledColor color={color}>{grade}</StyledColor>
-                          <StyledTip>
-                            {notCounted && (
-                              <>
-                                Nie liczona do średniej
-                                <br />
-                              </>
-                            )}
+                      <StyledGrade key={i.toString()} isNotCounted={notCounted}>
+                        <StyledNumber color={color}>{grade}</StyledNumber>
+                        <StyledTip>
+                          {notCounted ? (
+                            <StyledTooltipDescription color="textSecondary">
+                              Nie liczona do średniej
+                            </StyledTooltipDescription>
+                          ) : null}
+                          <StyledTooltipDescription color={color}>
                             {category}
-                            <br />
-                            Waga {weight}
-                            <br />
-                            {date}
-                            {gradeDesc && <br />}
-                            {gradeDesc}
-                            {categoryDesc && <br />}
-                            {categoryDesc}
-                          </StyledTip>
-                        </StyledGrade>
-                        {i !== gradesList.length - 1 && <StyledSeparator>, </StyledSeparator>}
-                      </React.Fragment>
+                          </StyledTooltipDescription>
+                          <StyledTooltipDescription>Waga {weight}</StyledTooltipDescription>
+                          <StyledTooltipDescription>{dateSyntax}</StyledTooltipDescription>
+                          {categoryDesc || gradeDesc ? <StyledBorder /> : null}
+                          <StyledTooltipDescription>{categoryDesc}</StyledTooltipDescription>
+                          <StyledTooltipDescription>{gradeDesc}</StyledTooltipDescription>
+                        </StyledTip>
+                      </StyledGrade>
                     ),
                   )}
                 </StyledGradesWrapper>
