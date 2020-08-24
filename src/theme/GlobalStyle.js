@@ -20,6 +20,7 @@ const GlobalStyle = createGlobalStyle`
     body {
         font-size: 1.6rem;
         font-family: 'Montserrat', sans-serif;
+        background-color: rgb(28, 28, 30);
     }
 
     .MuiSnackbarContent-message {
@@ -29,6 +30,10 @@ const GlobalStyle = createGlobalStyle`
 
     div[tabindex="-1"]:focus {
         outline: 0;
+    }
+
+    span[role=img] {
+        color: #ffffff;
     }
 `;
 

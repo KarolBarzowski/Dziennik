@@ -4,20 +4,18 @@ import styled, { css } from 'styled-components';
 import Collapse from '@kunukn/react-collapse';
 import { Line } from 'react-chartjs-2';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronUp, faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { faChevronUp, faSpinner, faSyncAlt, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { getCleanName, getColor, getRGBColor } from 'functions/functions';
-import { fadeIn, slideInDown } from 'functions/animations';
+import { slideInDown } from 'functions/animations';
 import Paragraph from 'components/atoms/Paragraph/Paragraph';
 import Tooltip from 'components/atoms/Tooltip/Tooltip';
+import GradeForm from 'components/molecules/GradeForm/GradeForm';
 
 const StyledWrapper = styled.div`
+  position: relative;
   display: flex;
   flex-flow: column nowrap;
   width: 100%;
-
-  :hover {
-    background-color: ${({ theme }) => theme.modalHover};
-  }
 
   ${({ isOpen }) =>
     isOpen &&
@@ -66,6 +64,10 @@ const StyledHeader = styled.button`
   min-height: 6.4rem;
   animation: ${slideInDown} ${({ theme }) => theme.slideTransition} 0.15s;
 
+  :hover {
+    background-color: ${({ theme }) => theme.modalHover};
+  }
+
   ${({ isOpen }) =>
     isOpen &&
     css`
@@ -102,6 +104,7 @@ const StyledNumber = styled.span`
   font-family: 'Roboto', sans-serif;
   font-weight: 500;
   width: 15%;
+  text-align: center;
 
   :hover ${Tooltip} {
     transform: translate(-50%, 0.8rem) scale(1);
@@ -180,7 +183,7 @@ const ExpandableWrapper = styled.div`
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding: 1.5rem;
+  padding: 1.5rem 0;
 `;
 
 const StyledGraph = styled.div`
@@ -188,13 +191,137 @@ const StyledGraph = styled.div`
   width: 50%;
 `;
 
-const StyledContent = styled.div`
+const StyledContentWrapper = styled.div`
+  height: 28rem;
   width: 50%;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: flex-start;
+  animation: ${slideInDown} ${({ theme }) => theme.slideTransition} 0.15s;
+
+  ${StyledGradesWrapper} {
+    width: 100%;
+  }
 `;
 
 const StyledLoading = styled(FontAwesomeIcon)`
   color: ${({ theme }) => theme.text};
   margin: 1rem auto;
+`;
+
+const StyledContentHeader = styled(Paragraph)`
+  text-transform: uppercase;
+  letter-spacing: 0.1rem;
+  margin-bottom: 1rem;
+`;
+
+const StyledContent = styled.div`
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+`;
+
+const StyledGradeBtn = styled.button`
+  position: relative;
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  height: 5.5rem;
+  width: 5.5rem;
+  background-color: ${({ theme }) => theme.modalHover};
+  border-radius: 0.8rem;
+  margin: 0.5rem 0.5rem 0 0;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+  border: none;
+  outline: none;
+  padding: 0.5rem;
+
+  :hover,
+  :focus {
+    background-color: ${({ theme }) => theme.modalFocus};
+  }
+
+  ${({ isBlue }) =>
+    isBlue &&
+    css`
+      background-color: ${({ theme }) => theme.blue};
+
+      :hover,
+      :focus {
+        background-color: ${({ theme }) => theme.blueHover};
+      }
+    `}
+`;
+
+const StyledCustomGrade = styled.span`
+  font-size: 3.4rem;
+  color: ${({ theme }) => theme.text};
+  pointer-events: none;
+`;
+
+const StyledWeight = styled.span`
+  position: absolute;
+  bottom: 0;
+  right: 0.5rem;
+  font-size: 2.1rem;
+  color: ${({ theme }) => theme.textSecondary};
+  pointer-events: none;
+`;
+
+const StyledResetBtn = styled.button`
+  position: absolute;
+  top: 2.2rem;
+  right: 1.5rem;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  outline: none;
+  z-index: 100;
+
+  :hover ${Tooltip} {
+    border-radius: 1rem 0 1rem 1rem;
+    transform: translate(calc(-100% - 0.8rem), 0.4rem) scale(1);
+  }
+`;
+
+const StyledResetIcon = styled(FontAwesomeIcon)`
+  color: ${({ theme }) => theme.text};
+  font-size: 2.4rem;
+`;
+
+const StyledDefault = styled.span`
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  font-weight: ${({ theme }) => theme.regular};
+  font-size: ${({ theme }) => theme.s};
+  color: ${({ theme }) => theme.textSecondary};
+
+  ${({ isVisible }) =>
+    isVisible
+      ? css`
+          visibility: visible;
+          opacity: 1;
+          transform: translate(-50%, 0);
+          transition: opacity 0.15s ease-in-out 0.05s, transform 0.15s ease-in-out 0.05s;
+        `
+      : css`
+          visibility: hidden;
+          opacity: 0;
+          transform: translate(-50%, -1rem);
+          transition: opacity 0.15s ease-in-out 0.05s, transform 0.15s ease-in-out 0.05s,
+            visibility 0s linear 0.2s;
+        `}
+`;
+
+const StyledPlusIcon = styled(FontAwesomeIcon)`
+  font-size: 3.4rem;
+  color: ${({ theme }) => theme.text};
+  align-self: center;
+  margin: auto 0;
+  pointer-events: none;
 `;
 
 const monthsInYearInGenitive = [
@@ -221,7 +348,17 @@ yesterday.setDate(today.getDate() - 1);
 const yesterdayMonth = yesterday.getMonth();
 yesterday = yesterday.getDate();
 
-function GradesRow({ name, grades, semester, setEstimatedGrades, setFinalGrades }) {
+function GradesRow({
+  name,
+  grades,
+  semester,
+  setEstimatedGrades,
+  setFinalGrades,
+  index,
+  estimatedGrades,
+  finalGrades,
+  setShouldUpdate,
+}) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [sortedGrades, setSortedGrades] = useState([]);
   const [average, setAverage] = useState(null);
@@ -238,10 +375,33 @@ function GradesRow({ name, grades, semester, setEstimatedGrades, setFinalGrades 
   );
   const [graphData, setGraphData] = useState({ labels: [], datasets: [] });
   const [countedList, setCountedList] = useState([]);
+  const [graphList, setGraphList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isGradeFormVisible, setIsGradeFormVisible] = useState(false);
+  const [xPos, setXPos] = useState(0);
+  const [yPos, setYPos] = useState(0);
+  const [currentGrade, setCurrentGrade] = useState(5);
+  const [currentWeight, setCurrentWeight] = useState(1);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isEdited, setIsEdited] = useState(false);
+  const [isReset, setIsReset] = useState(0);
+  const [isUpdate, setIsUpdate] = useState(0);
+  const [simAverage, setSimAverage] = useState(null);
+  const [simEstimatedGrade, setSimEstimatedGrade] = useState(null);
+  const [simFinalGrade, setSimFinalGrade] = useState(null);
+  const [defaultAvg, setDefaultAvg] = useState(average);
+  const [defaultEst, setDefaultEst] = useState(estimatedGrade);
+  const [defaultFin, setDefaultFin] = useState(finalGrade);
+  const [simAvgColor, setSimAvgColor] = useState('text');
+  const [simEstColor, setSimEstColor] = useState('text');
+  const [simFinColor, setSimFinColor] = useState('text');
+  const [canRemove, setCanRemove] = useState(true);
 
   useEffect(() => {
     setIsLoading(true);
+    setIsEdited(false);
+    setIsReset(0);
+    setIsUpdate(0);
 
     const results = [];
     const avgGrades = [];
@@ -343,12 +503,13 @@ function GradesRow({ name, grades, semester, setEstimatedGrades, setFinalGrades 
     );
 
     const sorted = results.sort((a, b) => a.date - b.date);
-    const onlyCountedList = [];
+    const graphArr = [];
+    const countedArr = [];
 
     sorted.forEach(
       ({ value, dateSyntax, notCounted, color, grade, weight, category, categoryDesc, desc }) => {
         if (!notCounted) {
-          onlyCountedList.push({
+          graphArr.push({
             grade,
             weight,
             category,
@@ -358,6 +519,13 @@ function GradesRow({ name, grades, semester, setEstimatedGrades, setFinalGrades 
             dateSyntax,
             color,
           });
+
+          countedArr.push({
+            grade,
+            weight,
+            value,
+          });
+
           const [date] = dateSyntax.split(' | ');
           dataObj.labels.push(date);
           dataObj.datasets[0].data.push(parseFloat(value));
@@ -394,21 +562,191 @@ function GradesRow({ name, grades, semester, setEstimatedGrades, setFinalGrades 
       else if (avg >= gradesSteps[4]) final = 6;
     }
 
-    setCountedList(onlyCountedList);
+    if (isReset === 0) {
+      setEstimatedGrades(prevState => [...prevState, estimated]);
+      setFinalGrades(prevState => [...prevState, final]);
+      setDefaultAvg(avg);
+      setDefaultEst(estimated);
+      setDefaultFin(final);
+    } else {
+      const newEstArr = estimatedGrades;
+      newEstArr[index] = estimated;
+      setEstimatedGrades(newEstArr);
+
+      const newFinArr = finalGrades;
+      newFinArr[index] = final;
+      setFinalGrades(newFinArr);
+      setShouldUpdate(prevState => prevState + 1);
+    }
+
+    setCountedList(countedArr);
+    setGraphList(graphArr);
     setGraphData(dataObj);
     setSortedGrades(sorted);
     setAverage(avg);
     setEstimatedGrade(estimated);
     setFinalGrade(final);
-    setEstimatedGrades(prevState => [...prevState, estimated]);
-    setFinalGrades(prevState => [...prevState, final]);
     setTimeout(() => {
       setIsLoading(false);
     }, 250);
-  }, [grades, semester]);
+
+    // eslint-disable-next-line
+  }, [grades, semester, isReset]);
+
+  useEffect(() => {
+    let estimated;
+    let final;
+    let nominator = 0;
+    let denominator = 0;
+
+    countedList.forEach(({ value, weight }) => {
+      nominator += parseFloat(value) * parseFloat(weight);
+      denominator += parseFloat(weight);
+    });
+
+    const avg = (nominator / denominator).toFixed(2);
+
+    if (avg <= gradesSteps[0] - 0.01) estimated = 1;
+    else if (avg >= gradesSteps[0] && avg <= gradesSteps[1] - 0.01) estimated = 2;
+    else if (avg >= gradesSteps[1] && avg <= gradesSteps[2] - 0.01) estimated = 3;
+    else if (avg >= gradesSteps[2] && avg <= gradesSteps[3] - 0.01) estimated = 4;
+    else if (avg >= gradesSteps[3] && avg <= gradesSteps[4] - 0.01) estimated = 5;
+    else if (avg >= gradesSteps[4]) estimated = 6;
+
+    if (avg <= gradesSteps[0] - 0.01) final = 1;
+    else if (avg >= gradesSteps[0] && avg <= gradesSteps[1] - 0.01) final = 2;
+    else if (avg >= gradesSteps[1] && avg <= gradesSteps[2] - 0.01) final = 3;
+    else if (avg >= gradesSteps[2] && avg <= gradesSteps[3] - 0.01) final = 4;
+    else if (avg >= gradesSteps[3] && avg <= gradesSteps[4] - 0.01) final = 5;
+    else if (avg >= gradesSteps[4]) final = 6;
+
+    if (avg < defaultAvg) setSimAvgColor('red');
+    else if (avg > defaultAvg) setSimAvgColor('green');
+    else setSimAvgColor('text');
+
+    if (estimated < defaultEst) setSimEstColor('red');
+    else if (estimated > defaultEst) setSimEstColor('green');
+    else setSimEstColor('text');
+
+    if (final < defaultFin) setSimFinColor('red');
+    else if (final > defaultFin) setSimFinColor('green');
+    else setSimFinColor('text');
+
+    if (isUpdate !== 0) {
+      const newEstArr = estimatedGrades;
+      newEstArr[index] = estimated;
+      setEstimatedGrades(newEstArr);
+
+      const newFinArr = finalGrades;
+      newFinArr[index] = final;
+      setFinalGrades(newFinArr);
+      setShouldUpdate(prevState => prevState + 1);
+    }
+
+    setSimAverage(avg);
+    setSimEstimatedGrade(estimated);
+    setSimFinalGrade(final);
+
+    // eslint-disable-next-line
+  }, [isUpdate]);
+
+  const handleShowGradeForm = (e, grade, weight, i) => {
+    const { target } = e;
+
+    if (target.id === 'add') {
+      setCanRemove(false);
+    } else {
+      setCanRemove(true);
+
+      if (countedList.length === 1) {
+        setCanRemove(false);
+      }
+    }
+
+    const { offsetLeft, offsetTop } = target;
+    setXPos(offsetLeft + 64);
+    setYPos(offsetTop);
+
+    setCurrentGrade(grade);
+    setCurrentWeight(parseFloat(weight));
+    setCurrentIndex(parseFloat(i));
+
+    setIsGradeFormVisible(true);
+  };
+
+  const handleHideGradeForm = () => {
+    setIsGradeFormVisible(false);
+  };
+
+  const handleSaveGrade = (grade, weight) => {
+    setIsEdited(true);
+    setIsGradeFormVisible(false);
+
+    const newGrade = {
+      weight: parseFloat(weight),
+    };
+
+    let lastCharacter;
+    let value = parseFloat(grade);
+    let g = parseFloat(grade);
+
+    if (grade.length > 1) {
+      lastCharacter = grade.slice(-1);
+
+      if (lastCharacter === '+') {
+        value -= 0.25;
+        g += lastCharacter;
+      } else if (lastCharacter === '-') {
+        value += 0.5;
+        g += lastCharacter;
+      }
+    }
+    newGrade.value = value;
+    newGrade.grade = g;
+
+    const newArr = countedList;
+    newArr.splice(currentIndex, 1, newGrade);
+
+    setIsUpdate(prevState => prevState + 1);
+  };
+
+  const handleRemoveGrade = () => {
+    setIsEdited(true);
+
+    const newArr = countedList;
+    newArr.splice(currentIndex, 1);
+
+    setIsGradeFormVisible(false);
+    setCountedList(newArr);
+    setIsUpdate(prevState => prevState + 1);
+  };
+
+  const handleReset = () => {
+    setIsEdited(false);
+    setIsReset(prevState => !prevState);
+  };
 
   return (
     <StyledWrapper isOpen={isCollapsed}>
+      <GradeForm
+        x={xPos}
+        y={yPos}
+        isVisible={isGradeFormVisible}
+        setIsVisible={handleHideGradeForm}
+        grade={currentGrade}
+        weight={currentWeight}
+        handleSaveGrade={handleSaveGrade}
+        handleRemoveGrade={handleRemoveGrade}
+        canRemove={canRemove}
+      />
+      {isEdited ? (
+        <StyledResetBtn type="button" onClick={handleReset}>
+          <StyledResetIcon icon={faSyncAlt} />
+          <Tooltip>
+            <StyledDescription>Resetuj</StyledDescription>
+          </Tooltip>
+        </StyledResetBtn>
+      ) : null}
       {isLoading ? (
         <StyledLoading icon={faSpinner} size="2x" spin />
       ) : (
@@ -423,44 +761,74 @@ function GradesRow({ name, grades, semester, setEstimatedGrades, setFinalGrades 
           <StyledSpan color={getCleanName(name)}>{name}</StyledSpan>
           <StyledGradesWrapper>
             {sortedGrades.length
-              ? sortedGrades.map((grade, i) => (
-                  <StyledGrade key={i.toString()} isNotCounted={grade.notCounted}>
-                    <StyledNumber color={grade.color}>{grade.grade}</StyledNumber>
-                    <StyledTooltip>
-                      {grade.notCounted ? (
-                        <StyledDescription color="textSecondary">
-                          Nie liczona do średniej
-                        </StyledDescription>
-                      ) : null}
-                      <StyledDescription color={grade.color}>{grade.category}</StyledDescription>
-                      <StyledDescription>Waga {grade.weight}</StyledDescription>
-                      <StyledDescription>{grade.dateSyntax}</StyledDescription>
-                      {grade.categoryDesc || grade.desc ? <StyledBorder /> : null}
-                      <StyledDescription>{grade.categoryDesc}</StyledDescription>
-                      <StyledDescription>{grade.desc}</StyledDescription>
-                    </StyledTooltip>
-                  </StyledGrade>
-                ))
+              ? sortedGrades.map(
+                  (
+                    { grade, color, notCounted, category, weight, dateSyntax, categoryDesc, desc },
+                    i,
+                  ) => (
+                    <StyledGrade key={i.toString()} isNotCounted={notCounted}>
+                      <StyledNumber color={color}>{grade}</StyledNumber>
+                      <StyledTooltip>
+                        {notCounted ? (
+                          <StyledDescription color="textSecondary">
+                            Nie liczona do średniej
+                          </StyledDescription>
+                        ) : null}
+                        <StyledDescription color={color}>{category}</StyledDescription>
+                        <StyledDescription>Waga {weight}</StyledDescription>
+                        <StyledDescription>{dateSyntax}</StyledDescription>
+                        {categoryDesc || desc ? <StyledBorder /> : null}
+                        <StyledDescription>{categoryDesc}</StyledDescription>
+                        <StyledDescription>{desc}</StyledDescription>
+                      </StyledTooltip>
+                    </StyledGrade>
+                  ),
+                )
               : null}
           </StyledGradesWrapper>
-          <StyledNumber color={parseFloat(average) <= gradesSteps[0] - 0.01 ? 'red' : 'text'}>
-            {average}
-          </StyledNumber>
-          <StyledNumber color={parseFloat(estimatedGrade) === 1 ? 'red' : 'text'}>
-            {typeof estimatedGrade === 'number' ? (
-              <>
-                - ({estimatedGrade})
-                <StyledTooltip>
-                  <StyledDescription>Wyliczona ze średniej</StyledDescription>
-                </StyledTooltip>
-              </>
-            ) : (
-              estimatedGrade
-            )}
-          </StyledNumber>
-          <StyledNumber color={parseFloat(finalGrade) === 1 ? 'red' : 'text'}>
-            {finalGrade}
-          </StyledNumber>
+          {isEdited ? (
+            <StyledNumber color={simAvgColor}>
+              {simAverage === 'NaN' ? 'Błąd' : simAverage}
+              <StyledDefault isVisible={parseFloat(defaultAvg) !== parseFloat(simAverage)}>
+                {defaultAvg}
+              </StyledDefault>
+            </StyledNumber>
+          ) : (
+            <StyledNumber color={average <= gradesSteps[0] - 0.01 ? 'red' : 'text'}>
+              {average}
+            </StyledNumber>
+          )}
+          {isEdited ? (
+            <StyledNumber color={simEstColor}>
+              {simEstimatedGrade}
+              <StyledDefault isVisible={parseFloat(defaultEst) !== parseFloat(simEstimatedGrade)}>
+                {defaultEst}
+              </StyledDefault>
+            </StyledNumber>
+          ) : (
+            <StyledNumber color={estimatedGrade === 1 ? 'red' : 'text'}>
+              {typeof estimatedGrade === 'number' ? (
+                <>
+                  - ({estimatedGrade})
+                  <StyledTooltip>
+                    <StyledDescription>Wyliczona ze średniej</StyledDescription>
+                  </StyledTooltip>
+                </>
+              ) : (
+                estimatedGrade
+              )}
+            </StyledNumber>
+          )}
+          {isEdited ? (
+            <StyledNumber color={simFinColor}>
+              {simFinalGrade}
+              <StyledDefault isVisible={parseFloat(defaultFin) !== parseFloat(simFinalGrade)}>
+                {defaultFin}
+              </StyledDefault>
+            </StyledNumber>
+          ) : (
+            <StyledNumber color={finalGrade === 1 ? 'red' : 'text'}>{finalGrade}</StyledNumber>
+          )}
         </StyledHeader>
       )}
       <StyledCollapse isOpen={isCollapsed}>
@@ -469,7 +837,37 @@ function GradesRow({ name, grades, semester, setEstimatedGrades, setFinalGrades 
             <StyledLoading icon={faSpinner} size="2x" spin />
           ) : (
             <>
-              <StyledContent />
+              <StyledContentWrapper>
+                <StyledContentHeader secondary>
+                  SYMULATOR - dodaj | zmień | usuń klikając na ocenę
+                  <br />
+                  Ocena przewidywana i końcowa będzie liczona ze średniej
+                </StyledContentHeader>
+                <StyledContent>
+                  <StyledGradesWrapper>
+                    {countedList.length
+                      ? countedList.map(({ grade, weight, color }, i) => (
+                          <StyledGradeBtn
+                            key={i.toString()}
+                            type="button"
+                            onClick={e => handleShowGradeForm(e, grade, weight, i)}
+                          >
+                            <StyledCustomGrade color={color}>{grade}</StyledCustomGrade>
+                            <StyledWeight>{weight}</StyledWeight>
+                          </StyledGradeBtn>
+                        ))
+                      : null}
+                    <StyledGradeBtn
+                      type="button"
+                      onClick={e => handleShowGradeForm(e, 5, 1, countedList.length)}
+                      isBlue
+                      id="add"
+                    >
+                      <StyledPlusIcon icon={faPlus} />
+                    </StyledGradeBtn>
+                  </StyledGradesWrapper>
+                </StyledContent>
+              </StyledContentWrapper>
               <StyledGraph>
                 <Line
                   data={graphData}
@@ -516,16 +914,16 @@ function GradesRow({ name, grades, semester, setEstimatedGrades, setFinalGrades 
                       backgroundColor: 'rgb(58, 58, 60)',
                       callbacks: {
                         title: () => '',
-                        label: tooltipItem => countedList[tooltipItem.index].category,
+                        label: tooltipItem => graphList[tooltipItem.index].category,
                         labelTextColor: tooltipItem =>
-                          getRGBColor(countedList[tooltipItem.index].color),
+                          getRGBColor(graphList[tooltipItem.index].color),
                         beforeFooter: tooltipItem =>
-                          `Ocena ${countedList[tooltipItem[0].index].grade}\nWaga ${
-                            countedList[tooltipItem[0].index].weight
+                          `Ocena ${graphList[tooltipItem[0].index].grade}\nWaga ${
+                            graphList[tooltipItem[0].index].weight
                           }`,
-                        footer: tooltipItem => countedList[tooltipItem[0].index].dateSyntax,
+                        footer: tooltipItem => graphList[tooltipItem[0].index].dateSyntax,
                         afterFooter: tooltipItem => {
-                          const { categoryDesc, desc } = countedList[tooltipItem[0].index];
+                          const { categoryDesc, desc } = graphList[tooltipItem[0].index];
                           let result = '';
                           if (categoryDesc.length) {
                             result += categoryDesc;
@@ -573,10 +971,16 @@ GradesRow.propTypes = {
   semester: PropTypes.string,
   setEstimatedGrades: PropTypes.func.isRequired,
   setFinalGrades: PropTypes.func.isRequired,
+  index: PropTypes.number.isRequired,
+  estimatedGrades: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.number, PropTypes.string])),
+  finalGrades: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.number, PropTypes.string])),
+  setShouldUpdate: PropTypes.func.isRequired,
 };
 
 GradesRow.defaultProps = {
   grades: [],
+  estimatedGrades: [],
+  finalGrades: [],
   semester: '1',
 };
 

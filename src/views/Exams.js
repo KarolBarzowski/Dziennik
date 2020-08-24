@@ -78,10 +78,6 @@ const StyledInfo = styled(Paragraph)`
   margin: 1rem 0;
 `;
 
-const StyledEmoji = styled.span`
-  color: #ffffff;
-`;
-
 function Exams() {
   const { examsData } = useData(null);
   const [upcoming, setUpcoming] = useState(null);
@@ -223,9 +219,9 @@ function Exams() {
           ) : (
             <StyledInfo secondary>
               Brak nadchodzących zadań{' '}
-              <StyledEmoji role="img" aria-label="Sunglasses">
+              <span role="img" aria-label="Sunglasses">
                 😎
-              </StyledEmoji>
+              </span>
             </StyledInfo>
           )}
         </StyledBox>

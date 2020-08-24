@@ -2,10 +2,8 @@ import React, { useState, useEffect } from 'react';
 import styled, { css } from 'styled-components';
 import { useData } from 'hooks/useData';
 import { slideInDown } from 'functions/animations';
-import { getColor } from 'functions/functions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSyncAlt } from '@fortawesome/free-solid-svg-icons';
-import { ReactComponent as Laurels } from 'assets/laurels.svg';
 import Section from 'components/atoms/Section/Section';
 import Paragraph from 'components/atoms/Paragraph/Paragraph';
 import Heading from 'components/atoms/Heading/Heading';
@@ -53,10 +51,10 @@ const StyledNumber = styled(Paragraph)`
   position: relative;
   font-size: 3.4rem;
   font-family: 'Roboto';
+  color: ${({ theme, color }) => (theme[color] ? theme[color] : theme.text)};
 `;
 
 const StyledBox = styled.div`
-  position: relative;
   display: flex;
   flex-flow: column nowrap;
   justify-content: space-between;
@@ -151,8 +149,32 @@ const StyledInfo = styled(Paragraph)`
   margin: 1rem 0;
 `;
 
-const StyledEmoji = styled.span`
-  color: #ffffff;
+const StyledDefault = styled.span`
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  font-size: 2.1rem;
+  font-weight: 500;
+  color: ${({ theme }) => theme.textSecondary};
+
+  ${({ isVisible }) =>
+    isVisible
+      ? css`
+          visibility: visible;
+          opacity: 1;
+          font-size: 2.1rem;
+          transform: translateX(7rem);
+          transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out,
+            font-size 0.2s ease-in-out;
+        `
+      : css`
+          visibility: hidden;
+          opacity: 0;
+          transform: translateX(0);
+          font-size: 3.4rem;
+          transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out,
+            font-size 0.2s ease-in-out, visibility 0s linear 0.25s;
+        `};
 `;
 
 const monthsInYearInGenitive = [
@@ -179,11 +201,16 @@ function NewGrades() {
   const [finalGrades, setFinalGrades] = useState([]);
   const [estimatedAverage, setEstimatedAverage] = useState();
   const [finalAverage, setFinalAverage] = useState();
+  const [shouldUpdate, setShouldUpdate] = useState(0);
+  const [defaultFinAvg, setDefaultFinAvg] = useState(finalAverage);
+  const [defaultEstAvg, setDefaultEstAvg] = useState(estimatedAverage);
+  const [estAvgColor, setEstAvgColor] = useState('text');
+  const [finAvgColor, setFinAvgColor] = useState('text');
 
   const { userData, gradesData } = useData();
 
   useEffect(() => {
-    if (estimatedGrades.length) {
+    if (estimatedGrades.length && estimatedGrades.length <= gradesData.length) {
       let sum = 0;
       estimatedGrades.forEach(grade => {
         sum += parseFloat(grade);
@@ -191,12 +218,21 @@ function NewGrades() {
 
       const avg = (sum / estimatedGrades.length).toFixed(2);
 
+      if (avg < defaultEstAvg) setEstAvgColor('red');
+      else if (avg > defaultEstAvg) setEstAvgColor('green');
+      else setEstAvgColor('text');
+
       setEstimatedAverage(avg);
+      if (shouldUpdate === 0) {
+        setDefaultEstAvg(avg);
+      }
     }
-  }, [estimatedGrades]);
+
+    // eslint-disable-next-line
+  }, [estimatedGrades, shouldUpdate, defaultEstAvg]);
 
   useEffect(() => {
-    if (finalGrades.length) {
+    if (finalGrades.length && finalGrades.length <= gradesData.length) {
       let sum = 0;
       finalGrades.forEach(grade => {
         sum += parseFloat(grade);
@@ -204,21 +240,18 @@ function NewGrades() {
 
       const avg = (sum / finalGrades.length).toFixed(2);
 
+      if (avg < defaultFinAvg) setFinAvgColor('red');
+      else if (avg > defaultFinAvg) setFinAvgColor('green');
+      else setFinAvgColor('text');
+
       setFinalAverage(avg);
+      if (shouldUpdate === 0) {
+        setDefaultFinAvg(avg);
+      }
     }
-  }, [finalGrades]);
 
-  useEffect(() => {
-    if (estimatedAverage) {
-      setEstimatedGrades([]);
-    }
-  }, [estimatedAverage]);
-
-  useEffect(() => {
-    if (finalAverage) {
-      setFinalGrades([]);
-    }
-  }, [finalAverage]);
+    // eslint-disable-next-line
+  }, [finalGrades, shouldUpdate, defaultFinAvg]);
 
   useEffect(() => {
     if (userData) {
@@ -258,6 +291,11 @@ function NewGrades() {
   const handleSwitchSemester = () => {
     const semester = currentSemester === '1' ? '2' : '1';
 
+    setShouldUpdate(0);
+    setFinAvgColor('text');
+    setEstAvgColor('text');
+    setEstimatedGrades([]);
+    setFinalGrades([]);
     setCurrentSemester(semester);
     window.localStorage.setItem('semester', semester);
   };
@@ -286,13 +324,23 @@ function NewGrades() {
         {estimatedAverage !== 'NaN' ? (
           <StyledBox>
             <StyledParagraph secondary>Średnia przewidywana</StyledParagraph>
-            <StyledNumber>{estimatedAverage}</StyledNumber>
+            <StyledNumber color={estAvgColor}>
+              {estimatedAverage}
+              <StyledDefault isVisible={defaultEstAvg !== estimatedAverage}>
+                {defaultEstAvg}
+              </StyledDefault>
+            </StyledNumber>
           </StyledBox>
         ) : null}
         {finalAverage !== 'NaN' ? (
           <StyledBox>
             <StyledParagraph secondary>Średnia końcowa</StyledParagraph>
-            <StyledNumber>{finalAverage}</StyledNumber>
+            <StyledNumber color={finAvgColor}>
+              {finalAverage}
+              <StyledDefault isVisible={defaultFinAvg !== finalAverage}>
+                {defaultFinAvg}
+              </StyledDefault>
+            </StyledNumber>
           </StyledBox>
         ) : null}
       </StyledRow>
@@ -306,22 +354,26 @@ function NewGrades() {
             <StyledColumnTitle>Końcowa</StyledColumnTitle>
           </StyledRow>
           {gradesData.length ? (
-            gradesData.map(({ name, grades }) => (
+            gradesData.map(({ name, grades }, i) => (
               <GradesRow
                 key={name}
                 name={name}
                 grades={grades}
                 semester={currentSemester}
+                estimatedGrades={estimatedGrades}
+                finalGrades={finalGrades}
                 setEstimatedGrades={setEstimatedGrades}
                 setFinalGrades={setFinalGrades}
+                index={i}
+                setShouldUpdate={setShouldUpdate}
               />
             ))
           ) : (
             <StyledInfo secondary>
               Brak ocen do wyświetlenia{' '}
-              <StyledEmoji role="img" aria-label="Sad">
+              <span role="img" aria-label="Sad">
                 🙁
-              </StyledEmoji>
+              </span>
             </StyledInfo>
           )}
         </StyledColumn>
