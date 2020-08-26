@@ -548,7 +548,7 @@ function Modal({ isVisible, handleModalToggle }) {
           )}
           {currentPage === 'Wersja' && (
             <StyledPage>
-              <StyledParagraph regular>Aktualna wersja: 1.6.0</StyledParagraph>
+              <StyledParagraph regular>Aktualna wersja: 1.7.0</StyledParagraph>
               <StyledParagraph regular>Zalecana wersja skryptu: 2.3.1</StyledParagraph>
               <StyledButton
                 as="a"

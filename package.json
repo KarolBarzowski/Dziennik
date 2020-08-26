@@ -1,6 +1,6 @@
 {
   "name": "dziennik",
-  "version": "1.5.1",
+  "version": "1.7.0",
   "private": true,
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.26",
@@ -25,6 +25,7 @@
     "pure-react-carousel": "^1.25.2",
     "react": "^16.12.0",
     "react-chartjs-2": "^2.8.0",
+    "react-countup": "^4.3.3",
     "react-device-detect": "^1.11.14",
     "react-dom": "^16.12.0",
     "react-ga": "^2.7.0",

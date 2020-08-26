@@ -7,6 +7,7 @@ import Heading from 'components/atoms/Heading/Heading';
 import Paragraph from 'components/atoms/Paragraph/Paragraph';
 import Button from 'components/atoms/Button/Button';
 import Card from 'components/organisms/Card/Card';
+import EventCard from 'components/organisms/EventCard/EventCard';
 import { getColor, getCleanName } from 'functions/functions';
 
 const StyledWrapper = styled.div`
@@ -292,7 +293,7 @@ function Dashboard() {
           >
             <>
               <Heading>Aktualizacja</Heading>
-              <Paragraph secondary>Dostępna jest aktualizacja skryptu.</Paragraph>
+              <Paragraph secondary>Dostępna jest aktualizacja skryptu</Paragraph>
             </>
           </Card>
         )}
@@ -325,7 +326,7 @@ function Dashboard() {
           <StyledHeader>
             <div>
               <Heading>Uwagi</Heading>
-              <Paragraph secondary>Nowe uwagi od ostatniej synchronizacji.</Paragraph>
+              <Paragraph secondary>Nowe uwagi od ostatniej synchronizacji</Paragraph>
             </div>
             <Button as={Link} to="/uwagi">
               Wszystkie
@@ -343,6 +344,7 @@ function Dashboard() {
             </Button>
           </StyledHeader>
         </Card>
+        <EventCard />
       </StyledWrapper>
     </Section>
   );

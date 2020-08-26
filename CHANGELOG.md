@@ -2,6 +2,14 @@
 
 Wszystkie zmiany w projekcie zostaną tutaj zapisane.
 
+## UNRELEASED
+
+## [1.7.0] - 2020-08-26
+
+### DODANO
+
+- **[Podsumowanie]** Dodano nową kartę "Przypominacz".
+
 ## [1.6.0] - 2020-08-24
 
 ### DODANO
