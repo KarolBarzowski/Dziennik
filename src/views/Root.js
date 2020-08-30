@@ -45,19 +45,17 @@ function Root() {
       <SnackbarProvider>
         <Router history={history}>
           <MainTemplate>
-            <Switch>
-              <UserTemplate>
-                <>
-                  <Route exact path="/" component={Dashboard} />
-                  <Route path="/oceny" component={NewGrades} />
-                  <Route path="/plan" component={Plan} />
-                  <Route path="/sprawdziany" component={Exams} />
-                  <Route path="/frekwencja" component={Absences} />
-                  <Route path="/uwagi" component={Points} />
-                  <Route component={NotFound} />
-                </>
-              </UserTemplate>
-            </Switch>
+            <UserTemplate>
+              <Switch>
+                <Route exact path="/" component={Dashboard} />
+                <Route path="/oceny" component={NewGrades} />
+                <Route path="/plan" component={Plan} />
+                <Route path="/sprawdziany" component={Exams} />
+                <Route path="/frekwencja" component={Absences} />
+                <Route path="/uwagi" component={Points} />
+                <Route component={NotFound} />
+              </Switch>
+            </UserTemplate>
           </MainTemplate>
         </Router>
       </SnackbarProvider>
