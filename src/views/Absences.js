@@ -143,6 +143,13 @@ const monthsInYear = [
   'Grudzień',
 ];
 
+const backgroundColors = [
+  'rgb(52, 199, 89)',
+  'rgb(90, 200, 250)',
+  'rgb(0, 122, 255)',
+  'rgb(255, 69, 58)',
+];
+
 function Absences() {
   const { absencesData } = useData(null);
   const [data, setData] = useState({ labels: [], datasets: [] });
@@ -224,12 +231,7 @@ function Absences() {
               absencesSorted.pending.length,
               absencesSorted.unexcused.length,
             ],
-            backgroundColor: [
-              'rgb(52, 199, 89)',
-              'rgb(90, 200, 250)',
-              'rgb(0, 122, 255)',
-              'rgb(255, 69, 58)',
-            ],
+            backgroundColor: backgroundColors,
           },
         ],
       };
@@ -264,36 +266,34 @@ function Absences() {
                     </StyledLink>
                   </StyledParagraph>
                 ) : null}
-                {/* <StyledParagraph>Łącznie:</StyledParagraph> */}
                 <StyledList>
                   <li>
                     <StyledParagraph>
-                      &bull; Nieobecności: {absencesData ? absencesData.length : 'Brak danych'}
+                      Nieobecności: {absencesData ? absencesData.length : 'Brak danych'}
                     </StyledParagraph>
                   </li>
                   <li>
                     <StyledParagraph>
-                      &bull; Godziny <StyledColor color="green">usprawiedliwione</StyledColor>:{' '}
+                      Godziny <StyledColor color="green">usprawiedliwione</StyledColor>:{' '}
                       {frequency ? frequency.excused.length : 'Brak danych'}
                     </StyledParagraph>
                   </li>
                   <li>
                     <StyledParagraph>
-                      &bull; Godziny <StyledColor color="red">nieusprawiedliwione</StyledColor>:{' '}
+                      Godziny <StyledColor color="red">nieusprawiedliwione</StyledColor>:{' '}
                       {frequency ? frequency.unexcused.length : 'Brak danych'}
                     </StyledParagraph>
                   </li>
                   <li>
                     <StyledParagraph>
-                      &bull; Godziny{' '}
+                      Godziny{' '}
                       <StyledColor color="blue">wnioskowane do usprawiedliwienia</StyledColor>:{' '}
                       {frequency ? frequency.pending.length : 'Brak danych'}
                     </StyledParagraph>
                   </li>
                   <li>
                     <StyledParagraph>
-                      &bull; Godziny{' '}
-                      <StyledColor color="teal">nieliczone do frekwencji</StyledColor> :{' '}
+                      Godziny <StyledColor color="teal">nieliczone do frekwencji</StyledColor> :{' '}
                       {frequency ? frequency.notCounted.length : 'Brak danych'}
                     </StyledParagraph>
                   </li>
@@ -311,6 +311,27 @@ function Absences() {
                   display: false,
                 },
                 maintainAspectRatio: false,
+                tooltips: {
+                  bodyFontFamily: "'Montserrat', sans-serif",
+                  bodyFontSize: 16,
+                  bodyFontColor: 'rgba(255, 255, 255, .87)',
+                  bodyFontStyle: '500',
+                  yPadding: 10,
+                  xPadding: 10,
+                  caretPadding: 15,
+                  caretSize: 10,
+                  cornerRadius: 10,
+                  displayColors: false,
+                  backgroundColor: 'rgb(58, 58, 60)',
+                  callbacks: {
+                    label: (tooltipItem, data) => {
+                      return `${data.labels[tooltipItem.index]}: ${
+                        data.datasets[0].data[tooltipItem.index]
+                      }`;
+                    },
+                    labelTextColor: tooltipItem => backgroundColors[tooltipItem.index],
+                  },
+                },
               }}
             />
           </StyledBox>

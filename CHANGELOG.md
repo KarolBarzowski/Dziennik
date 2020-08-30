@@ -15,6 +15,8 @@ Wszystkie zmiany w projekcie zostaną tutaj zapisane.
 - **[ogólne]** Zmieniono wygląd paska do przewijania strony.
 - **[Poradnik]** Odświeżono stronę.
 - **[ustawienia]** Ustawienia regulacji progów ocen przeniesiono do podstrony Oceny.
+- **[Frekwencja]** Drobna zmiana kosmetyczna podsumowania.
+- **[Frekwencja]** Zmieniono wygląd dymka pokazującego się na wykresie.
 
 ### USUNIĘTO
 
