@@ -10,6 +10,7 @@ Wszystkie zmiany w projekcie zostaną tutaj zapisane.
 - **[ogólne]** Dodano podstronę z aktualizacją skryptu.
 - **[Oceny]** Dodano ustawienia regulacji progów ocen (przeniesiono z dawnych ustawień).
 - **[Oceny]** Dodano legendę kolorów ocen.
+- **[Podsumowanie]** Do karty Przypominacz dodano przycisk "Następne".
 
 ### ZMIENIONO
 

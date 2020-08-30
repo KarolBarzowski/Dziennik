@@ -5,6 +5,8 @@ import { events } from 'utils/calendarData';
 import Paragraph from 'components/atoms/Paragraph/Paragraph';
 import Heading from 'components/atoms/Heading/Heading';
 import CountUp from 'react-countup';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowRight, faRedoAlt } from '@fortawesome/free-solid-svg-icons';
 
 const Wrapper = styled.div`
   display: flex;
@@ -58,6 +60,10 @@ const Label = styled(Paragraph)`
 `;
 
 const Header = styled.div`
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: space-between;
   margin-bottom: 1.5rem;
 `;
 
@@ -69,6 +75,30 @@ const Column = styled.div`
 
 const StyledParagraph = styled(Paragraph)`
   margin-left: 3rem;
+`;
+
+const Button = styled.button`
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 500;
+  font-size: 1.6rem;
+  color: ${({ theme }) => theme.text};
+  padding: 0.5rem 1rem;
+  border-radius: 5rem;
+  background-color: transparent;
+  border: 0.2rem solid ${({ theme }) => theme.border};
+  cursor: pointer;
+  margin-left: 0.5rem;
+  outline: none;
+  transition: background-color 0.05s ease-in-out;
+
+  :hover,
+  :focus {
+    background-color: ${({ theme }) => theme.buttonHover};
+  }
+`;
+
+const Icon = styled(FontAwesomeIcon)`
+  margin-left: 0.5rem;
 `;
 
 const monthsInYear = [
@@ -86,25 +116,29 @@ const monthsInYear = [
   'grudnia',
 ];
 
+const today = new Date();
+today.setHours(0, 0, 0, 0);
+const todayTs = today.getTime();
+
+const tomorrow = new Date(today);
+tomorrow.setDate(today.getDate() + 1);
+tomorrow.setHours(0, 0, 0, 0);
+const tomorrowTs = tomorrow.getTime();
+
+const year = today.getFullYear();
+
 function EventCard() {
   const [currentEvent, setCurrentEvent] = useState(null);
+  const [defaultEvent, setDefaultEvent] = useState(null);
+  const [isReset, setIsReset] = useState(false);
+  const [isNext, setIsNext] = useState(true);
+  const [prevCount, setPrevCount] = useState(1);
 
   useEffect(() => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const todayTs = today.getTime();
-
-    const tomorrow = new Date(today);
-    tomorrow.setDate(today.getDate() + 1);
-    tomorrow.setHours(0, 0, 0, 0);
-    const tomorrowTs = tomorrow.getTime();
-
-    const year = today.getFullYear();
-
     let closestEvent = null;
     let closestTs = null;
 
-    events.forEach(({ label, date }) => {
+    events.forEach(({ label, date }, i) => {
       if (date.getFullYear() === year) {
         const ts = date.getTime();
         if (ts >= todayTs) {
@@ -114,6 +148,7 @@ function EventCard() {
               label,
               day: date.getDate(),
               month: date.getMonth(),
+              index: i,
             };
           }
         }
@@ -122,7 +157,7 @@ function EventCard() {
 
     const timeleft = closestTs - new Date().getTime();
 
-    const daysLeft = Math.floor(timeleft / (1000 * 60 * 60 * 24));
+    const daysLeft = parseFloat((timeleft / (1000 * 60 * 60 * 24)).toFixed());
 
     if (closestTs === todayTs) {
       closestEvent.left = 'Dzisiaj';
@@ -132,13 +167,83 @@ function EventCard() {
       closestEvent.left = daysLeft;
     }
 
+    if (closestEvent.day === 31 && closestEvent.month === 11) {
+      setIsNext(false);
+      setIsReset(false);
+    }
+
     setCurrentEvent(closestEvent);
+    setDefaultEvent(closestEvent);
   }, []);
+
+  const handleNext = () => {
+    setIsReset(true);
+
+    let closestEvent = null;
+    let closestTs = null;
+
+    events.forEach(({ label, date }, i) => {
+      if (date.getFullYear() === year) {
+        const ts = date.getTime();
+        const currentTs = events[currentEvent.index].date.getTime();
+
+        if (ts > currentTs) {
+          if (ts <= closestTs || closestTs === null) {
+            closestTs = ts;
+            closestEvent = {
+              label,
+              day: date.getDate(),
+              month: date.getMonth(),
+              index: i,
+            };
+          }
+        }
+      }
+    });
+
+    const timeleft = closestTs - new Date().getTime();
+
+    const daysLeft = parseFloat((timeleft / (1000 * 60 * 60 * 24)).toFixed());
+
+    if (closestTs === todayTs) {
+      closestEvent.left = 'Dzisiaj';
+    } else if (closestTs === tomorrowTs) {
+      closestEvent.left = 'Jutro';
+    } else {
+      closestEvent.left = daysLeft;
+    }
+
+    if (closestEvent.day === 31 && closestEvent.month === 11) {
+      setIsNext(false);
+    }
+
+    setPrevCount(currentEvent.left);
+    setCurrentEvent(closestEvent);
+  };
+
+  const handleReset = () => {
+    setIsReset(false);
+    setIsNext(true);
+    setCurrentEvent(defaultEvent);
+  };
 
   return currentEvent ? (
     <Wrapper>
       <Header>
         <Heading>Przypominacz</Heading>
+        <Row>
+          {isReset && (
+            <Button type="button" onClick={handleReset}>
+              Zresetuj
+            </Button>
+          )}
+          {isNext && (
+            <Button type="button" onClick={handleNext}>
+              Następne
+              <Icon icon={faArrowRight} fixedWidth />
+            </Button>
+          )}
+        </Row>
       </Header>
       <Row>
         <Column>
@@ -146,7 +251,7 @@ function EventCard() {
           <Row>
             <Day>
               {typeof currentEvent.left === 'number' ? (
-                <CountUp start={0} end={currentEvent.left} duration={1.25} delay={0.1} />
+                <CountUp start={prevCount} end={currentEvent.left} duration={1.5} delay={0.1} />
               ) : (
                 currentEvent.left
               )}
@@ -157,9 +262,7 @@ function EventCard() {
         <Column>
           <StyledParagraph secondary>Data</StyledParagraph>
           <Row>
-            <Day border>
-              <CountUp start={0} end={currentEvent.day} duration={1.25} delay={0.1} />
-            </Day>
+            <Day border>{currentEvent.day}</Day>
             <Month secondary>{monthsInYear[currentEvent.month]}</Month>
           </Row>
         </Column>
