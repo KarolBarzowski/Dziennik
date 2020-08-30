@@ -478,6 +478,11 @@ function NewGrades() {
     <Section>
       <Modal ref={modalRef} isOpen={isModalOpen} x={x} y={y}>
         <Heading>Regulacja progów ocen</Heading>
+        <Paragraph secondary>
+          Jeżeli nauczyciel nie wystawił oceny przewidywanej
+          <br /> lub końcowej, będą one liczone ze średniej ważonej.
+          <br /> Tak samo, jeśli korzystasz z symulatora ocen.
+        </Paragraph>
         <SettingsRow>
           <SettingsParagraph>1</SettingsParagraph>
           <StyledSeparator ml={0.5} mr={0.5}>
