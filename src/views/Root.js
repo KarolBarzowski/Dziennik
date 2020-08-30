@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactGA from 'react-ga';
 import { createBrowserHistory } from 'history';
 import { Router, Switch, Route } from 'react-router-dom';
@@ -13,6 +13,8 @@ import Exams from 'views/Exams';
 import Absences from 'views/Absences';
 import Tutorial from 'views/Tutorial';
 import Points from 'views/Points';
+import Update from 'views/Update';
+import NotFound from 'views/NotFound';
 import GlobalStyle from 'theme/GlobalStyle';
 
 ReactGA.initialize(process.env.REACT_APP_TRACKING_ID);
@@ -25,11 +27,18 @@ history.listen(location => {
 });
 
 function Root() {
+  const [isScriptUpdate, setIsScriptUpdate] = useState(false);
   const { data } = useData();
 
-  if (!data) {
-    return <Tutorial />;
-  }
+  useEffect(() => {
+    const ACTUAL_SCRIPT_VERSION = process.env.REACT_APP_SCRIPT_VERSION;
+    const scriptVersion = window.localStorage.getItem('script_version');
+    setIsScriptUpdate(scriptVersion !== ACTUAL_SCRIPT_VERSION);
+  }, []);
+
+  if (!data) return <Tutorial />;
+  if (isScriptUpdate) return <Update />;
+
   return (
     <>
       <GlobalStyle />
@@ -45,6 +54,7 @@ function Root() {
                   <Route path="/sprawdziany" component={Exams} />
                   <Route path="/frekwencja" component={Absences} />
                   <Route path="/uwagi" component={Points} />
+                  <Route component={NotFound} />
                 </>
               </UserTemplate>
             </Switch>
