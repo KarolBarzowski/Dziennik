@@ -2,9 +2,6 @@ import React from 'react';
 import ReactGA from 'react-ga';
 import styled from 'styled-components';
 import GlobalStyle from 'theme/GlobalStyle';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faExclamation, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
-import { faFacebookMessenger } from '@fortawesome/free-brands-svg-icons';
 
 ReactGA.initialize(process.env.REACT_APP_TRACKING_ID);
 ReactGA.pageview('tutorial');
@@ -15,23 +12,13 @@ const StyledWrapper = styled.div`
 
   a {
     color: rgb(10, 132, 255);
+    text-decoration: none;
   }
 
   ol,
   ul {
-    margin-left: 3.5rem;
+    margin-left: 2.5rem;
   }
-`;
-
-const StyledWarn = styled(FontAwesomeIcon)`
-  color: rgb(211, 47, 47);
-  margin-right: 0.5rem;
-`;
-
-const StyledInfo = styled.div`
-  margin-top: 2.5rem;
-  font-size: 1.6rem;
-  font-weight: 400;
 `;
 
 const handleAddEvent = () => {
@@ -45,15 +32,18 @@ const Tutorial = () => (
   <>
     <GlobalStyle />
     <StyledWrapper id="tutorial">
-      <h1>Prawdopodobnie jesteś tutaj pierwszy raz.</h1>
-      <p>Aktualnie wspierane przeglądarki: Google Chrome, Mozilla Firefox, Opera, Opera GX, Edge</p>
-      <p>
-        <StyledWarn icon={faExclamation} />
-        Aktualnie aplikacja działa wyłącznie na komputerze, w przyszłości powstanie wersja mobilna.
-      </p>
+      <h1>Witaj! Prawdopodobnie jesteś tutaj pierwszy raz.</h1>
       <br />
-      <h3>1. Aby móc używać aplikacji, wymagany jest dodatek do przeglądarki Tampermonkey.</h3>
-      <p>Linki do pobrania (otworzą się w nowym oknie): </p>
+
+      <h2>Dlaczego widzisz to okno, a nie aplikacje?</h2>
+      <h2>- Aplikacja aby działać potrzebuje danych ze szkolnego edziennika.</h2>
+      <br />
+
+      <h2>Jak pobrać te dane?</h2>
+      <h2>- Jest to bardzo proste. Potrzebujesz jedynie dodatku do przeglądarki i gotowe!</h2>
+      <br />
+
+      <h2>1. Pobierz dodatek Tampermonkey.</h2>
       <ul>
         <li>
           <a
@@ -92,64 +82,56 @@ const Tutorial = () => (
           </a>
         </li>
       </ul>
+      <br />
 
+      <h2>2. Pobierz skrypt do dodatku Tampermonkey.</h2>
+      <p>Otworzy się nowe okno z instalacją skryptu, naciśnij przycisk Zainstaluj.</p>
+      <a href="https://github.com/KarolBarzowski/Dziennik/raw/master/script.user.js">Pobierz</a>
       <br />
-      <h3>
-        2. Po pobraniu dodatku, pobierz skrypt. (otworzy się nowe okno z instalacją skryptu,
-        naciśnij przycisk Zainstaluj){' '}
-        <a href="https://github.com/KarolBarzowski/Dziennik/raw/master/script.user.js">Pobierz</a>
-      </h3>
       <br />
-      <h3>3. Jeżeli skrypt został zainstalowany, należy wykonać synchronizację:</h3>
+
+      <h2>3. Wykonaj swoją pierwszą synchronizację!</h2>
+      <p>
+        Wystarczy, że klikniesz poniższy niebieski napis &quot;Synchronizuj&quot;. Otworzy się
+        edziennik, wtedy zaloguj się na konto ucznia bądź rodzica - nie ma to znaczenia.
+      </p>
+      <p>
+        Po zalogowaniu synchronizacja przebiegnie automatycznie, a na koniec przekieruje Cię do
+        właściwej aplikacji!{' '}
+        <span role="img" aria-label="Sunglasses emoji">
+          😎
+        </span>
+      </p>
+      <a
+        href="https://nasze.miasto.gdynia.pl/ed_miej/zest_start.pl?autoSync=true"
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={handleAddEvent}
+      >
+        Synchronizuj
+      </a>
       <br />
-      <ol>
-        <li>
-          Wystarczy, że{' '}
-          <a
-            href="https://nasze.miasto.gdynia.pl/ed_miej/zest_start.pl?autoSync=true"
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={handleAddEvent}
-          >
-            klikniesz tutaj
-          </a>{' '}
-          i się zalogujesz (na ucznia lub rodzica, nie ma to znaczenia).
-        </li>
-        <li>Po zalogowaniu się synchronizacja przebiegnie automatycznie.</li>
+      <br />
+      <br />
+      <br />
+
+      <p>FAQ:</p>
+      <p>Q: Mam się zalogować, ale skąd wiem, że skrypt nie ukradnie mi mojego hasła?</p>
+      <p>
+        A: Bez obaw! Skrypt nie działa na podstronie wymagającej zalogowania się. Możesz to
+        sprawdzić - gdy będziesz się logował zobacz,
         <br />
-        <h4>
-          <StyledWarn icon={faExclamation} />
-          Uwaga! Jeżeli coś się stało i się nie zsynchronizowało skontaktuj się ze mną{' '}
-          <a href="https://m.me/walterbialy" target="_blank" rel="noopener noreferrer">
-            <FontAwesomeIcon icon={faFacebookMessenger} />
-          </a>
-          .
-        </h4>
-        <br />
-      </ol>
-      <StyledInfo>
+        że po kliknięciu na dodatek Tampermonkey nie widać aktywnego skryptu, a po zalogowaniu -
+        widać.
+      </p>
+      <br />
+      <p>
+        W razie pytań - pisz śmiało na{' '}
         <a href="https://m.me/walterbialy" target="_blank" rel="noopener noreferrer">
-          Zgłoś błąd <FontAwesomeIcon icon={faFacebookMessenger} />
+          messengerze
         </a>
-      </StyledInfo>
-      <StyledInfo>
-        <h4>
-          <FontAwesomeIcon icon={faInfoCircle} fixedWidth /> Jak działa skrypt?
-        </h4>
-        <br />
-        Skrypt pobiera dane (oceny, plan lekcji, sprawdziany, nieobecności i uwagi) z dziennika
-        elektornicznego, następnie zapisuje je w pamięci dodatku Tampermonkey oraz w pamięci
-        lokalnej przeglądarki.
-        <br />
-        Pobrane dane są widoczne tylko dla Ciebie.
-        <br />
-        Twórca tej aplikacji nie ma dostępu do żadnych z tych danych.
-        <br />
-        <br />W razie pytań:{' '}
-        <a href="https://m.me/walterbialy" target="_blank" rel="noopener noreferrer">
-          Kontakt przez messengera <FontAwesomeIcon icon={faFacebookMessenger} />
-        </a>
-      </StyledInfo>
+        !
+      </p>
     </StyledWrapper>
   </>
 );
