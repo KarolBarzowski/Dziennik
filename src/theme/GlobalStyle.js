@@ -23,6 +23,16 @@ const GlobalStyle = createGlobalStyle`
         background-color: rgb(28, 28, 30);
     }
 
+    body::-webkit-scrollbar {
+        width: 1.2rem;
+        background-color: rgb(28, 28, 30);
+    }
+
+    body::-webkit-scrollbar-thumb {
+        background-color: rgb(44, 44, 46);
+        border-radius: 2rem;
+    }
+
     .MuiSnackbarContent-message {
         font-size: 1.6rem;
         font-family: 'Montserrat', sans-serif;
