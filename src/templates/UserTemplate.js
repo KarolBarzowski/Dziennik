@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import DynamicHeader from 'components/molecules/DynamicHeader/DynamicHeader';
 import Navbar from 'components/organisms/Navbar/Navbar';
-import Modal from 'components/organisms/Modal/Modal';
 
 const StyledTopbar = styled.div`
   display: flex;
@@ -16,17 +15,12 @@ const StyledTopbar = styled.div`
 `;
 
 function UserTemplate({ children }) {
-  const [isModalOpen, setModalOpen] = useState(false);
-
-  const handleModalToggle = () => setModalOpen(!isModalOpen);
-
   return (
     <>
       <StyledTopbar>
         <DynamicHeader />
-        <Navbar handleModalToggle={handleModalToggle} />
+        <Navbar />
       </StyledTopbar>
-      <Modal isVisible={isModalOpen} handleModalToggle={handleModalToggle} />
       {children}
     </>
   );

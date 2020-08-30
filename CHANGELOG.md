@@ -4,6 +4,22 @@ Wszystkie zmiany w projekcie zostaną tutaj zapisane.
 
 ## UNRELEASED
 
+### DODANO
+
+- **[ogólne]** Dodano podstronę z błędem 404.
+- **[ogólne]** Dodano podstronę z aktualizacją skryptu.
+- **[Oceny]** Dodano ustawienia regulacji progów ocen (przeniesiono z dawnych ustawień).
+
+### ZMIENIONO
+
+- **[ogólne]** Zmieniono wygląd paska do przewijania strony.
+- **[Poradnik]** Odświeżono stronę.
+- **[ustawienia]** Ustawienia regulacji progów ocen przeniesiono do podstrony Oceny.
+
+### USUNIĘTO
+
+- **[ustawienia]** Usunięto ustawienia.
+
 ## [1.7.0] - 2020-08-26
 
 ### DODANO

@@ -63,6 +63,7 @@ export const theme = {
   ...lessonsPalette,
   ...transitions,
   background: 'rgb(28, 28, 30)',
+  modal: 'rgb(44, 44, 46)',
   burger: 'rgb(255, 255, 255)',
   navbar: colors.dp08,
   card: colors.dp01,

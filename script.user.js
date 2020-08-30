@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Pobieracz danych z e-dziennika
-// @version      2.3.1
+// @version      2.3.2
 // @description  Skrypt synchronizuje e-dziennik szkolny z aplikacją.
-// @author       Karol Barzowski
+// @author       Karol
 // @match        https://nasze.miasto.gdynia.pl/ed_miej/*
 // @match        https://edziennik.netlify.com/*
 // @match        https://edziennik.netlify.app/*
@@ -15,7 +15,7 @@
 // @grant        GM_getValue
 // ==/UserScript==
 
-const SCRIPT_VERSION = '2.3.1';
+const SCRIPT_VERSION = '2.3.2';
 const ACTUAL_ACTION = localStorage.getItem('actualAction');
 const SHOULD_START = localStorage.getItem('shouldStart');
 const ACTUAL_URL = window.location.href;

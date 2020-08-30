@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useReducer } from 'react';
+import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
+import { useOutsideClick } from 'hooks/useOutsideClick';
 import { useData } from 'hooks/useData';
 import { slideInDown } from 'functions/animations';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -177,6 +179,97 @@ const StyledDefault = styled.span`
         `};
 `;
 
+const Modal = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-flow: column nowrap;
+  background-color: ${({ theme }) => theme.collapse};
+  padding: 1rem;
+  border-radius: 1rem;
+  z-index: 99;
+  box-shadow: rgba(0, 0, 0, 0.16) 0 3px 6px;
+  transform: ${({ x, y }) => `translate(${x}px, ${y}px)`};
+
+  ${({ isOpen }) =>
+    isOpen
+      ? css`
+          visibility: visible;
+          opacity: 1;
+          transition: opacity 0.15s ease-in-out, visibility 0s linear 0s,
+            transform 0.15s ease-in-out;
+        `
+      : css`
+          visibility: hidden;
+          opacity: 0;
+          transition: opacity 0.15s ease-in-out, visibility 0s linear 0.15s;
+        `};
+`;
+
+const StyledSeparator = styled.div`
+  margin: ${({ mt = 0, mr = 0, mb = 0, ml = 0 }) => `${mt}rem ${mr}rem ${mb}rem ${ml}rem`};
+`;
+
+const SettingsRow = styled.div`
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 20rem;
+  margin: 0.5rem 0;
+
+  :first-of-type {
+    margin-top: 1.5rem;
+  }
+`;
+
+const StyledNumberInput = styled.input`
+  width: 6rem;
+  padding: 0.2rem 0.4rem;
+  background-color: ${({ theme }) => theme.gray3};
+  color: ${({ theme }) => theme.text};
+  font-family: 'Roboto', sans-serif;
+  font-size: ${({ theme }) => theme.m};
+  border: none;
+  border-radius: 0.4rem;
+  cursor: pointer;
+  transition: background-color ${({ theme }) => theme.themeTransition},
+    color ${({ theme }) => theme.themeTransition};
+
+  :read-only {
+    width: 4rem;
+    ::-webkit-outer-spin-button,
+    ::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  }
+`;
+
+const SettingsParagraph = styled(Paragraph)`
+  font-size: ${({ theme }) => theme.m};
+`;
+
+const SettingsFooter = styled(StyledRow)`
+  margin-top: 1rem;
+  animation: ${slideInDown} 0.15s ease-in-out 0.05s backwards;
+`;
+
+const TextButton = styled.button`
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  outline: none;
+
+  ${Paragraph} {
+    color: ${({ theme }) => theme.blue} !important;
+    :hover {
+      text-decoration: underline;
+    }
+  }
+`;
+
 const monthsInYearInGenitive = [
   'stycznia',
   'lutego',
@@ -192,7 +285,46 @@ const monthsInYearInGenitive = [
   'grudnia',
 ];
 
+function NumberInput({ type, value, readOnly, func }) {
+  const [val, setVal] = useState(value);
+
+  useEffect(() => {
+    setVal(value);
+  }, [value]);
+
+  const handleChange = e => {
+    setVal(e.target.value);
+    func(e);
+  };
+
+  return (
+    <StyledNumberInput
+      type={type}
+      value={val}
+      onChange={handleChange}
+      step={0.01}
+      readOnly={readOnly}
+    />
+  );
+}
+
+NumberInput.propTypes = {
+  type: PropTypes.string,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  func: PropTypes.func,
+  readOnly: PropTypes.bool,
+};
+
+NumberInput.defaultProps = {
+  type: 'number',
+  readOnly: false,
+  func: null,
+};
+
 function NewGrades() {
+  const modalRef = useRef(null);
+  const settingsBtnRef = useRef(null);
+
   const [currentSemester, setCurrentSemester] = useState(
     window.localStorage.getItem('semester') || '1',
   );
@@ -206,8 +338,23 @@ function NewGrades() {
   const [defaultEstAvg, setDefaultEstAvg] = useState(estimatedAverage);
   const [estAvgColor, setEstAvgColor] = useState('text');
   const [finAvgColor, setFinAvgColor] = useState('text');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [x, setX] = useState(0);
+  const [y, setY] = useState(0);
+  const [gradesSteps, setGradesSteps] = useState(
+    JSON.parse(window.localStorage.getItem('settings_regulation')) || [
+      1.86,
+      2.86,
+      3.86,
+      4.86,
+      5.51,
+    ],
+  );
+  const [isEdited, setIsEdited] = useState(false);
+  const [, forceUpdate] = useReducer(x => x + 1, 0);
 
   const { userData, gradesData } = useData();
+  useOutsideClick(modalRef, () => setIsModalOpen(false));
 
   useEffect(() => {
     if (estimatedGrades.length && estimatedGrades.length <= gradesData.length) {
@@ -300,8 +447,113 @@ function NewGrades() {
     window.localStorage.setItem('semester', semester);
   };
 
+  const handleGradeChange = (e, index) => {
+    setIsEdited(true);
+    const newObj = gradesSteps;
+    const value = parseFloat(e.target.value);
+    gradesSteps[index] = value;
+    setGradesSteps(newObj);
+    window.localStorage.setItem('settings_regulation', JSON.stringify(newObj));
+    forceUpdate();
+  };
+
+  const handleReset = () => {
+    setIsEdited(true);
+    const newObj = [1.86, 2.86, 3.86, 4.86, 5.51];
+    setGradesSteps(newObj);
+    window.localStorage.setItem('settings_regulation', JSON.stringify(newObj));
+    forceUpdate();
+  };
+
+  const handleModalToggle = e => {
+    const { target } = e;
+
+    const { offsetLeft, offsetTop } = target;
+    setX(offsetLeft);
+    setY(offsetTop + 149);
+    setIsModalOpen(prevState => !prevState);
+  };
+
   return (
     <Section>
+      <Modal ref={modalRef} isOpen={isModalOpen} x={x} y={y}>
+        <Heading>Regulacja progów ocen</Heading>
+        <SettingsRow>
+          <SettingsParagraph>1</SettingsParagraph>
+          <StyledSeparator ml={0.5} mr={0.5}>
+            <SettingsParagraph regular>do</SettingsParagraph>
+          </StyledSeparator>
+          <NumberInput type="number" value={(gradesSteps[0] - 0.01).toFixed(2)} readOnly />
+          <StyledSeparator mr={4.4} />
+          <StyledSeparator mr={4.4} />
+        </SettingsRow>
+        <SettingsRow>
+          <SettingsParagraph>2</SettingsParagraph>
+          <StyledSeparator ml={0.5} mr={0.5}>
+            <SettingsParagraph regular>od</SettingsParagraph>
+          </StyledSeparator>
+          <NumberInput type="number" func={e => handleGradeChange(e, 0)} value={gradesSteps[0]} />
+          <StyledSeparator ml={0.5} mr={0.5}>
+            <SettingsParagraph regular>do</SettingsParagraph>
+          </StyledSeparator>
+          <NumberInput type="number" value={(gradesSteps[1] - 0.01).toFixed(2)} readOnly />
+        </SettingsRow>
+        <SettingsRow>
+          <SettingsParagraph>3</SettingsParagraph>
+          <StyledSeparator ml={0.5} mr={0.5}>
+            <SettingsParagraph regular>od</SettingsParagraph>
+          </StyledSeparator>
+          <NumberInput type="number" func={e => handleGradeChange(e, 1)} value={gradesSteps[1]} />
+          <StyledSeparator ml={0.5} mr={0.5}>
+            <SettingsParagraph regular>do</SettingsParagraph>
+          </StyledSeparator>
+          <NumberInput type="number" value={(gradesSteps[2] - 0.01).toFixed(2)} readOnly />
+        </SettingsRow>
+        <SettingsRow>
+          <SettingsParagraph>4</SettingsParagraph>
+          <StyledSeparator ml={0.5} mr={0.5}>
+            <SettingsParagraph regular>od</SettingsParagraph>
+          </StyledSeparator>
+          <NumberInput type="number" func={e => handleGradeChange(e, 2)} value={gradesSteps[2]} />
+          <StyledSeparator ml={0.5} mr={0.5}>
+            <SettingsParagraph regular>do</SettingsParagraph>
+          </StyledSeparator>
+          <NumberInput type="number" value={(gradesSteps[3] - 0.01).toFixed(2)} readOnly />
+        </SettingsRow>
+        <SettingsRow>
+          <SettingsParagraph>5</SettingsParagraph>
+          <StyledSeparator ml={0.5} mr={0.5}>
+            <SettingsParagraph regular>od</SettingsParagraph>
+          </StyledSeparator>
+          <NumberInput type="number" func={e => handleGradeChange(e, 3)} value={gradesSteps[3]} />
+          <StyledSeparator ml={0.5} mr={0.5}>
+            <SettingsParagraph regular>do</SettingsParagraph>
+          </StyledSeparator>
+          <NumberInput type="number" value={(gradesSteps[4] - 0.01).toFixed(2)} readOnly />
+        </SettingsRow>
+        <SettingsRow>
+          <SettingsParagraph>6</SettingsParagraph>
+          <StyledSeparator ml={0.5} mr={0.5}>
+            <SettingsParagraph regular>od</SettingsParagraph>
+          </StyledSeparator>
+          <NumberInput type="number" func={e => handleGradeChange(e, 4)} value={gradesSteps[4]} />
+          <StyledSeparator mr={3.6} />
+          <StyledSeparator mr={3.6} />
+        </SettingsRow>
+        <SettingsRow>
+          <TextButton type="button" onClick={handleReset}>
+            <Paragraph secondary>Resetuj</Paragraph>
+          </TextButton>
+        </SettingsRow>
+        {isEdited ? (
+          <SettingsFooter>
+            <TextButton type="button" onClick={() => window.location.reload()}>
+              <Paragraph secondary>Odśwież</Paragraph>
+            </TextButton>
+            <Paragraph secondary>, aby zobaczyć zmiany.</Paragraph>
+          </SettingsFooter>
+        ) : null}
+      </Modal>
       <StyledRow>
         <StyledBox>
           <StyledHeading>
@@ -343,6 +595,12 @@ function NewGrades() {
             </StyledNumber>
           </StyledBox>
         ) : null}
+        <StyledBox>
+          <StyledParagraph secondary>Ustawienia</StyledParagraph>
+          <StyledSwitchBtn type="button" onClick={handleModalToggle} ref={settingsBtnRef}>
+            Otwórz ustawienia
+          </StyledSwitchBtn>
+        </StyledBox>
       </StyledRow>
       <StyledBox main>
         <StyledColumn>
