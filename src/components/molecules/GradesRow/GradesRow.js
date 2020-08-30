@@ -841,7 +841,7 @@ function GradesRow({
                 <StyledContentHeader secondary>
                   SYMULATOR - dodaj | zmień | usuń klikając na ocenę
                   <br />
-                  Ocena przewidywana i końcowa będzie liczona ze średniej
+                  Ocena przewidywana i końcowa będzie liczona ze średniej ważonej
                 </StyledContentHeader>
                 <StyledContent>
                   <StyledGradesWrapper>

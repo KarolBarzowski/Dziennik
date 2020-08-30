@@ -7,9 +7,12 @@ export const getColor = name => {
     case 'negatywna':
       return 'red';
     case 'Kartkówka':
+    case 'Praca z tekstem':
+    case 'Rozumienie ze słuchu':
       return 'orange';
     case 'Odpowiedź ustna':
     case 'Ćwiczenie':
+    case 'Konwersacja':
     case 'pending':
       return 'blue';
     case 'Aktywność':

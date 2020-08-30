@@ -25,7 +25,12 @@ const StyledRow = styled.div`
   position: relative;
   display: flex;
   flex-flow: row nowrap;
-  width: 100%;
+
+  ${({ spacing }) =>
+    spacing &&
+    css`
+      justify-content: space-between;
+    `};
 
   ${({ border }) =>
     border &&
@@ -41,7 +46,7 @@ const StyledRow = styled.div`
         height: 0.2rem;
         background-color: ${({ theme }) => theme.background};
       }
-    `}
+    `};
 `;
 
 const StyledColumn = styled.div`
@@ -182,7 +187,7 @@ const StyledDefault = styled.span`
 const Modal = styled.div`
   position: absolute;
   top: 0;
-  left: 0;
+  right: 0;
   display: flex;
   flex-flow: column nowrap;
   background-color: ${({ theme }) => theme.collapse};
@@ -190,7 +195,7 @@ const Modal = styled.div`
   border-radius: 1rem;
   z-index: 99;
   box-shadow: rgba(0, 0, 0, 0.16) 0 3px 6px;
-  transform: ${({ x, y }) => `translate(${x}px, ${y}px)`};
+  transform: ${({ x, y }) => `translate(-${x}px, ${y}px)`};
 
   ${({ isOpen }) =>
     isOpen
@@ -270,6 +275,29 @@ const TextButton = styled.button`
   }
 `;
 
+const List = styled.ul`
+  list-style-type: none;
+`;
+
+const ListItem = styled.li`
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  margin-top: 0.5rem;
+
+  :first-of-type {
+    margin-top: 1.5rem;
+  }
+`;
+
+const ColorBox = styled.div`
+  height: 2.5rem;
+  width: 2.5rem;
+  background-color: ${({ color, theme }) => theme[color]};
+  margin-right: 0.5rem;
+  border-radius: 0.5rem;
+`;
+
 const monthsInYearInGenitive = [
   'stycznia',
   'lutego',
@@ -322,8 +350,10 @@ NumberInput.defaultProps = {
 };
 
 function NewGrades() {
-  const modalRef = useRef(null);
+  const settingsModalRef = useRef(null);
   const settingsBtnRef = useRef(null);
+  const legendModalRef = useRef(null);
+  const legendBtnRef = useRef(null);
 
   const [currentSemester, setCurrentSemester] = useState(
     window.localStorage.getItem('semester') || '1',
@@ -338,7 +368,8 @@ function NewGrades() {
   const [defaultEstAvg, setDefaultEstAvg] = useState(estimatedAverage);
   const [estAvgColor, setEstAvgColor] = useState('text');
   const [finAvgColor, setFinAvgColor] = useState('text');
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isLegendOpen, setIsLegendOpen] = useState(false);
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
   const [gradesSteps, setGradesSteps] = useState(
@@ -354,7 +385,8 @@ function NewGrades() {
   const [, forceUpdate] = useReducer(x => x + 1, 0);
 
   const { userData, gradesData } = useData();
-  useOutsideClick(modalRef, () => setIsModalOpen(false));
+  useOutsideClick(settingsModalRef, () => setIsSettingsOpen(false));
+  useOutsideClick(legendModalRef, () => setIsLegendOpen(false));
 
   useEffect(() => {
     if (estimatedGrades.length && estimatedGrades.length <= gradesData.length) {
@@ -465,23 +497,31 @@ function NewGrades() {
     forceUpdate();
   };
 
-  const handleModalToggle = e => {
+  const handleSettingsToggle = e => {
     const { target } = e;
 
-    const { offsetLeft, offsetTop } = target;
-    setX(offsetLeft);
+    const { offsetTop } = target;
+    setX(15);
     setY(offsetTop + 149);
-    setIsModalOpen(prevState => !prevState);
+    setIsSettingsOpen(prevState => !prevState);
+  };
+
+  const handleLegendToggle = e => {
+    const { target } = e;
+
+    const { offsetTop } = target;
+    setX(230);
+    setY(offsetTop + 149);
+    setIsLegendOpen(prevState => !prevState);
   };
 
   return (
     <Section>
-      <Modal ref={modalRef} isOpen={isModalOpen} x={x} y={y}>
+      <Modal ref={settingsModalRef} isOpen={isSettingsOpen} x={x} y={y}>
         <Heading>Regulacja progów ocen</Heading>
         <Paragraph secondary>
           Jeżeli nauczyciel nie wystawił oceny przewidywanej
           <br /> lub końcowej, będą one liczone ze średniej ważonej.
-          <br /> Tak samo, jeśli korzystasz z symulatora ocen.
         </Paragraph>
         <SettingsRow>
           <SettingsParagraph>1</SettingsParagraph>
@@ -559,57 +599,136 @@ function NewGrades() {
           </SettingsFooter>
         ) : null}
       </Modal>
-      <StyledRow>
-        <StyledBox>
-          <StyledHeading>
-            Semestr <StyledRomanNumber>{currentSemester === '1' ? 'I' : 'II'}</StyledRomanNumber>
-          </StyledHeading>
-          <StyledSwitchBtn type="button" onClick={handleSwitchSemester}>
-            Semestr{' '}
-            <StyledRomanNumber>
-              {currentSemester === '1' ? 'II' : 'I'}
-              <StyledSyncIcon icon={faSyncAlt} />
-            </StyledRomanNumber>
-          </StyledSwitchBtn>
-        </StyledBox>
-        {lastSyncDate ? (
+      <Modal ref={legendModalRef} isOpen={isLegendOpen} x={x} y={y}>
+        <Heading>Legenda</Heading>
+        <List>
+          <ListItem>
+            <ColorBox color="textSecondary" />
+            <SettingsParagraph>Nie liczona do średniej</SettingsParagraph>
+          </ListItem>
+          <ListItem>
+            <ColorBox color="red" />
+            <SettingsParagraph>Sprawdzian</SettingsParagraph>
+          </ListItem>
+          <ListItem>
+            <ColorBox color="red" />
+            <SettingsParagraph>Test</SettingsParagraph>
+          </ListItem>
+          <ListItem>
+            <ColorBox color="red" />
+            <SettingsParagraph>Praca klasowa</SettingsParagraph>
+          </ListItem>
+          <ListItem>
+            <ColorBox color="orange" />
+            <SettingsParagraph>Kartkówka</SettingsParagraph>
+          </ListItem>
+          <ListItem>
+            <ColorBox color="orange" />
+            <SettingsParagraph>Praca z tekstem</SettingsParagraph>
+          </ListItem>
+          <ListItem>
+            <ColorBox color="orange" />
+            <SettingsParagraph>Rozumienie ze słuchu</SettingsParagraph>
+          </ListItem>
+          <ListItem>
+            <ColorBox color="blue" />
+            <SettingsParagraph>Odpowiedź ustna</SettingsParagraph>
+          </ListItem>
+          <ListItem>
+            <ColorBox color="blue" />
+            <SettingsParagraph>Konwersacja</SettingsParagraph>
+          </ListItem>
+          <ListItem>
+            <ColorBox color="blue" />
+            <SettingsParagraph>Ćwiczenie</SettingsParagraph>
+          </ListItem>
+          <ListItem>
+            <ColorBox color="green" />
+            <SettingsParagraph>Aktywność</SettingsParagraph>
+          </ListItem>
+          <ListItem>
+            <ColorBox color="green" />
+            <SettingsParagraph>Praca domowa</SettingsParagraph>
+          </ListItem>
+          <ListItem>
+            <ColorBox color="purple" />
+            <SettingsParagraph>Praca pisemna/referat</SettingsParagraph>
+          </ListItem>
+          <ListItem>
+            <ColorBox color="purple" />
+            <SettingsParagraph>Projekt/zadanie</SettingsParagraph>
+          </ListItem>
+          <ListItem>
+            <ColorBox color="purple" />
+            <SettingsParagraph>Prezentacja</SettingsParagraph>
+          </ListItem>
+          <ListItem>
+            <ColorBox color="text" />
+            <SettingsParagraph>Inne</SettingsParagraph>
+          </ListItem>
+        </List>
+      </Modal>
+      <StyledRow spacing>
+        <StyledRow>
           <StyledBox>
-            <StyledParagraph secondary>Ostatnia aktualizacja</StyledParagraph>
-            <Heading>{lastSyncDate}</Heading>
+            <StyledHeading>
+              Semestr <StyledRomanNumber>{currentSemester === '1' ? 'I' : 'II'}</StyledRomanNumber>
+            </StyledHeading>
+            <StyledSwitchBtn type="button" onClick={handleSwitchSemester}>
+              Semestr{' '}
+              <StyledRomanNumber>
+                {currentSemester === '1' ? 'II' : 'I'}
+                <StyledSyncIcon icon={faSyncAlt} />
+              </StyledRomanNumber>
+            </StyledSwitchBtn>
           </StyledBox>
-        ) : null}
-        {estimatedAverage !== 'NaN' ? (
+          {lastSyncDate ? (
+            <StyledBox>
+              <StyledParagraph secondary>Ostatnia aktualizacja</StyledParagraph>
+              <Heading>{lastSyncDate}</Heading>
+            </StyledBox>
+          ) : null}
+          {estimatedAverage !== 'NaN' ? (
+            <StyledBox>
+              <StyledParagraph secondary>Średnia przewidywana</StyledParagraph>
+              <StyledNumber color={estAvgColor}>
+                {estimatedAverage}
+                <StyledDefault isVisible={defaultEstAvg !== estimatedAverage}>
+                  {defaultEstAvg}
+                </StyledDefault>
+              </StyledNumber>
+            </StyledBox>
+          ) : null}
+          {finalAverage !== 'NaN' ? (
+            <StyledBox>
+              <StyledParagraph secondary>Średnia końcowa</StyledParagraph>
+              <StyledNumber color={finAvgColor}>
+                {finalAverage}
+                <StyledDefault isVisible={defaultFinAvg !== finalAverage}>
+                  {defaultFinAvg}
+                </StyledDefault>
+              </StyledNumber>
+            </StyledBox>
+          ) : null}
+        </StyledRow>
+        <StyledRow>
           <StyledBox>
-            <StyledParagraph secondary>Średnia przewidywana</StyledParagraph>
-            <StyledNumber color={estAvgColor}>
-              {estimatedAverage}
-              <StyledDefault isVisible={defaultEstAvg !== estimatedAverage}>
-                {defaultEstAvg}
-              </StyledDefault>
-            </StyledNumber>
+            <StyledParagraph secondary>Legenda</StyledParagraph>
+            <StyledSwitchBtn type="button" onClick={handleLegendToggle} ref={legendBtnRef}>
+              Pokaż legendę
+            </StyledSwitchBtn>
           </StyledBox>
-        ) : null}
-        {finalAverage !== 'NaN' ? (
           <StyledBox>
-            <StyledParagraph secondary>Średnia końcowa</StyledParagraph>
-            <StyledNumber color={finAvgColor}>
-              {finalAverage}
-              <StyledDefault isVisible={defaultFinAvg !== finalAverage}>
-                {defaultFinAvg}
-              </StyledDefault>
-            </StyledNumber>
+            <StyledParagraph secondary>Ustawienia</StyledParagraph>
+            <StyledSwitchBtn type="button" onClick={handleSettingsToggle} ref={settingsBtnRef}>
+              Otwórz ustawienia
+            </StyledSwitchBtn>
           </StyledBox>
-        ) : null}
-        <StyledBox>
-          <StyledParagraph secondary>Ustawienia</StyledParagraph>
-          <StyledSwitchBtn type="button" onClick={handleModalToggle} ref={settingsBtnRef}>
-            Otwórz ustawienia
-          </StyledSwitchBtn>
-        </StyledBox>
+        </StyledRow>
       </StyledRow>
       <StyledBox main>
         <StyledColumn>
-          <StyledRow spacing="true" border>
+          <StyledRow border>
             <StyledColumnTitle>Przedmiot</StyledColumnTitle>
             <StyledColumnTitle>Oceny</StyledColumnTitle>
             <StyledColumnTitle>Średnia</StyledColumnTitle>
