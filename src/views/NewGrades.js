@@ -382,9 +382,11 @@ function NewGrades() {
     ],
   );
   const [isEdited, setIsEdited] = useState(false);
+  const [estBehaviourGrades, setEstBehaviourGrades] = useState(['Brak', 'Brak']);
+  const [finBehaviourGrades, setFinBehaviourGrades] = useState(['Brak', 'Brak']);
   const [, forceUpdate] = useReducer(x => x + 1, 0);
 
-  const { userData, gradesData } = useData();
+  const { userData, gradesData, behaviourData } = useData();
   useOutsideClick(settingsModalRef, () => setIsSettingsOpen(false));
   useOutsideClick(legendModalRef, () => setIsLegendOpen(false));
 
@@ -466,6 +468,16 @@ function NewGrades() {
       setLastSyncDate(fullDate);
     }
   }, [userData]);
+
+  useEffect(() => {
+    if (behaviourData) {
+      const { estSemI, estSemII, semI, semII } = behaviourData;
+
+      console.log(behaviourData);
+      setEstBehaviourGrades([estSemI, estSemII]);
+      setFinBehaviourGrades([semI, semII]);
+    }
+  }, [behaviourData]);
 
   const handleSwitchSemester = () => {
     const semester = currentSemester === '1' ? '2' : '1';
@@ -710,6 +722,16 @@ function NewGrades() {
               </StyledNumber>
             </StyledBox>
           ) : null}
+          <StyledBox>
+            <StyledParagraph secondary>
+              Zachowanie <br />
+              Proponowana | Końcowa
+            </StyledParagraph>
+            <StyledRow spacing>
+              <Heading>{estBehaviourGrades[parseFloat(currentSemester) - 1]}</Heading>
+              <Heading>{finBehaviourGrades[parseFloat(currentSemester) - 1]}</Heading>
+            </StyledRow>
+          </StyledBox>
         </StyledRow>
         <StyledRow>
           <StyledBox>

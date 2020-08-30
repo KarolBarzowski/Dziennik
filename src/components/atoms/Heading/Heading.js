@@ -5,6 +5,10 @@ const Heading = styled.h1`
   font-weight: ${({ theme }) => theme.semiBold};
   color: ${({ theme }) => theme.text};
   transition: color ${({ theme }) => theme.themeTransition};
+
+  ::first-letter {
+    text-transform: uppercase;
+  }
 `;
 
 export default Heading;
