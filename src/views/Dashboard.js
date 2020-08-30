@@ -12,7 +12,7 @@ import { getColor, getCleanName } from 'functions/functions';
 
 const StyledWrapper = styled.div`
   position: relative;
-  min-height: calc(100vh - 7.9rem);
+  height: 100%;
   width: 100%;
   column-count: 1;
 
