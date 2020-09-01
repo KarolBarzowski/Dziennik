@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import styled, { css } from 'styled-components';
-import { slideInDown } from 'functions/animations';
 import { events } from 'utils/calendarData';
 import Paragraph from 'components/atoms/Paragraph/Paragraph';
 import Heading from 'components/atoms/Heading/Heading';
 import CountUp from 'react-countup';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faRedoAlt } from '@fortawesome/free-solid-svg-icons';
+import { slideInDown, fadeIn } from 'functions/animations';
 
 const Wrapper = styled.div`
   display: flex;
@@ -90,6 +90,7 @@ const Button = styled.button`
   margin-left: 0.5rem;
   outline: none;
   transition: background-color 0.05s ease-in-out;
+  animation: ${fadeIn} 0.15s ease-in-out;
 
   :hover,
   :focus {
@@ -234,7 +235,7 @@ function EventCard() {
         <Row>
           {isReset && (
             <Button type="button" onClick={handleReset}>
-              Zresetuj
+              <FontAwesomeIcon icon={faRedoAlt} />
             </Button>
           )}
           {isNext && (

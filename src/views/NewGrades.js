@@ -473,7 +473,6 @@ function NewGrades() {
     if (behaviourData) {
       const { estSemI, estSemII, semI, semII } = behaviourData;
 
-      console.log(behaviourData);
       setEstBehaviourGrades([estSemI, estSemII]);
       setFinBehaviourGrades([semI, semII]);
     }

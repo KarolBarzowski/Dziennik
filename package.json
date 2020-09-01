@@ -38,6 +38,7 @@
     "react-scripts": "^3.4.3",
     "storybook-react-router": "^1.0.8",
     "styled-components": "^4.4.1",
+    "webpack": "^4.42.0",
     "yup": "^0.28.1"
   },
   "scripts": {
