@@ -7,7 +7,7 @@ import { useData } from 'hooks/useData';
 import MainTemplate from 'templates/MainTemplate';
 import UserTemplate from 'templates/UserTemplate';
 import Dashboard from 'views/Dashboard';
-import NewGrades from 'views/NewGrades';
+import Grades from 'views/Grades';
 import Plan from 'views/Plan';
 import Exams from 'views/Exams';
 import Absences from 'views/Absences';
@@ -48,7 +48,7 @@ function Root() {
             <UserTemplate>
               <Switch>
                 <Route exact path="/" component={Dashboard} />
-                <Route path="/oceny" component={NewGrades} />
+                <Route path="/oceny" component={Grades} />
                 <Route path="/plan" component={Plan} />
                 <Route path="/sprawdziany" component={Exams} />
                 <Route path="/frekwencja" component={Absences} />

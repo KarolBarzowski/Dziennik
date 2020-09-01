@@ -349,7 +349,7 @@ NumberInput.defaultProps = {
   func: null,
 };
 
-function NewGrades() {
+function Grades() {
   const settingsModalRef = useRef(null);
   const settingsBtnRef = useRef(null);
   const legendModalRef = useRef(null);
@@ -785,4 +785,4 @@ function NewGrades() {
   );
 }
 
-export default NewGrades;
+export default Grades;
