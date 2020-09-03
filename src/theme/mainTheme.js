@@ -66,7 +66,7 @@ export const theme = {
   modal: 'rgb(44, 44, 46)',
   burger: 'rgb(255, 255, 255)',
   navbar: colors.dp08,
-  card: colors.dp01,
+  card: 'rgb(44, 44, 46)',
   collapse: 'rgb(58, 58, 60)',
   text: 'rgba(255, 255, 255, .87)',
   textInvert: 'rgba(28, 28, 30)',

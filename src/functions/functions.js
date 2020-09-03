@@ -1,3 +1,38 @@
+import React from 'react';
+import ClearSky from 'components/atoms/Weather/ClearSky';
+import FewClouds from 'components/atoms/Weather/FewClouds';
+import Clouds from 'components/atoms/Weather/Clouds';
+import ShowerRain from 'components/atoms/Weather/ShowerRain';
+import Rain from 'components/atoms/Weather/Rain';
+import Thunderstorm from 'components/atoms/Weather/Thunderstorm';
+import Snow from 'components/atoms/Weather/Snow';
+import Mist from 'components/atoms/Weather/Mist';
+
+export const getWeatherIcon = icon => {
+  switch (`${icon[0]}${icon[1]}`) {
+    case '01':
+      return <ClearSky />;
+    case '02':
+      return <FewClouds />;
+    case '03':
+    case '04':
+      return <Clouds />;
+    case '09':
+      return <ShowerRain />;
+    case '10':
+      return <Rain />;
+    case '11':
+      return <Thunderstorm />;
+    case '13':
+      return <Snow />;
+    case '50':
+      return <Mist />;
+
+    default:
+      return null;
+  }
+};
+
 export const getColor = name => {
   switch (name) {
     case 'Sprawdzian':

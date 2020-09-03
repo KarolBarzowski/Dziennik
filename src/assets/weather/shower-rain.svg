@@ -1,0 +1,19 @@
+<svg width="34" height="39" viewBox="0 0 34 39" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="shower-rain">
+<g id="rain">
+<g id="Group 1">
+<path id="Vector" d="M13.3278 28.2851V30.2851" stroke="#91C0F8" stroke-width="2" stroke-linecap="round"/>
+<path id="Vector_2" d="M13.4428 35.0629V37.0629" stroke="#91C0F8" stroke-width="2" stroke-linecap="round"/>
+</g>
+<g id="Group 3">
+<path id="Vector_3" d="M18.2946 25.9385V27.9385" stroke="#91C0F8" stroke-width="2" stroke-linecap="round"/>
+<path id="Vector_4" d="M18.3464 31.9911V33.9911" stroke="#91C0F8" stroke-width="2" stroke-linecap="round"/>
+</g>
+<g id="Group 2">
+<path id="Vector_5" d="M23.2642 26.5866V28.5866" stroke="#91C0F8" stroke-width="2" stroke-linecap="round"/>
+<path id="Vector_6" d="M23.2605 32.9791V34.9791" stroke="#91C0F8" stroke-width="2" stroke-linecap="round"/>
+</g>
+</g>
+<path id="cloud" d="M32.7 15.4C32.7 10.8 29 7.2 24.5 7.2C23.5 7.2 22.6 7.4 21.7 7.7C21.4 4.3 18.6 1.5 15.1 1.5C11.4 1.5 8.40001 4.5 8.40001 8.2C8.40001 9 8.6 9.8 8.8 10.5C8.5 10.4 8.1 10.4 7.8 10.4C4.1 10.4 1.10001 13.4 1.10001 17.1C1.10001 20.7 4.00001 23.7 7.60001 23.8H24.8C29.2 23.3 32.7 19.8 32.7 15.4Z" fill="#57A0EE" stroke="white" stroke-width="1.2" stroke-linejoin="round"/>
+</g>
+</svg>

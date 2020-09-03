@@ -22,7 +22,7 @@ const StyledHeader = styled.h1`
   color: ${({ theme }) => theme.text};
   transition: color ${({ theme }) => theme.themeTransition},
     background-color ${({ theme }) => theme.themeTransition};
-  animation: ${SlideInDown} 0.3s ease-in-out 0.5s both;
+  animation: ${SlideInDown} 0.3s ease-in-out 0.1s both;
 
   ${({ visible }) =>
     visible &&
