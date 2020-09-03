@@ -152,111 +152,106 @@ function WelcomeCard() {
         `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=minutely,hourly&appid=${key}&lang=${lang}&units=${units}`,
       )
         .then(response => response.json())
-        .then(
-          result => {
-            const temp = [result.current.temp, result.daily[1].temp.day];
-            const desc = [
-              result.current.weather[0].description,
-              result.daily[1].weather[0].description,
-            ];
-            const icon = [result.current.weather[0].icon, result.daily[1].weather[0].icon];
-            const min = [result.daily[0].temp.min, result.daily[1].temp.min];
-            const max = [result.daily[0].temp.max, result.daily[1].temp.max];
-            const code = [result.current.weather[0].id, result.daily[1].weather[0].id];
+        .then(result => {
+          const temp = [result.current.temp, result.daily[1].temp.day];
+          const desc = [
+            result.current.weather[0].description,
+            result.daily[1].weather[0].description,
+          ];
+          const icon = [result.current.weather[0].icon, result.daily[1].weather[0].icon];
+          const min = [result.daily[0].temp.min, result.daily[1].temp.min];
+          const max = [result.daily[0].temp.max, result.daily[1].temp.max];
+          const code = [result.current.weather[0].id, result.daily[1].weather[0].id];
 
-            const weather = [
+          const weather = [
+            {
+              temp: temp[0].toFixed(),
+              desc: desc[0],
+              icon: icon[0],
+              min: min[0].toFixed(),
+              max: max[0].toFixed(),
+              code: code[0],
+            },
+            {
+              temp: temp[1].toFixed(),
+              desc: desc[1],
+              icon: icon[1],
+              min: min[1].toFixed(),
+              max: max[1].toFixed(),
+              code: code[1],
+            },
+          ];
+
+          setWeather(weather);
+
+          setIsWarning(
+            weather[1].code >= 200 && weather[1].code < 700 && (today !== 5 || today !== 6),
+          );
+
+          const tl = gsap.timeline();
+
+          tl.call(() => {
+            setIsTodayVisible(true);
+            setIsTomorrowVisible(true);
+          })
+            .fromTo(
+              lineRef.current,
               {
-                temp: temp[0].toFixed(),
-                desc: desc[0],
-                icon: icon[0],
-                min: min[0].toFixed(),
-                max: max[0].toFixed(),
-                code: code[0],
+                height: 0,
               },
               {
-                temp: temp[1].toFixed(),
-                desc: desc[1],
-                icon: icon[1],
-                min: min[1].toFixed(),
-                max: max[1].toFixed(),
-                code: code[1],
+                height: 89,
+                duration: 0.75,
+                delay: 0.25,
               },
-            ];
-
-            setWeather(weather);
-
-            setIsWarning(
-              weather[1].code >= 200 && weather[1].code < 700 && (today !== 5 || today !== 6),
+            )
+            .fromTo(
+              leftIconRef.current,
+              { x: 25, autoAlpha: 0 },
+              { x: 0, duration: 0.75, autoAlpha: 1 },
+              '-=0.25',
+            )
+            .fromTo(
+              rightIconRef.current,
+              { x: -25, autoAlpha: 0 },
+              { x: 0, duration: 0.75, autoAlpha: 1 },
+              '-=0.75',
+            )
+            .fromTo(
+              temp1Ref.current,
+              { y: 25, autoAlpha: 0 },
+              { y: 0, duration: 0.75, autoAlpha: 1 },
+              '-=0.25',
+            )
+            .fromTo(
+              temp2Ref.current,
+              { y: 25, autoAlpha: 0 },
+              { y: 0, duration: 0.75, autoAlpha: 1 },
+              '-=0.75',
+            )
+            .fromTo(
+              [...tempRow2Ref.current.children],
+              { y: 15, autoAlpha: 0 },
+              { y: 0, duration: 0.5, autoAlpha: 1, stagger: 0.15 },
+            )
+            .fromTo(
+              [...tempRow1Ref.current.children],
+              { y: 15, autoAlpha: 0 },
+              { y: 0, duration: 0.5, autoAlpha: 1, stagger: 0.15 },
+              '-=0.5',
+            )
+            .fromTo(
+              weatherDesc1Ref.current,
+              { x: -15, autoAlpha: 0 },
+              { x: 0, duration: 0.5, autoAlpha: 1 },
+            )
+            .fromTo(
+              weatherDesc2Ref.current,
+              { x: -15, autoAlpha: 0 },
+              { x: 0, duration: 0.5, autoAlpha: 1 },
+              '-=0.5',
             );
-
-            const tl = gsap.timeline();
-
-            tl.call(() => {
-              setIsTodayVisible(true);
-              setIsTomorrowVisible(true);
-            })
-              .fromTo(
-                lineRef.current,
-                {
-                  height: 0,
-                },
-                {
-                  height: 89,
-                  duration: 0.75,
-                  delay: 0.25,
-                },
-              )
-              .fromTo(
-                leftIconRef.current,
-                { x: 25, autoAlpha: 0 },
-                { x: 0, duration: 0.75, autoAlpha: 1 },
-                '-=0.25',
-              )
-              .fromTo(
-                rightIconRef.current,
-                { x: -25, autoAlpha: 0 },
-                { x: 0, duration: 0.75, autoAlpha: 1 },
-                '-=0.75',
-              )
-              .fromTo(
-                temp1Ref.current,
-                { y: 25, autoAlpha: 0 },
-                { y: 0, duration: 0.75, autoAlpha: 1 },
-                '-=0.25',
-              )
-              .fromTo(
-                temp2Ref.current,
-                { y: 25, autoAlpha: 0 },
-                { y: 0, duration: 0.75, autoAlpha: 1 },
-                '-=0.75',
-              )
-              .fromTo(
-                [...tempRow2Ref.current.children],
-                { y: 15, autoAlpha: 0 },
-                { y: 0, duration: 0.5, autoAlpha: 1, stagger: 0.15 },
-              )
-              .fromTo(
-                [...tempRow1Ref.current.children],
-                { y: 15, autoAlpha: 0 },
-                { y: 0, duration: 0.5, autoAlpha: 1, stagger: 0.15 },
-                '-=0.5',
-              )
-              .fromTo(
-                weatherDesc1Ref.current,
-                { x: -15, autoAlpha: 0 },
-                { x: 0, duration: 0.5, autoAlpha: 1 },
-              )
-              .fromTo(
-                weatherDesc2Ref.current,
-                { x: -15, autoAlpha: 0 },
-                { x: 0, duration: 0.5, autoAlpha: 1 },
-                '-=0.5',
-              );
-          },
-          error => {
-            console.log(error);
-          },
-        );
+        });
     }
   }, [userData]);
 
