@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import styled, { css } from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
 import { events } from 'utils/calendarData';
 import Paragraph from 'components/atoms/Paragraph/Paragraph';
 import Heading from 'components/atoms/Heading/Heading';
@@ -9,10 +9,25 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faRedoAlt } from '@fortawesome/free-solid-svg-icons';
 import { fadeIn } from 'functions/animations';
 
+const slideIn = keyframes`
+  from {
+    transform: translateX(-1.5rem);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+`;
+
 const Row = styled.div`
   display: flex;
   flex-flow: row wrap;
   align-items: baseline;
+
+  animation: ${slideIn} 0.3s ease-in-out backwards;
+  animation-delay: ${({ delay }) => `${delay + 0.3}s`};
 `;
 
 const Day = styled(Paragraph)`
@@ -35,6 +50,11 @@ const Day = styled(Paragraph)`
         height: 5.5rem;
       }
     `}
+`;
+
+const StyledHeading = styled(Heading)`
+  animation: ${slideIn} 0.3s ease-in-out backwards;
+  animation-delay: ${({ delay }) => `${delay + 0.3}s`};
 `;
 
 const Month = styled(Paragraph)`
@@ -77,7 +97,8 @@ const Button = styled.button`
   margin-left: 0.5rem;
   outline: none;
   transition: background-color 0.05s ease-in-out;
-  animation: ${fadeIn} 0.15s ease-in-out;
+  animation: ${slideIn} 0.3s ease-in-out backwards;
+  animation-delay: ${({ delay }) => `${delay + 0.3}s`};
 
   :hover,
   :focus {
@@ -218,7 +239,7 @@ function EventCard() {
   return currentEvent ? (
     <Card>
       <Header>
-        <Heading>Przypominacz</Heading>
+        <StyledHeading delay={0.05}>Przypominacz</StyledHeading>
         <Row>
           {isReset && (
             <Button type="button" onClick={handleReset}>
@@ -226,20 +247,20 @@ function EventCard() {
             </Button>
           )}
           {isNext && (
-            <Button type="button" onClick={handleNext}>
+            <Button type="button" onClick={handleNext} delay={0.1}>
               Następne
               <Icon icon={faArrowRight} fixedWidth />
             </Button>
           )}
         </Row>
       </Header>
-      <Row>
+      <Row delay={0.15}>
         <Column>
           <Paragraph secondary>Pozostało</Paragraph>
           <Row>
             <Day>
               {typeof currentEvent.left === 'number' ? (
-                <CountUp start={prevCount} end={currentEvent.left} duration={1.5} delay={0.1} />
+                <CountUp start={prevCount} end={currentEvent.left} duration={1.5} delay={0.35} />
               ) : (
                 currentEvent.left
               )}
@@ -255,7 +276,7 @@ function EventCard() {
           </Row>
         </Column>
       </Row>
-      <Row>
+      <Row delay={0.2}>
         <Column marginTop>
           <Paragraph secondary>Święto / Okazja</Paragraph>
           <Label>{currentEvent.label}</Label>

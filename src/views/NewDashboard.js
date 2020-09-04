@@ -5,6 +5,7 @@ import Paragraph from 'components/atoms/Paragraph/Paragraph';
 import WelcomeCard from 'components/organisms/WelcomeCard/WelcomeCard';
 import SyncCard from 'components/organisms/SyncCard/SyncCard';
 import EventCard from 'components/organisms/EventCard/EventCard';
+import GradesCard from 'components/organisms/GradesCard/GradesCard';
 
 const Container = styled.div`
   display: flex;
@@ -16,6 +17,10 @@ const Container = styled.div`
 const Column = styled.div`
   height: 100%;
   width: 33%;
+
+  :not(:first-of-type) {
+    margin-left: 1.5rem;
+  }
 
   @media screen and (min-width: 1440px) {
     width: 50%;
@@ -29,8 +34,16 @@ const Column = styled.div`
 
 const InnerColumn = styled.div`
   width: 100%;
+
+  :not(:first-of-type) {
+    margin-left: 0rem;
+  }
+
   @media screen and (min-width: 1440px) {
-    width: 50%;
+    width: calc(50% - 1.5rem);
+    :not(:first-of-type) {
+      margin-left: 1.5rem;
+    }
   }
 `;
 
@@ -57,7 +70,9 @@ function Dashboard() {
         <Column>
           <ColumnDescription secondary>Kolumna 2 i 3</ColumnDescription>
           <Row>
-            <InnerColumn>a</InnerColumn>
+            <InnerColumn>
+              <GradesCard />
+            </InnerColumn>
             <InnerColumn>b</InnerColumn>
           </Row>
         </Column>
