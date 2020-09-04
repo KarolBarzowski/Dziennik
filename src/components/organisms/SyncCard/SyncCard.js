@@ -37,8 +37,8 @@ const StyledDescription = styled(Paragraph)`
 const Button = styled.a`
   display: block;
   padding: 0.6rem 1.4rem;
-  max-width: 14.4rem;
   margin-top: 1.5rem;
+  max-width: 14.4rem;
   border: 0.2rem solid rgb(99, 99, 102);
   border-radius: 5rem;
   text-align: center;
@@ -63,6 +63,15 @@ const StyledHeading = styled(Heading)`
   animation-delay: ${({ delay }) => `${delay + 0.3}s`};
 `;
 
+const Warning = styled(Paragraph)`
+  color: ${({ theme }) => theme.red};
+  opacity: 0.87;
+  font-size: 1.6rem;
+  margin-top: 0.5rem;
+  animation: ${slideIn} 0.3s ease-in-out backwards;
+  animation-delay: ${({ delay }) => `${delay + 0.3}s`};
+`;
+
 const monthsInYearInGenitive = [
   'stycznia',
   'lutego',
@@ -81,6 +90,7 @@ const monthsInYearInGenitive = [
 function SyncCard() {
   const [dataDate, setDataDate] = useState('');
   const [lastSyncDate, setLastSyncDate] = useState('');
+  const [sync, setSync] = useState({ isSync: false });
 
   const { userData } = useData();
 
@@ -133,6 +143,14 @@ function SyncCard() {
 
       setLastSyncDate(fullSyncDate);
       setDataDate(fullDate);
+
+      const currentTs = today.getTime();
+      const difference = currentTs - timestamp;
+      const dayInSeconds = 1000 * 60 * 60 * 24;
+      const daysDifference = Math.floor(difference / dayInSeconds);
+      if (daysDifference >= 2) {
+        setSync({ isSync: true, days: daysDifference });
+      }
     }
   }, [userData]);
 
@@ -155,6 +173,7 @@ function SyncCard() {
         Ostatnia synchronizacja
       </StyledDescription>
       <StyledParagraph delay={0.25}>{lastSyncDate}</StyledParagraph>
+      {sync.isSync ? <Warning delay={0.3}>Zalecana synchronizacja</Warning> : null}
       <Button
         href="https://nasze.miasto.gdynia.pl/ed_miej/zest_start.pl?autoSync=true"
         onClick={handleAddEvent}

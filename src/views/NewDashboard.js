@@ -4,6 +4,7 @@ import Section from 'components/atoms/Section/Section';
 import Paragraph from 'components/atoms/Paragraph/Paragraph';
 import WelcomeCard from 'components/organisms/WelcomeCard/WelcomeCard';
 import SyncCard from 'components/organisms/SyncCard/SyncCard';
+import EventCard from 'components/organisms/EventCard/EventCard';
 
 const Container = styled.div`
   display: flex;
@@ -51,6 +52,7 @@ function Dashboard() {
           <ColumnDescription secondary>Kolumna 1</ColumnDescription>
           <WelcomeCard />
           <SyncCard />
+          <EventCard />
         </Column>
         <Column>
           <ColumnDescription secondary>Kolumna 2 i 3</ColumnDescription>

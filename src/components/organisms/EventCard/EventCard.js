@@ -3,28 +3,15 @@ import styled, { css } from 'styled-components';
 import { events } from 'utils/calendarData';
 import Paragraph from 'components/atoms/Paragraph/Paragraph';
 import Heading from 'components/atoms/Heading/Heading';
+import Card from 'components/atoms/Card/Card';
 import CountUp from 'react-countup';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faRedoAlt } from '@fortawesome/free-solid-svg-icons';
-import { slideInDown, fadeIn } from 'functions/animations';
-
-const Wrapper = styled.div`
-  display: flex;
-  flex-flow: column nowrap;
-  height: 100%;
-  margin: 0 0 1.5rem 0;
-  padding: 1rem 1.5rem 1.5rem;
-  background-color: ${({ theme }) => theme.card};
-  border-radius: 1.5rem;
-  box-shadow: rgba(0, 0, 0, 0.16) 0 3px 6px;
-  break-inside: avoid-column;
-  transition: background-color ${({ theme }) => theme.themeTransition};
-  animation: ${slideInDown} ${({ theme }) => theme.slideTransition} 0.15s;
-`;
+import { fadeIn } from 'functions/animations';
 
 const Row = styled.div`
   display: flex;
-  flex-flow: row nowrap;
+  flex-flow: row wrap;
   align-items: baseline;
 `;
 
@@ -61,7 +48,7 @@ const Label = styled(Paragraph)`
 
 const Header = styled.div`
   display: flex;
-  flex-flow: row nowrap;
+  flex-flow: row wrap;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 1.5rem;
@@ -229,7 +216,7 @@ function EventCard() {
   };
 
   return currentEvent ? (
-    <Wrapper>
+    <Card>
       <Header>
         <Heading>Przypominacz</Heading>
         <Row>
@@ -274,7 +261,7 @@ function EventCard() {
           <Label>{currentEvent.label}</Label>
         </Column>
       </Row>
-    </Wrapper>
+    </Card>
   ) : null;
 }
 
