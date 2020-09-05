@@ -56,6 +56,7 @@ const Row = styled.div`
 `;
 
 const StyledImg = styled(NoData)`
+  pointer-events: none;
   height: 14.4rem;
   width: 14.4rem;
   animation: ${slideIn} 0.3s ease-in-out backwards;
