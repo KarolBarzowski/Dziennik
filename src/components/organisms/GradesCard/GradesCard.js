@@ -5,6 +5,7 @@ import Heading from 'components/atoms/Heading/Heading';
 import Paragraph from 'components/atoms/Paragraph/Paragraph';
 import Card from 'components/atoms/Card/Card';
 import MiniGradesRow from 'components/molecules/MiniGradesRow/MiniGradesRow';
+import { ReactComponent as NoData } from 'assets/images/no_grades.svg';
 
 const slideIn = keyframes`
   from {
@@ -65,6 +66,23 @@ const SwitchItem = styled.button`
   padding: 0.5rem 1rem;
   cursor: pointer;
   outline: none;
+`;
+
+const Empty = styled.div`
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  margin: 2.5rem;
+`;
+
+const StyledImg = styled(NoData)`
+  height: 14.4rem;
+  width: 14.4rem;
+`;
+
+const Info = styled(Paragraph)`
+  font-size: 1.6rem;
+  margin-top: 1.5rem;
 `;
 
 function GradesCard() {
@@ -143,19 +161,24 @@ function GradesCard() {
           </SwitchWrapper>
         ) : null}
       </Row>
-      {grades.length
-        ? grades.map(({ name, newGrades, allGrades }, i) => (
-            <MiniGradesRow
-              key={name}
-              name={name}
-              newGrades={newGrades}
-              allGrades={allGrades}
-              delay={i * 0.05 + 0.05}
-              semester={currentSemester}
-              setSemesters={setSemesters}
-            />
-          ))
-        : 'brak nowych ocen'}
+      {grades.length ? (
+        grades.map(({ name, newGrades, allGrades }, i) => (
+          <MiniGradesRow
+            key={name}
+            name={name}
+            newGrades={newGrades}
+            allGrades={allGrades}
+            delay={i * 0.05 + 0.05}
+            semester={currentSemester}
+            setSemesters={setSemesters}
+          />
+        ))
+      ) : (
+        <Empty>
+          <StyledImg />
+          <Info secondary>Żadnych nowych ocen</Info>
+        </Empty>
+      )}
     </Card>
   );
 }
