@@ -78,11 +78,15 @@ const Empty = styled.div`
 const StyledImg = styled(NoData)`
   height: 14.4rem;
   width: 14.4rem;
+  animation: ${slideIn} 0.3s ease-in-out backwards;
+  animation-delay: ${({ delay }) => `${delay + 0.3}s`};
 `;
 
 const Info = styled(Paragraph)`
   font-size: 1.6rem;
   margin-top: 1.5rem;
+  animation: ${slideIn} 0.3s ease-in-out backwards;
+  animation-delay: ${({ delay }) => `${delay + 0.3}s`};
 `;
 
 function GradesCard() {
@@ -175,8 +179,10 @@ function GradesCard() {
         ))
       ) : (
         <Empty>
-          <StyledImg />
-          <Info secondary>Żadnych nowych ocen</Info>
+          <StyledImg delay={0.1} />
+          <Info secondary delay={0.15}>
+            Żadnych nowych ocen
+          </Info>
         </Empty>
       )}
     </Card>
