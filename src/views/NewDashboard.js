@@ -6,6 +6,7 @@ import WelcomeCard from 'components/organisms/WelcomeCard/WelcomeCard';
 import SyncCard from 'components/organisms/SyncCard/SyncCard';
 import EventCard from 'components/organisms/EventCard/EventCard';
 import GradesCard from 'components/organisms/GradesCard/GradesCard';
+import ExamsCard from 'components/organisms/ExamsCard/ExamsCard';
 
 const Container = styled.div`
   display: flex;
@@ -73,7 +74,9 @@ function Dashboard() {
             <InnerColumn>
               <GradesCard />
             </InnerColumn>
-            <InnerColumn>b</InnerColumn>
+            <InnerColumn>
+              <ExamsCard />
+            </InnerColumn>
           </Row>
         </Column>
         <Column>
