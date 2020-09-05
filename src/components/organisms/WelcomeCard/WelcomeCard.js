@@ -103,7 +103,7 @@ const monthsInYearInGenitive = [
   'grudnia',
 ];
 
-const daysInWeek = ['niedziela', 'poniedziałek', 'wtorek', 'środa', 'czwartek', 'piątek'];
+const daysInWeek = ['niedziela', 'poniedziałek', 'wtorek', 'środa', 'czwartek', 'piątek', 'sobota'];
 
 function WelcomeCard() {
   const leftIconRef = useRef(null);
@@ -185,7 +185,7 @@ function WelcomeCard() {
           setWeather(weather);
 
           setIsWarning(
-            weather[1].code >= 200 && weather[1].code < 700 && (today !== 5 || today !== 6),
+            weather[1].code >= 200 && weather[1].code < 700 && today !== 5 && today !== 6,
           );
 
           const tl = gsap.timeline();

@@ -7,7 +7,6 @@ import Card from 'components/atoms/Card/Card';
 import CountUp from 'react-countup';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faRedoAlt } from '@fortawesome/free-solid-svg-icons';
-import { fadeIn } from 'functions/animations';
 
 const slideIn = keyframes`
   from {

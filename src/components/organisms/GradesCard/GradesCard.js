@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
-import ReactGA from 'react-ga';
 import { useData } from 'hooks/useData';
 import Heading from 'components/atoms/Heading/Heading';
 import Paragraph from 'components/atoms/Paragraph/Paragraph';
 import Card from 'components/atoms/Card/Card';
+import MiniGradesRow from 'components/molecules/MiniGradesRow/MiniGradesRow';
 
 const slideIn = keyframes`
   from {
@@ -18,44 +18,11 @@ const slideIn = keyframes`
   }
 `;
 
-const StyledParagraph = styled(Paragraph)`
-  font-size: 2.1rem;
-  font-weight: 600;
-  margin: 0.5rem 0 0;
-  animation: ${slideIn} 0.3s ease-in-out backwards;
-  animation-delay: ${({ delay }) => `${delay + 0.3}s`};
-`;
-
-const StyledDescription = styled(Paragraph)`
-  margin-top: 1.5rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  animation: ${slideIn} 0.3s ease-in-out backwards;
-  animation-delay: ${({ delay }) => `${delay + 0.3}s`};
-`;
-
-const Button = styled.a`
-  display: block;
-  padding: 0.6rem 1.4rem;
-  margin-top: 1.5rem;
-  max-width: 14.4rem;
-  border: 0.2rem solid rgb(99, 99, 102);
-  border-radius: 5rem;
-  text-align: center;
-  text-decoration: none;
-  cursor: pointer;
-  transition: background-color 0.1s ease-in-out 0s, border 0.3s ease-in-out 0.05s,
-    color 0.3s ease-in-out 0.05s;
-  animation: ${slideIn} 0.3s ease-in-out backwards;
-  animation-delay: ${({ delay }) => `${delay + 0.3}s`};
-
-  :hover {
-    background-color: rgba(255, 255, 255, 0.07);
-  }
-
-  ${Paragraph} {
-    font-size: 1.6rem;
-  }
+const Row = styled.div`
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  justify-content: space-between;
 `;
 
 const StyledHeading = styled(Heading)`
@@ -63,38 +30,132 @@ const StyledHeading = styled(Heading)`
   animation-delay: ${({ delay }) => `${delay + 0.3}s`};
 `;
 
-const Warning = styled(Paragraph)`
-  color: ${({ theme }) => theme.red};
-  opacity: 0.87;
+const StyledParagraph = styled(Paragraph)`
+  position: relative;
   font-size: 1.6rem;
-  margin-top: 0.5rem;
-  animation: ${slideIn} 0.3s ease-in-out backwards;
-  animation-delay: ${({ delay }) => `${delay + 0.3}s`};
+  z-index: 1;
 `;
 
-const monthsInYearInGenitive = [
-  'stycznia',
-  'lutego',
-  'marca',
-  'kwietnia',
-  'maja',
-  'czerwca',
-  'lipca',
-  'sierpnia',
-  'września',
-  'października',
-  'listopada',
-  'grudnia',
-];
+const SwitchActive = styled.span`
+  position: absolute;
+  left: 0;
+  top: 0;
+  background-color: ${({ theme }) => theme.border};
+  height: 100%;
+  width: 50%;
+  transform: ${({ active }) => (active ? 'translateX(100%)' : 'transalteX(0)')};
+  transition: transform 0.3s ease-in-out;
+`;
+
+const SwitchWrapper = styled.div`
+  position: relative;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  height: 3.4rem;
+  border-radius: 10rem;
+  overflow: hidden;
+  border: 2px solid ${({ theme }) => theme.border};
+`;
+
+const SwitchItem = styled.button`
+  border: none;
+  background-color: transparent;
+  height: 100%;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  outline: none;
+`;
 
 function GradesCard() {
-  const { gradesData } = useData();
+  const [grades, setGrades] = useState([]);
+  const [currentSemester, setCurrentSemester] = useState(0);
+  const [isMultipleSemesters, setIsMultipleSemesters] = useState(false);
+  const [semesters, setSemesters] = useState([]);
 
-  useEffect(() => {}, []);
+  const { gradesData } = useData([]);
+
+  useEffect(() => {
+    const results = [];
+    const lastTs = JSON.parse(window.localStorage.getItem('lastTs'));
+
+    gradesData.forEach(({ name, grades }) => {
+      const localResults = [];
+      const allResults = [];
+
+      grades.forEach(grade => {
+        const [d, t] = grade.date.split(' ');
+        const [day, month, year] = d.split('/');
+        const [hour, minute, second] = t.split(':');
+        const dateOfPublication = new Date(
+          `20${year}`,
+          month - 1,
+          day,
+          hour,
+          minute,
+          second,
+        ).getTime();
+
+        if (dateOfPublication > lastTs) {
+          localResults.push(grade);
+        } else {
+          allResults.push(grade);
+        }
+      });
+
+      if (localResults.length) {
+        results.push({
+          name,
+          newGrades: localResults,
+          allGrades: allResults,
+        });
+      }
+    });
+    setGrades(results);
+  }, [gradesData]);
+
+  useEffect(() => {
+    if (semesters.length) {
+      const semestersSet = Array.from(new Set(semesters));
+      if (semestersSet.length === 2) {
+        setCurrentSemester(0);
+        setIsMultipleSemesters(true);
+      } else {
+        setCurrentSemester(parseFloat(semestersSet[0]) - 1);
+        setIsMultipleSemesters(false);
+      }
+    }
+  }, [semesters]);
 
   return (
     <Card>
-      <StyledHeading delay={0.05}>Oceny</StyledHeading>
+      <Row>
+        <StyledHeading delay={0.05}>Oceny</StyledHeading>
+        {isMultipleSemesters ? (
+          <SwitchWrapper>
+            <SwitchActive active={currentSemester} />
+            <SwitchItem type="button" onClick={() => setCurrentSemester(0)}>
+              <StyledParagraph>Sem. I</StyledParagraph>
+            </SwitchItem>
+            <SwitchItem type="button" onClick={() => setCurrentSemester(1)}>
+              <StyledParagraph>Sem. II</StyledParagraph>
+            </SwitchItem>
+          </SwitchWrapper>
+        ) : null}
+      </Row>
+      {grades.length
+        ? grades.map(({ name, newGrades, allGrades }, i) => (
+            <MiniGradesRow
+              key={name}
+              name={name}
+              newGrades={newGrades}
+              allGrades={allGrades}
+              delay={i * 0.05 + 0.05}
+              semester={currentSemester}
+              setSemesters={setSemesters}
+            />
+          ))
+        : 'brak nowych ocen'}
     </Card>
   );
 }

@@ -62,13 +62,13 @@ function Dashboard() {
     <Section>
       <Container>
         <Column>
-          <ColumnDescription secondary>Kolumna 1</ColumnDescription>
+          <ColumnDescription secondary>Informacje ogólne</ColumnDescription>
           <WelcomeCard />
           <SyncCard />
           <EventCard />
         </Column>
         <Column>
-          <ColumnDescription secondary>Kolumna 2 i 3</ColumnDescription>
+          <ColumnDescription secondary>Od ostatniej synchronizacji</ColumnDescription>
           <Row>
             <InnerColumn>
               <GradesCard />
@@ -77,7 +77,7 @@ function Dashboard() {
           </Row>
         </Column>
         <Column>
-          <ColumnDescription secondary>Kolumna 4</ColumnDescription>
+          <ColumnDescription secondary>Reszta</ColumnDescription>
         </Column>
       </Container>
     </Section>

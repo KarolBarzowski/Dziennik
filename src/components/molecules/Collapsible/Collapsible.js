@@ -12,7 +12,7 @@ const StyledWrapper = styled.div`
   display: flex;
   flex-flow: column nowrap;
   width: 100%;
-  background-color: ${({ theme }) => theme.card};
+  background-color: ${({ theme }) => theme.dp01};
   border-radius: 1rem;
   margin: 1rem 0 0.5rem;
   box-shadow: rgba(0, 0, 0, 0.16) 0 1px 2px;
