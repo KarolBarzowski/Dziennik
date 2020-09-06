@@ -118,11 +118,11 @@ function SyncCard() {
       yesterday = yesterday.getDate();
 
       if (currentDay === day && currentMonth === month) {
-        fullDate = `Dzisiaj o ${hour}:${minute}`;
+        fullDate = `Dzisiaj | ${hour}:${minute}`;
       } else if (yesterday === day && yesterdayMonth === month) {
-        fullDate = `Wczoraj o ${hour}:${minute}`;
+        fullDate = `Wczoraj | ${hour}:${minute}`;
       } else {
-        fullDate = `${day} ${monthsInYearInGenitive[month]} o ${hour}:${minute}`;
+        fullDate = `${day} ${monthsInYearInGenitive[month]} | ${hour}:${minute}`;
       }
 
       let fullSyncDate = '';
@@ -166,7 +166,7 @@ function SyncCard() {
     <Card>
       <StyledHeading delay={0.05}>Aktualność danych</StyledHeading>
       <StyledDescription secondary delay={0.1}>
-        Wyświetlam dane z:
+        Wyświetlam dane z
       </StyledDescription>
       <StyledParagraph delay={0.15}>{dataDate}</StyledParagraph>
       <StyledDescription secondary delay={0.2}>

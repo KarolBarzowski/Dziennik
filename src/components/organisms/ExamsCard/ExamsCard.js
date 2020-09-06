@@ -25,8 +25,6 @@ const StyledHeading = styled(Heading)`
 `;
 
 const Title = styled(Paragraph)`
-  /* text-transform: uppercase;
-  letter-spacing: 1px; */
   margin-top: 1.5rem;
   animation: ${slideIn} 0.3s ease-in-out backwards;
   animation-delay: ${({ delay }) => `${delay + 0.3}s`};

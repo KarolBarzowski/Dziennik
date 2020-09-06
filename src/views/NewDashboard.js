@@ -8,6 +8,8 @@ import EventCard from 'components/organisms/EventCard/EventCard';
 import GradesCard from 'components/organisms/GradesCard/GradesCard';
 import ExamsCard from 'components/organisms/ExamsCard/ExamsCard';
 import AbsencesCard from 'components/organisms/AbsencesCard/AbsencesCard';
+import PointsCard from 'components/organisms/PointsCard/PointsCard';
+import PlanCard from 'components/organisms/PlanCard/PlanCard';
 
 const Container = styled.div`
   display: flex;
@@ -78,11 +80,13 @@ function Dashboard() {
             </InnerColumn>
             <InnerColumn>
               <ExamsCard />
+              <PointsCard />
             </InnerColumn>
           </Row>
         </Column>
         <Column>
           <ColumnDescription secondary>Reszta</ColumnDescription>
+          <PlanCard />
         </Column>
       </Container>
     </Section>

@@ -209,47 +209,49 @@ function WelcomeCard() {
               leftIconRef.current,
               { x: 25, autoAlpha: 0 },
               { x: 0, duration: 0.75, autoAlpha: 1 },
-              '-=0.25',
+              0.5,
             )
             .fromTo(
               rightIconRef.current,
               { x: -25, autoAlpha: 0 },
               { x: 0, duration: 0.75, autoAlpha: 1 },
-              '-=0.75',
+              0.5,
             )
             .fromTo(
               temp1Ref.current,
               { y: 25, autoAlpha: 0 },
               { y: 0, duration: 0.75, autoAlpha: 1 },
-              '-=0.25',
+              0.75,
             )
             .fromTo(
               temp2Ref.current,
               { y: 25, autoAlpha: 0 },
               { y: 0, duration: 0.75, autoAlpha: 1 },
-              '-=0.75',
+              0.75,
             )
             .fromTo(
               [...tempRow2Ref.current.children],
               { y: 15, autoAlpha: 0 },
               { y: 0, duration: 0.5, autoAlpha: 1, stagger: 0.15 },
+              1,
             )
             .fromTo(
               [...tempRow1Ref.current.children],
               { y: 15, autoAlpha: 0 },
               { y: 0, duration: 0.5, autoAlpha: 1, stagger: 0.15 },
-              '-=0.5',
+              1,
             )
             .fromTo(
               weatherDesc1Ref.current,
               { x: -15, autoAlpha: 0 },
               { x: 0, duration: 0.5, autoAlpha: 1 },
+              1.5,
             )
             .fromTo(
               weatherDesc2Ref.current,
               { x: -15, autoAlpha: 0 },
               { x: 0, duration: 0.5, autoAlpha: 1 },
-              '-=0.5',
+              1.5,
             );
         });
     }
