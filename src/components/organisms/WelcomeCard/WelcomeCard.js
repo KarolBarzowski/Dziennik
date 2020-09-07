@@ -8,6 +8,7 @@ import { faExclamation } from '@fortawesome/free-solid-svg-icons';
 import Heading from 'components/atoms/Heading/Heading';
 import Paragraph from 'components/atoms/Paragraph/Paragraph';
 import Card from 'components/atoms/Card/Card';
+import Tooltip from 'components/atoms/Tooltip/Tooltip';
 
 const slideIn = keyframes`
   from {
@@ -21,11 +22,27 @@ const slideIn = keyframes`
   }
 `;
 
-const Info = styled(Paragraph)`
+const Info = styled.a`
+  position: relative;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: ${({ theme }) => theme.textSecondary};
+  width: 5rem;
+  text-decoration: none;
   text-transform: uppercase;
   letter-spacing: 0.1rem;
   animation: ${slideIn} 0.3s ease-in-out backwards;
   animation-delay: ${({ delay }) => `${delay + 0.3}s`};
+  z-index: 9;
+
+  :hover {
+    text-decoration: underline;
+  }
+
+  :hover ${Tooltip} {
+    transform: translate(0, -50%) scale(1);
+  }
 `;
 
 const Row = styled.div`
@@ -86,6 +103,31 @@ const StyledHeading = styled(Heading)`
 
 const Icon = styled(FontAwesomeIcon)`
   color: ${({ theme }) => theme.red};
+`;
+
+const StyledTooltip = styled(Tooltip)`
+  text-transform: none;
+  letter-spacing: 0rem;
+  border-radius: 1rem;
+  top: 50%;
+  left: 6rem;
+
+  ::before {
+    content: '';
+    display: block;
+    width: 0;
+    height: 0;
+    position: absolute;
+
+    border-bottom: 0.8rem solid transparent;
+    border-top: 0.8rem solid transparent;
+    border-right: 0.8rem solid rgb(58, 58, 60);
+    border-left: 0.8rem solid transparent;
+
+    top: 50%;
+    left: -1.5rem;
+    transform: translateY(-50%);
+  }
 `;
 
 const monthsInYearInGenitive = [
@@ -273,8 +315,15 @@ function WelcomeCard() {
       <Row>
         <Column>
           {isTodayVisible ? (
-            <Info secondary delay={0.5}>
+            <Info
+              href="https://www.google.com/search?q=pogoda+gdynia"
+              target="_blank"
+              rel="noreferrer noopener"
+              secondary
+              delay={0.5}
+            >
               Teraz
+              <StyledTooltip>Pokaż w google</StyledTooltip>
             </Info>
           ) : null}
           <Row spacing="true">
@@ -303,8 +352,15 @@ function WelcomeCard() {
         <Line ref={lineRef} />
         <Column>
           {isTomorrowVisible ? (
-            <Info secondary delay={0.5}>
+            <Info
+              href="https://www.google.com/search?q=pogoda+gdynia+jutro"
+              target="_blank"
+              rel="noreferrer noopener"
+              secondary
+              delay={0.5}
+            >
               Jutro
+              <StyledTooltip>Pokaż w google</StyledTooltip>
             </Info>
           ) : null}
           <Row spacing="true">

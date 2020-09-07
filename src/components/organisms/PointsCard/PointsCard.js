@@ -101,7 +101,7 @@ function PointsCard() {
   return (
     <Card>
       <StyledHeading delay={0.05}>Uwagi</StyledHeading>
-      {!points.length ? (
+      {points.length ? (
         points.map(({ type, teacher, points, color }) => (
           <Row>
             <Color color={color}>{type}</Color>

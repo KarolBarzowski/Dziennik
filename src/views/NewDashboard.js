@@ -28,6 +28,10 @@ const Column = styled.div`
 
   @media screen and (min-width: 1440px) {
     width: 50%;
+    
+    :last-of-type {
+      margin-left: 0rem;
+    }
 
     :first-of-type,
     :last-of-type {
