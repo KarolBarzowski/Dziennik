@@ -23,9 +23,10 @@ const StyledWrapper = styled.nav`
 `;
 
 const StyledParagraph = styled(Paragraph)`
+  font-size: 1.6rem;
   text-decoration: none;
   transition: color 0.1s ease-in-out;
-  padding: 0;
+  padding: 1rem;
 
   &.active,
   :hover {
@@ -44,7 +45,7 @@ const StyledList = styled.ul`
 const StyledListItem = styled.li`
   margin: 0;
   &:not(:first-of-type) {
-    margin: 0 0 0 2.5rem;
+    margin: 0 0 0 1.5rem;
   }
 `;
 

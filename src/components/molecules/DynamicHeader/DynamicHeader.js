@@ -40,23 +40,7 @@ function DynamicHeader({ location }) {
   const headerRef = useRef();
   const width = useWindowWidth();
   const [visible, setVisible] = useState(false);
-  const [welcome, setWelcome] = useState(false);
   const [page, setPage] = useState('');
-
-  useEffect(() => {
-    const storage = window.sessionStorage.getItem('welcome');
-    if (!storage) {
-      window.sessionStorage.setItem('welcome', true);
-      const data = JSON.parse(window.localStorage.getItem('data'));
-      const {
-        user: { name },
-      } = data;
-      setWelcome(`Witaj, ${name}`);
-      setTimeout(() => {
-        setWelcome(false);
-      }, 5000);
-    }
-  }, []);
 
   useEffect(() => {
     let currentPage;
@@ -87,13 +71,13 @@ function DynamicHeader({ location }) {
 
   useEffect(() => {
     const headerWidth = headerRef.current.offsetWidth;
-    const isVisible = width - headerWidth < 600;
+    const isVisible = width - headerWidth < 750;
     setVisible(isVisible);
   }, [width]);
 
   return (
     <StyledHeader ref={headerRef} visible={visible}>
-      {welcome || <StyledAnimated>{page}</StyledAnimated>}
+      <StyledAnimated>{page}</StyledAnimated>
     </StyledHeader>
   );
 }
