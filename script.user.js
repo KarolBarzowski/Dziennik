@@ -390,7 +390,11 @@ const getGrades = () => {
   });
 
   const storageData = JSON.parse(localStorage.getItem('data'));
-  storageData.grades.push(data);
+
+  if (data.name !== 'undefined') {
+    storageData.grades.push(data);
+  }
+
   localStorage.setItem('data', JSON.stringify(storageData));
 
   if (names.length > actualName + 1) {
