@@ -200,8 +200,8 @@ function ExamsCard() {
           <Title secondary delay={0.1}>
             Dzisiaj
           </Title>
-          {todayExams.map(({ name, category, dayName }) => (
-            <Row delay={0.15}>
+          {todayExams.map(({ name, category, dayName }, i) => (
+            <Row delay={0.15} key={i.toString()}>
               <Name>{dayName}</Name>
               <Name color={getCleanName(name)}>{name}</Name>
               <Name color={getColor(category)}>{category}</Name>
@@ -214,8 +214,8 @@ function ExamsCard() {
           <Title secondary delay={0.1}>
             Jutro
           </Title>
-          {tomorrowExams.map(({ name, category, dayName }) => (
-            <Row delay={0.15}>
+          {tomorrowExams.map(({ name, category, dayName }, i) => (
+            <Row delay={0.15} key={i.toString()}>
               <Name>{dayName}</Name>
               <Name color={getCleanName(name)}>{name}</Name>
               <Name color={getColor(category)}>{category}</Name>
@@ -228,8 +228,8 @@ function ExamsCard() {
           <Title secondary delay={0.1}>
             Najbliższy tydzień
           </Title>
-          {nextWeekExams.map(({ name, category, dayName }) => (
-            <Row delay={0.15}>
+          {nextWeekExams.map(({ name, category, dayName }, i) => (
+            <Row delay={0.15} key={i.toString()}>
               <Name>{dayName}</Name>
               <Name color={getCleanName(name)}>{name}</Name>
               <Name color={getColor(category)}>{category}</Name>
@@ -240,10 +240,10 @@ function ExamsCard() {
       {restExams.length ? (
         <>
           <Title secondary delay={0.1}>
-            Później
+            Odległe
           </Title>
-          {restExams.map(({ name, category, dateSyntax }) => (
-            <Row delay={0.15}>
+          {restExams.map(({ name, category, dateSyntax }, i) => (
+            <Row delay={0.15} key={i.toString()}>
               <Name>{dateSyntax}</Name>
               <Name color={getCleanName(name)}>{name}</Name>
               <Name color={getColor(category)}>{category}</Name>
