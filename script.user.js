@@ -51,16 +51,18 @@ if (
   const dataToExport = GM_getValue('data', null);
   const storageData = localStorage.getItem('data');
   const parsedStorageData = JSON.parse(storageData);
+  const isUpdate = GM_getValue('isUpdated');
+
   localStorage.setItem('script_version', SCRIPT_VERSION);
   if (dataToExport !== null && storageData === null) {
     // after 1st sync
     localStorage.setItem('data', JSON.stringify(dataToExport));
-    localStorage.setItem('isUpdate', true);
+    localStorage.setItem('isUpdate', isUpdate);
     window.location.reload();
   } else if (parsedStorageData.user.timestamp < dataToExport.user.timestamp) {
     // sync
     localStorage.setItem('data', JSON.stringify(dataToExport));
-    localStorage.setItem('isUpdate', true);
+    localStorage.setItem('isUpdate', isUpdate);
     window.location.reload();
   }
 }
