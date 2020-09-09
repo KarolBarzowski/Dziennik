@@ -51,25 +51,30 @@ if (
   const dataToExport = GM_getValue('data', null);
   const storageData = localStorage.getItem('data');
   const parsedStorageData = JSON.parse(storageData);
-  const isUpdate = GM_getValue('isUpdated');
+  const isUpdate = GM_getValue('isUpdated', false);
 
   localStorage.setItem('script_version', SCRIPT_VERSION);
   if (dataToExport !== null && storageData === null) {
     // after 1st sync
     localStorage.setItem('data', JSON.stringify(dataToExport));
+    localStorage.setItem('isUpdate', true);
     window.location.reload();
   } else if (parsedStorageData.user.timestamp < dataToExport.user.timestamp) {
     // sync
     localStorage.setItem('data', JSON.stringify(dataToExport));
+    localStorage.setItem('isUpdate', true);
+    window.location.reload();
+  } else if (isUpdate) {
+    GM_setValue('isUpdated', false);
+    localStorage.setItem('isNotSynced', true);
     window.location.reload();
   }
-  localStorage.setItem('isUpdate', isUpdate);
 }
 
 const finish = () => {
   const data = localStorage.getItem('data');
   GM_setValue('data', JSON.parse(data));
-  GM_setValue('isUpdated', true);
+  GM_setValue('isUpdated', false);
 
   localStorage.clear();
 
@@ -173,7 +178,7 @@ const getLogin = () => {
     } = data;
 
     if (lastSync === obj.lastSync) {
-      GM_setValue('isUpdated', false);
+      GM_setValue('isUpdated', true);
 
       localStorage.clear();
 
