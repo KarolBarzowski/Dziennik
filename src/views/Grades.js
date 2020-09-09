@@ -361,11 +361,11 @@ function Grades() {
   const [lastSyncDate, setLastSyncDate] = useState(null);
   const [estimatedGrades, setEstimatedGrades] = useState([]);
   const [finalGrades, setFinalGrades] = useState([]);
-  const [estimatedAverage, setEstimatedAverage] = useState();
-  const [finalAverage, setFinalAverage] = useState();
+  const [estimatedAverage, setEstimatedAverage] = useState('NaN');
+  const [finalAverage, setFinalAverage] = useState('NaN');
   const [shouldUpdate, setShouldUpdate] = useState(0);
-  const [defaultFinAvg, setDefaultFinAvg] = useState(finalAverage);
-  const [defaultEstAvg, setDefaultEstAvg] = useState(estimatedAverage);
+  const [defaultFinAvg, setDefaultFinAvg] = useState();
+  const [defaultEstAvg, setDefaultEstAvg] = useState();
   const [estAvgColor, setEstAvgColor] = useState('text');
   const [finAvgColor, setFinAvgColor] = useState('text');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -679,7 +679,7 @@ function Grades() {
           </ListItem>
         </List>
       </Modal>
-      <StyledRow spacing>
+      <StyledRow spacing="true">
         <StyledRow>
           <StyledBox>
             <StyledHeading>
@@ -726,7 +726,7 @@ function Grades() {
               Zachowanie <br />
               Proponowana | Końcowa
             </StyledParagraph>
-            <StyledRow spacing>
+            <StyledRow spacing="true">
               <Heading>{estBehaviourGrades[parseFloat(currentSemester) - 1]}</Heading>
               <Heading>{finBehaviourGrades[parseFloat(currentSemester) - 1]}</Heading>
             </StyledRow>
