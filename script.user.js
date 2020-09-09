@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Pobieracz danych z e-dziennika
-// @version      2.3.2
-// @description  Skrypt synchronizuje e-dziennik szkolny z aplikacją.
-// @author       Karol
+// @version      3.0.0
+// @description  Synchronizuje e-dziennik szkolny z aplikacją.
+// @author       https://edziennik.netlify.app
 // @match        https://nasze.miasto.gdynia.pl/ed_miej/*
 // @match        https://edziennik.netlify.com/*
 // @match        https://edziennik.netlify.app/*
@@ -15,7 +15,9 @@
 // @grant        GM_getValue
 // ==/UserScript==
 
-const SCRIPT_VERSION = '2.3.2';
+const { localStorage } = window;
+
+const SCRIPT_VERSION = '3.0.0';
 const ACTUAL_ACTION = localStorage.getItem('actualAction');
 const SHOULD_START = localStorage.getItem('shouldStart');
 const ACTUAL_URL = window.location.href;
@@ -38,6 +40,8 @@ const URLS = {
     'https://nasze.miasto.gdynia.pl/ed_miej/zest_ed_zachowanie_ucznia.pl?f_g_start=0&print_version=1',
   points:
     'https://nasze.miasto.gdynia.pl/ed_miej/zest_ed_uwagi_ucznia.pl?&f_g_start=0&iframe_name=zest&print_version=1&punkty_semestr=',
+  planContent:
+    'https://nasze.miasto.gdynia.pl/ed_miej/zest_ed_plan_zajec.pl?weekend=0&print_version=1&uczen=',
 };
 
 if (
@@ -64,12 +68,9 @@ if (
 const finish = () => {
   const data = localStorage.getItem('data');
   GM_setValue('data', JSON.parse(data));
+  GM_setValue('isUpdated', true);
 
-  localStorage.removeItem('shouldStart');
-  localStorage.removeItem('actualAction');
-  localStorage.removeItem('user');
-  localStorage.removeItem('data');
-  localStorage.removeItem('LOGIN');
+  localStorage.clear();
 
   window.location.href = 'https://edziennik.netlify.app';
 };
@@ -80,14 +81,7 @@ const displayButtons = () => {
   const isAutoSync = new URL(href).searchParams.get('autoSync') === 'true';
 
   if (isAutoSync) {
-    localStorage.removeItem('shouldStart');
-    localStorage.removeItem('actualAction');
-    localStorage.removeItem('user');
-    localStorage.removeItem('data');
-    localStorage.removeItem('names');
-    localStorage.removeItem('actualName');
-    localStorage.removeItem('LOGIN');
-
+    localStorage.clear();
     localStorage.setItem('actualAction', 'settings');
     localStorage.setItem('shouldStart', 'true');
 
@@ -123,24 +117,19 @@ const displayButtons = () => {
   #readyBtn {
   background-color: rgb(36, 138, 61);
   }
-
-  #resetBtn {
-  background-color: rgb(215, 0, 21);
-  }
   `);
 
   const box = document.createElement('div');
   box.innerHTML = `
-  <button type="button" id="resetBtn">Resetuj</button>
   <button type="button" id="readyBtn">Synchronizuj</button>
   `;
   box.classList.add('box');
   document.body.appendChild(box);
 
   const readyBtn = document.querySelector('#readyBtn');
-  const resetBtn = document.querySelector('#resetBtn');
 
   readyBtn.addEventListener('click', e => {
+    localStorage.clear();
     localStorage.setItem('actualAction', 'settings');
     localStorage.setItem('shouldStart', 'true');
 
@@ -155,22 +144,6 @@ const displayButtons = () => {
     e.target.textContent = 'Pobieranie';
 
     window.location.href = URLS.settings;
-  });
-
-  resetBtn.addEventListener('click', () => {
-    localStorage.removeItem('shouldStart');
-    localStorage.removeItem('actualAction');
-    localStorage.removeItem('user');
-    localStorage.removeItem('data');
-    localStorage.removeItem('names');
-    localStorage.removeItem('actualName');
-    localStorage.removeItem('LOGIN');
-
-    resetBtn.textContent = 'Zresetowano';
-
-    setTimeout(() => {
-      resetBtn.textContent = 'Resetuj';
-    }, 2000);
   });
 };
 
@@ -190,6 +163,23 @@ const getLogin = () => {
     timestamp: ts,
     lastSync: `${basicData[3]} ${basicData[4]}`,
   };
+
+  const data = GM_getValue('data', null);
+
+  if (data) {
+    const {
+      user: { lastSync },
+    } = data;
+
+    if (lastSync === obj.lastSync) {
+      GM_setValue('isUpdated', false);
+
+      localStorage.clear();
+
+      window.location.href = 'https://edziennik.netlify.app';
+      return;
+    }
+  }
 
   if (USER === 'student') {
     const name = basicData[7];
@@ -229,42 +219,98 @@ const getPlan = () => {
       }
     }, 100);
   } else {
-    const iframe = document.querySelector('#f_plan');
+    const btn = document.querySelector('#f_daty_lagel_img');
+    btn.click();
 
-    const plan = [[], [], [], [], []];
+    const checkExist = setInterval(() => {
+      const listItems = document
+        .querySelector('#f_daty_list')
+        .querySelectorAll('.link_list_element');
 
-    const rows = Array.from(
-      iframe.contentWindow.document.querySelectorAll('#section > table > tbody > tr'),
-    ).slice(2);
+      if (listItems.length) {
+        clearInterval(checkExist);
+        listItems.forEach(({ attributes: { key } }, i) => {
+          const { value } = key;
 
-    rows.forEach((row, lessonIndex) => {
-      if (lessonIndex % 2 === 0) {
-        const childrens = Array.from(row.children);
-
-        childrens.slice(1).forEach((child, dayIndex) => {
-          const lesson = {
-            name: '',
-            hours: '',
-            teacher: '',
-            room: '',
-          };
-
-          if (child.innerHTML !== '') {
-            const [name, hours, moreInfo] = child.innerText.split('\n');
-            lesson.name = name;
-            lesson.hours = hours;
-            const [, teacher, room] = moreInfo.split(', ');
-            lesson.teacher = teacher;
-            lesson.room = room.slice(0, -1);
+          if (value) {
+            localStorage.setItem(`day-${i}`, value);
           }
-
-          plan[dayIndex].push(lesson);
         });
       }
-    });
 
-    storageData.plan = plan;
-    localStorage.setItem('data', JSON.stringify(storageData));
+      const date = localStorage.getItem('day-1');
+
+      localStorage.setItem('actualAction', 'planContent');
+      localStorage.setItem('currentDay', 0);
+      window.location.href = `${URLS.planContent}${LOGIN}&daty=${date}`;
+    }, 100);
+  }
+};
+
+const getPlanContent = () => {
+  const storageData = JSON.parse(localStorage.getItem('data'));
+  const currentIndex = JSON.parse(localStorage.getItem('currentDay'));
+
+  let plan;
+
+  if (storageData.plan) {
+    plan = storageData.plan;
+  } else {
+    plan = [[], []];
+  }
+
+  const content = Array.from(document.querySelectorAll('#printContent > table > tbody > tr'));
+
+  content.forEach((row, rowIndex) => {
+    if (rowIndex === 0) {
+      // get day names with dates
+      const headers = Array.from(row.querySelectorAll('th'));
+
+      headers.forEach(header => {
+        plan[currentIndex].push({
+          title: header.textContent,
+          plan: [],
+        });
+      });
+    } else if (row.children.length) {
+      // get rows with content
+      const items = Array.from(row.children);
+
+      let lesson;
+
+      items.forEach((item, itemIndex) => {
+        if (itemIndex !== 0 && item.children.length) {
+          const [name, hours, rest] = item.innerText.split('\n');
+          let [class_, teacher, room] = rest.split(', ');
+
+          [, class_] = class_.split('(');
+          [room] = room.split(')');
+
+          lesson = {
+            name,
+            hours,
+            class: class_,
+            teacher,
+            room,
+          };
+
+          plan[currentIndex][itemIndex - 1].plan.push(lesson);
+        }
+      });
+    }
+  });
+
+  storageData.plan = plan;
+  localStorage.setItem('data', JSON.stringify(storageData));
+
+  if (currentIndex === 0) {
+    localStorage.setItem('currentDay', 1);
+    const date = localStorage.getItem('day-2');
+    window.location.href = `${URLS.planContent}${LOGIN}&daty=${date}`;
+  } else {
+    localStorage.removeItem('day-1');
+    localStorage.removeItem('day-2');
+    localStorage.removeItem('currentDay');
     localStorage.setItem('actualAction', 'gradesLinks');
     window.location.href = `${URLS.gradesLinks}${LOGIN}`;
   }
@@ -495,6 +541,11 @@ function init() {
       case 'plan':
         if (ACTUAL_URL.includes(URLS.plan)) {
           getPlan();
+        }
+        break;
+      case 'planContent':
+        if (ACTUAL_URL.includes(URLS.planContent)) {
+          getPlanContent();
         }
         break;
       case 'gradesLinks':
