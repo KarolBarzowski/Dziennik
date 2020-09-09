@@ -57,14 +57,13 @@ if (
   if (dataToExport !== null && storageData === null) {
     // after 1st sync
     localStorage.setItem('data', JSON.stringify(dataToExport));
-    localStorage.setItem('isUpdate', isUpdate);
     window.location.reload();
   } else if (parsedStorageData.user.timestamp < dataToExport.user.timestamp) {
     // sync
     localStorage.setItem('data', JSON.stringify(dataToExport));
-    localStorage.setItem('isUpdate', isUpdate);
     window.location.reload();
   }
+  localStorage.setItem('isUpdate', isUpdate);
 }
 
 const finish = () => {
