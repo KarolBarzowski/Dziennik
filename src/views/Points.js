@@ -113,6 +113,12 @@ const StyledDivider = styled.span`
   }
 `;
 
+const StyledInfo = styled(Paragraph)`
+  text-align: center;
+  font-size: 1.6rem;
+  margin: 1rem 0;
+`;
+
 function Points() {
   const { pointsData } = useData(null);
   const [points, setPoints] = useState([]);
@@ -232,7 +238,12 @@ function Points() {
             </StyledSum>
           </>
         ) : (
-          <></>
+          <StyledInfo secondary>
+            Brak uwag do wyświetlenia{' '}
+            <span role="img" aria-label="Sad">
+              🙁
+            </span>
+          </StyledInfo>
         )}
       </StyledBox>
     </Section>
