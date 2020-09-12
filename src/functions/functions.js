@@ -77,7 +77,8 @@ export const getCleanName = name =>
     .replace(/ó/g, 'o')
     .replace(/ś/g, 's')
     .replace(/ź/g, 'z')
-    .replace(/ż/g, 'z');
+    .replace(/ż/g, 'z')
+    .replace(/ł/g, 'l');
 
 export const getStatus = status => {
   switch (status) {

@@ -17,8 +17,11 @@ const lessonsPalette = {
   default: 'rgb(58, 58, 60)',
   zajeciazwychowawca: 'rgb(255, 159, 10)',
   programowanieialgorytmika: 'rgb(10, 132, 255)',
+  aplikacjeinternetowe: '#2d92f7',
   jezykangielski: '#ffcc00',
+  jezykangielskizawodowy: '#ffcc00',
   religia: '#c5e1a5',
+  wychowaniedozyciawrodzinie: '#c5e1a5',
   wychowaniefizyczne: '#ce93d8',
   matematyka: '#ffe082',
   jezykniemiecki: '#90caf9',
@@ -26,10 +29,13 @@ const lessonsPalette = {
   jezykpolski: '#ffab91',
   siecikomputerowe: '#d1c4e9',
   urzadzeniatechnikikomputerowej: '#a5d6a7',
+  statycznewitrynyinternetowe: '#a5d6a7',
   bazydanych: '#b39ddb',
   wiedzaokulturze: '#dcedc8',
   podstawyprzedsiebiorczosci: '#fff9c4',
+  prowadzeniedzialalnoscigospodarczej: '#fff9c4',
   systemyoperacyjne: '#f8bbd0',
+  historiaispoleczenstwo: '#eb544b',
 };
 
 const colors = {

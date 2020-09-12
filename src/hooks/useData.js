@@ -4,7 +4,7 @@ export const useData = () => {
   const [data, setData] = useState(JSON.parse(window.localStorage.getItem('data')));
   const [gradesData, setGrades] = useState([]);
   const [userData, setUser] = useState(null);
-  const [planData, setPlan] = useState(null);
+  const [planData, setPlan] = useState([]);
   const [behaviourData, setBehaviour] = useState(null);
   const [absencesData, setAbsences] = useState(null);
   const [examsData, setExams] = useState(null);

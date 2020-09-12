@@ -20,6 +20,9 @@ Wszystkie zmiany w projekcie zostaną tutaj zapisane.
 - **[ustawienia]** Ustawienia regulacji progów ocen przeniesiono do podstrony Oceny.
 - **[Frekwencja]** Drobna zmiana kosmetyczna podsumowania.
 - **[Frekwencja]** Zmieniono wygląd dymka pokazującego się na wykresie.
+- **[Podsumowanie]** Zupełnie nowy wygląd podsumowania, nowe karty itp.
+- **[Nawigacja]** Powiększono nieco czcionkę i obszar kliknięcia przycisków nawigacji.
+- **[synchronizacja]** Skrypt synchronizujący odnowiony, działa teraz szybciej i lepiej.
 
 ### USUNIĘTO
 
