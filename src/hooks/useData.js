@@ -11,6 +11,11 @@ export const useData = () => {
   const [pointsData, setPoints] = useState(null);
 
   useEffect(() => {
+    const ACTUAL_SCRIPT_VERSION = process.env.REACT_APP_SCRIPT_VERSION;
+    const scriptVersion = window.localStorage.getItem('script_version');
+    if (scriptVersion !== ACTUAL_SCRIPT_VERSION) {
+      window.localStorage.clear();
+    }
     const actualData = JSON.parse(window.localStorage.getItem('data'));
     if (actualData !== null) {
       setData(actualData);
