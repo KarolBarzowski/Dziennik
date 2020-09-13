@@ -134,11 +134,13 @@ function SyncCard() {
       const syncMinute = syncDate.getMinutes();
 
       if (syncDateDay === currentDay && syncDateMonth === currentMonth) {
-        fullSyncDate = `Dzisiaj o ${syncHour}:${syncMinute}`;
+        fullSyncDate = `Dzisiaj o ${syncHour}:${syncMinute < 10 ? `0${syncMinute}` : syncMinute}`;
       } else if (yesterday === syncDateDay && yesterdayMonth === syncDateMonth) {
-        fullSyncDate = `Wczoraj o ${syncHour}:${syncMinute}`;
+        fullSyncDate = `Wczoraj o ${syncHour}:${syncMinute < 10 ? `0${syncMinute}` : syncMinute}`;
       } else {
-        fullSyncDate = `${syncDateDay} ${monthsInYearInGenitive[syncDateMonth]} o ${syncHour}:${syncMinute}`;
+        fullSyncDate = `${syncDateDay} ${monthsInYearInGenitive[syncDateMonth]} o ${syncHour}:${
+          syncMinute < 10 ? `0${syncMinute}` : syncMinute
+        }`;
       }
 
       setLastSyncDate(fullSyncDate);
