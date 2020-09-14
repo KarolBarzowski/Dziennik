@@ -311,6 +311,10 @@ function MiniGradesRow({ name, newGrades, allGrades, delay, semester, setSemeste
       setAvgColor('text');
     }
 
+    if (avgs[semester] === 'NaN') {
+      setAvgColor('text');
+    }
+
     const sorted = newResults[semester].sort((a, b) => a.date - b.date);
     setGrades(sorted);
     setAvg(avgs[semester]);
@@ -344,7 +348,7 @@ function MiniGradesRow({ name, newGrades, allGrades, delay, semester, setSemeste
       </GradesWrapper>
       <AvgWrapper>
         <Avg color={avgColor}>{fullAvg}</Avg>
-        <Avg secondary>{avg}</Avg>
+        {avg !== 'NaN' ? <Avg secondary>{avg}</Avg> : null}
       </AvgWrapper>
     </Wrapper>
   ) : null;

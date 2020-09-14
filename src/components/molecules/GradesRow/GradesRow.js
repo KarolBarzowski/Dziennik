@@ -827,7 +827,18 @@ function GradesRow({
               </StyledDefault>
             </StyledNumber>
           ) : (
-            <StyledNumber color={finalGrade === 1 ? 'red' : 'text'}>{finalGrade}</StyledNumber>
+            <StyledNumber color={finalGrade === 1 ? 'red' : 'text'}>
+              {typeof finalGrade === 'number' ? (
+                <>
+                  - ({finalGrade})
+                  <StyledTooltip>
+                    <StyledDescription>Wyliczona ze średniej</StyledDescription>
+                  </StyledTooltip>
+                </>
+              ) : (
+                finalGrade
+              )}
+            </StyledNumber>
           )}
         </StyledHeader>
       )}
