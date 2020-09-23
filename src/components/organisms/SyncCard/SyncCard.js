@@ -159,7 +159,7 @@ function SyncCard() {
   const handleAddEvent = () => {
     ReactGA.event({
       category: 'Synchronizacja',
-      action: 'Z nawigacji',
+      action: 'Z karty',
       label: userData.name,
     });
   };
