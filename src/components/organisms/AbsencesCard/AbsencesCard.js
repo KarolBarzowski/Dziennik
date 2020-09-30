@@ -263,7 +263,7 @@ function AbsencesCard() {
                 godzin nieusprawiedliwionych!
               </Warning>
               <Button
-                href="https://nasze.miasto.gdynia.pl/ed_miej/zest_start.pl?autoSync=true"
+                href="https://nasze.miasto.gdynia.pl/ed_miej/display.pl?form=ed_nieobecnosci_ucznia"
                 delay={0.3}
               >
                 <StyledParagraph>Usprawiedliwienie</StyledParagraph>
