@@ -1,11 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import styled, { css } from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
 import { useData } from 'hooks/useData';
 import Section from 'components/atoms/Section/Section';
 import Heading from 'components/atoms/Heading/Heading';
 import Paragraph from 'components/atoms/Paragraph/Paragraph';
 import { getColor, getCleanName } from 'functions/functions';
 import { slideInDown } from 'functions/animations';
+
+const Highlight = keyframes`
+  from {
+    background-color: #42495e;
+  }
+
+  to {
+    background-color: transparent;
+  }
+`;
 
 const StyledBox = styled.div`
   background-color: ${({ theme }) => theme.card};
@@ -25,7 +35,8 @@ const StyledRow = styled(Paragraph)`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.6rem 0.8rem;
+  padding: 1.2rem 1.6rem;
+  border-radius: 0.5rem;
   font-size: ${({ theme }) => theme.m};
 
   :nth-of-type(even) {
@@ -35,6 +46,12 @@ const StyledRow = styled(Paragraph)`
   :hover {
     background-color: ${({ theme }) => theme.hover};
   }
+
+  ${({ highlight }) =>
+    highlight &&
+    css`
+      animation: ${Highlight} 5s ease-in-out backwards;
+    `}
 `;
 
 const StyledItem = styled.span`
@@ -80,9 +97,10 @@ const StyledInfo = styled(Paragraph)`
 
 function Exams() {
   const { examsData } = useData(null);
-  const [upcoming, setUpcoming] = useState(null);
-  const [late, setLate] = useState(null);
+  const [upcoming, setUpcoming] = useState([]);
+  const [late, setLate] = useState([]);
   const [next, setNext] = useState(null);
+  const [highlightId, setHighlightId] = useState(null);
 
   const today = new Date();
   const daysInWeek = [
@@ -188,6 +206,17 @@ function Exams() {
     // eslint-disable-next-line
   }, [examsData]);
 
+  useEffect(() => {
+    if (upcoming.length) {
+      const highlightedExamId = window.localStorage.getItem('highlightedExamId');
+
+      if (highlightedExamId !== null) {
+        setHighlightId(parseFloat(highlightedExamId));
+        window.localStorage.removeItem('highlightedExamId');
+      }
+    }
+  }, [upcoming]);
+
   return (
     <Section>
       <>
@@ -207,9 +236,9 @@ function Exams() {
             <span>Nadchodzące</span>
             <span>{upcoming && upcoming.length}</span>
           </StyledHeading>
-          {upcoming ? (
-            upcoming.map(({ name, dateSyntax, desc, category, color, nameColor }) => (
-              <StyledRow key={desc}>
+          {upcoming.length ? (
+            upcoming.map(({ name, dateSyntax, desc, category, color, nameColor }, i) => (
+              <StyledRow key={desc} highlight={highlightId === i}>
                 <StyledItem>{dateSyntax}</StyledItem>
                 <StyledItem color={color}>{category || 'Inne'}</StyledItem>
                 <StyledName color={nameColor}>{name}</StyledName>
@@ -230,7 +259,7 @@ function Exams() {
             <span>Ubiegłe</span>
             <span>{late && late.length}</span>
           </StyledHeading>
-          {late &&
+          {late.length &&
             late.map(({ name, dateSyntax, desc, category, color, nameColor }) => (
               <StyledRow key={desc}>
                 <StyledItem>{dateSyntax}</StyledItem>

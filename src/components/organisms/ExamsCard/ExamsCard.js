@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
+import { useHistory } from 'react-router-dom';
 import { useData } from 'hooks/useData';
 import { getCleanName, getColor } from 'functions/functions';
 import Heading from 'components/atoms/Heading/Heading';
@@ -49,8 +50,14 @@ const Row = styled.div`
   margin: 1rem 0;
   border-radius: 1rem;
   padding: 1.5rem;
+  cursor: pointer;
+  transition: background-color 0.05s ease-in-out;
   animation: ${slideIn} 0.3s ease-in-out backwards;
   animation-delay: ${({ delay }) => `${delay + 0.3}s`};
+
+  :hover {
+    background-color: ${({ theme }) => theme.dp02};
+  }
 `;
 
 const StyledImg = styled(NoData)`
@@ -107,6 +114,8 @@ function ExamsCard() {
   const [nextWeekExams, setNextWeekExams] = useState([]);
   const [restExams, setRestExams] = useState([]);
   const [isData, setIsData] = useState(false);
+
+  const history = useHistory();
 
   const { examsData } = useData();
 
@@ -184,6 +193,23 @@ function ExamsCard() {
     }
   }, [examsData]);
 
+  const redirectToExam = (id, arrayIndex) => {
+    const arrays = [todayExams.length, tomorrowExams.length, nextWeekExams.length];
+
+    let highlightedExamId = id;
+
+    if (arrayIndex === 1) {
+      highlightedExamId += arrays[0];
+    } else if (arrayIndex === 2) {
+      highlightedExamId += arrays[0] + arrays[1];
+    } else if (arrayIndex === 3) {
+      highlightedExamId += arrays[0] + arrays[1] + arrays[2];
+    }
+
+    window.localStorage.setItem('highlightedExamId', highlightedExamId);
+    history.push('/sprawdziany');
+  };
+
   return (
     <Card>
       <StyledHeading delay={0.05}>Sprawdziany</StyledHeading>
@@ -201,7 +227,7 @@ function ExamsCard() {
             Dzisiaj
           </Title>
           {todayExams.map(({ name, category, dayName }, i) => (
-            <Row delay={0.15} key={i.toString()}>
+            <Row delay={0.15} key={i.toString()} onClick={() => redirectToExam(i, 0)}>
               <Name>{dayName}</Name>
               <Name color={getCleanName(name)}>{name}</Name>
               <Name color={getColor(category)}>{category}</Name>
@@ -215,7 +241,7 @@ function ExamsCard() {
             Jutro
           </Title>
           {tomorrowExams.map(({ name, category, dayName }, i) => (
-            <Row delay={0.15} key={i.toString()}>
+            <Row delay={0.15} key={i.toString()} onClick={() => redirectToExam(i, 1)}>
               <Name>{dayName}</Name>
               <Name color={getCleanName(name)}>{name}</Name>
               <Name color={getColor(category)}>{category}</Name>
@@ -229,7 +255,7 @@ function ExamsCard() {
             Najbliższy tydzień
           </Title>
           {nextWeekExams.map(({ name, category, dayName }, i) => (
-            <Row delay={0.15} key={i.toString()}>
+            <Row delay={0.15} key={i.toString()} onClick={() => redirectToExam(i, 2)}>
               <Name>{dayName}</Name>
               <Name color={getCleanName(name)}>{name}</Name>
               <Name color={getColor(category)}>{category}</Name>
@@ -243,7 +269,7 @@ function ExamsCard() {
             Odległe
           </Title>
           {restExams.map(({ name, category, dateSyntax }, i) => (
-            <Row delay={0.15} key={i.toString()}>
+            <Row delay={0.15} key={i.toString()} onClick={() => redirectToExam(i, 3)}>
               <Name>{dateSyntax}</Name>
               <Name color={getCleanName(name)}>{name}</Name>
               <Name color={getColor(category)}>{category}</Name>
