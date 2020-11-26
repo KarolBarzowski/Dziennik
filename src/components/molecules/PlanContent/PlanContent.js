@@ -196,7 +196,7 @@ function PlanContent({ plan }) {
   }, [isExpanded]);
 
   useEffect(() => {
-    if (plan.length) {
+    if (plan && plan.length) {
       const results = [];
       const [startHour] = plan[0].hours.split(' - ');
       const endHour = plan[plan.length - 1].hours.split(' - ')[1];

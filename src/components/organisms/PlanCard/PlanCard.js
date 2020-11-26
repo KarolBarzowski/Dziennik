@@ -156,7 +156,8 @@ function PlanCard() {
       const tomorrowDate = new Date(tomorrowTs);
 
       const todayDayNumber = todayDate.getDay() - 1;
-      const tomorrowDayNumber = tomorrowDate.getDay() - 1;
+      let tomorrowDayNumber = tomorrowDate.getDay() - 1;
+      if (tomorrowDayNumber < 0) tomorrowDayNumber = 0;
 
       let todayDateSyntax;
       let tomorrowDateSyntax;
