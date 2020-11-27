@@ -163,6 +163,7 @@ function ExamsCard() {
           dateSyntax,
           dayName,
           category: newCategory,
+          dateTs,
         };
 
         if (dateTs >= ts) {
@@ -186,10 +187,10 @@ function ExamsCard() {
       });
 
       setIsData(today.length + tomorrow.length + nextWeek.length + rest.length);
-      setTodayExams(today);
-      setTomorrowExams(tomorrow);
-      setNextWeekExams(nextWeek);
-      setRestExams(rest);
+      setTodayExams(today.sort((a, b) => a.dateTs - b.dateTs));
+      setTomorrowExams(tomorrow.sort((a, b) => a.dateTs - b.dateTs));
+      setNextWeekExams(nextWeek.sort((a, b) => a.dateTs - b.dateTs));
+      setRestExams(rest.sort((a, b) => a.dateTs - b.dateTs));
     }
   }, [examsData]);
 
