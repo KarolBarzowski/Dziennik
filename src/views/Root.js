@@ -31,7 +31,7 @@ function Root() {
   const { data } = useData();
 
   useEffect(() => {
-    const ACTUAL_SCRIPT_VERSION = process.env.REACT_APP_SCRIPT_VERSION;
+    const ACTUAL_SCRIPT_VERSION = "3.0.0";
     const scriptVersion = window.localStorage.getItem('script_version');
     setIsScriptUpdate(scriptVersion !== ACTUAL_SCRIPT_VERSION);
   }, []);

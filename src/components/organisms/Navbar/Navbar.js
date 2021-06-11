@@ -69,6 +69,9 @@ const StyledBtn = styled.button`
 
   :hover ${Tooltip} {
     transform: translate(-50%, 1rem) scale(1);
+  }
+  
+  :hover {
     background-color: rgb(58, 58, 60);
   }
 `;

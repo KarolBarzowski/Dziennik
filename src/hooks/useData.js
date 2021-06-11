@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
 export const useData = () => {
-  const [data, setData] = useState(JSON.parse(window.localStorage.getItem('data')));
+  const [data, setData] = useState(null);
   const [gradesData, setGrades] = useState([]);
   const [userData, setUser] = useState(null);
   const [planData, setPlan] = useState([]);
@@ -11,7 +11,7 @@ export const useData = () => {
   const [pointsData, setPoints] = useState(null);
 
   useEffect(() => {
-    const ACTUAL_SCRIPT_VERSION = process.env.REACT_APP_SCRIPT_VERSION;
+    const ACTUAL_SCRIPT_VERSION = "3.0.0";
     const scriptVersion = window.localStorage.getItem('script_version');
     if (scriptVersion !== ACTUAL_SCRIPT_VERSION) {
       window.localStorage.clear();
@@ -30,7 +30,7 @@ export const useData = () => {
         // script compatibility
         setPoints([...points[0], ...points[1]]);
       } else setPoints(points);
-    } else setData(null);
+    }
   }, []);
 
   useEffect(() => {
