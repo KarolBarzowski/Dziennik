@@ -143,6 +143,7 @@ const StyledGrade = styled.span`
 
 const StyledTooltip = styled(Tooltip)`
   border-radius: 1rem;
+  max-width: 300px;
 
   ::before {
     content: '';
@@ -166,6 +167,7 @@ const StyledDescription = styled.span`
   color: ${({ theme, color }) => (theme[color] ? theme[color] : theme.text)};
   display: block;
   width: 100%;
+  max-width: 300px;
   text-align: left;
   font-size: 1.6rem;
   margin: 0.2rem 0 0;

@@ -16,7 +16,7 @@ const StyledWrapper = styled.nav`
   align-items: center;
   height: 6.4rem;
   padding: 0.8rem 2.5rem;
-  background-color: ${({ theme }) => theme.navbar};
+  background-color: rgb(44, 44, 46);
   border-radius: 5rem;
   box-shadow: rgba(0, 0, 0, 0.16) 0 3px 6px;
   transition: background-color ${({ theme }) => theme.themeTransition};
@@ -27,10 +27,12 @@ const StyledParagraph = styled(Paragraph)`
   text-decoration: none;
   transition: color 0.1s ease-in-out;
   padding: 1rem;
+  border-radius: 6px;
 
   &.active,
   :hover {
     color: ${({ theme }) => theme.text};
+    background-color: rgb(58, 58, 60);
   }
 `;
 

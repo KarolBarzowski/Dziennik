@@ -51,7 +51,7 @@ export const useData = () => {
       }
     }
   }, [userData]);
-
+  
   return {
     data,
     gradesData,
