@@ -60,7 +60,8 @@ const StyledBtn = styled.button`
   border: none;
   outline: none;
   font-size: 2.4rem;
-  padding: 0;
+  padding: 8px;
+  border-radius: 6px;
   margin-left: 1rem;
   color: ${({ theme }) => theme.text};
   cursor: pointer;
@@ -68,6 +69,7 @@ const StyledBtn = styled.button`
 
   :hover ${Tooltip} {
     transform: translate(-50%, 1rem) scale(1);
+    background-color: rgb(58, 58, 60);
   }
 `;
 
