@@ -166,11 +166,11 @@ const StyledTooltip = styled(Tooltip)`
 const StyledDescription = styled.span`
   color: ${({ theme, color }) => (theme[color] ? theme[color] : theme.text)};
   display: block;
-  width: 100%;
-  max-width: 300px;
+  width: 300px;
   text-align: left;
   font-size: 1.6rem;
   margin: 0.2rem 0 0;
+  word-wrap: break-word;
 `;
 
 const StyledBorder = styled.hr`

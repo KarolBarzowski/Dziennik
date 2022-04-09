@@ -11,7 +11,6 @@ const Tooltip = styled.span`
   font-size: ${({ theme }) => theme.s};
   font-weight: ${({ theme }) => theme.medium};
   font-family: 'Montserrat';
-  white-space: nowrap;
   transform: translateX(-50%) scale(0);
   transition: transform 0.15s ease-in-out;
   transform-origin: top;
